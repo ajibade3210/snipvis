@@ -9,6 +9,7 @@
     "lint": "biome check ./src",
     "format": "biome format --write ./src",
     "type-check": "tsc --noEmit",
+    "check": "tsc --noEmit",
     "test": "vitest run",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

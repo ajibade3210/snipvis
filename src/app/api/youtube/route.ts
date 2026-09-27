@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { fetchYoutubeSchema } from "@/lib/validations";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const { url } = fetchYoutubeSchema.parse(await req.json());

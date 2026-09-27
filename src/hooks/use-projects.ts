@@ -1,5 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { projectService } from "@/services/api/project.service";
+import type { UpdateProjectInput } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useProjects = () =>
   useQuery({
@@ -27,7 +28,7 @@ export const useCreateProject = () => {
 export const useUpdateProject = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateProjectInput }) =>
       projectService.update(id, data),
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: ["projects"] });

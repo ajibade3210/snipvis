@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { cacheStore } from "@/lib/cache";
+import { CACHE_KEYS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { updateProjectSchema } from "@/lib/validations";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   _: NextRequest,
@@ -28,5 +30,6 @@ export async function PATCH(
     where: { id: params.id },
     data,
   });
+  await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
   return NextResponse.json(project);
 }

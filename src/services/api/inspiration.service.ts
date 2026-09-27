@@ -1,5 +1,12 @@
-import { api } from "./client";
+import { API_ROUTES } from "@/lib/constants";
+import type {
+  CreateInspirationInput,
+  InspirationType,
+  TagInspirationInput,
+} from "@/types";
 import { z } from "zod";
+import { api } from "./client";
+
 export const InspirationSchema = z.object({
   id: z.string(),
   thumbnailUrl: z.string(),
@@ -20,35 +27,42 @@ export const InspirationSchema = z.object({
     })
     .optional(),
 });
+
 export const inspirationService = {
-  listGlobal: (p?: { type?: string }) =>
-    api(`/api/inspirations${p?.type ? `?type=${p.type}` : ""}`, {
-      method: "GET",
-      schema: z.array(InspirationSchema),
-    }),
-  listByProject: (projectId: string, opts?: any) => {
+  listGlobal: (p?: { type?: InspirationType | "ALL" }) =>
+    api(
+      `${API_ROUTES.INSPIRATIONS}${p?.type && p.type !== "ALL" ? `?type=${p.type}` : ""}`,
+      {
+        method: "GET",
+        schema: z.array(InspirationSchema),
+      },
+    ),
+  listByProject: (
+    projectId: string,
+    opts?: { favorite?: boolean; type?: InspirationType | "ALL" },
+  ) => {
     const qs = new URLSearchParams({ projectId });
     if (opts?.favorite) qs.set("favorite", "true");
-    if (opts?.type) qs.set("type", opts.type);
-    return api(`/api/inspirations?${qs}`, {
+    if (opts?.type && opts.type !== "ALL") qs.set("type", opts.type);
+    return api(`${API_ROUTES.INSPIRATIONS}?${qs}`, {
       method: "GET",
       schema: z.array(InspirationSchema),
     });
   },
-  create: (data: any) =>
-    api("/api/inspirations", {
+  create: (data: CreateInspirationInput) =>
+    api(API_ROUTES.INSPIRATIONS, {
       method: "POST",
       body: JSON.stringify(data),
       schema: InspirationSchema,
     }),
-  tag: (data: any) =>
-    api("/api/inspirations/tag", {
+  tag: (data: TagInspirationInput) =>
+    api(API_ROUTES.INSPIRATION_TAG, {
       method: "POST",
       body: JSON.stringify(data),
     }),
   deleteTag: (projectId: string, inspirationId: string) =>
     api(
-      `/api/inspirations/tag?projectId=${encodeURIComponent(projectId)}&inspirationId=${encodeURIComponent(inspirationId)}`,
+      `${API_ROUTES.INSPIRATION_TAG}?projectId=${encodeURIComponent(projectId)}&inspirationId=${encodeURIComponent(inspirationId)}`,
       {
         method: "DELETE",
       },

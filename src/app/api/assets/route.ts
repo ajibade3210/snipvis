@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createAssetSchema } from "@/lib/validations";
+import type { AssetSource, AssetType } from "@prisma/client";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -28,8 +29,8 @@ export async function POST(req: NextRequest) {
   const asset = await prisma.asset.create({
     data: {
       url: data.url,
-      type: data.type as any,
-      source: data.source as any,
+      type: data.type as AssetType,
+      source: data.source as AssetSource,
       licenseText: data.licenseText,
       note: data.note,
       projects: {

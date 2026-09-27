@@ -1,7 +1,7 @@
 "use client";
 
-import type { RefObject } from "react";
 import { useTheme } from "@/lib/theme-provider";
+import type { RefObject } from "react";
 
 interface TopHeaderProps {
   searchQuery: string;
@@ -111,7 +111,6 @@ export function TopHeader({
         </button>
 
         <div className="w-8 h-8 rounded-full overflow-hidden border border-[#E3DCD3] dark:border-[#3C3530] shadow-xs cursor-pointer">
-          {/* biome-ignore lint/a11y/noSvgWithoutTitle: avatar */}
           <img
             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
             alt="Profile"

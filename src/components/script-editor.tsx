@@ -15,7 +15,9 @@ export function ScriptEditor({
 }: ScriptEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [selectedFormat, setSelectedFormat] = useState("p");
-  const [textAlign, setTextAlign] = useState<"left" | "center" | "right" | "justify">("left");
+  const [textAlign, setTextAlign] = useState<
+    "left" | "center" | "right" | "justify"
+  >("left");
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
 
@@ -44,12 +46,12 @@ export function ScriptEditor({
     updateStats(html);
   };
 
-  const exec = useCallback((command: string, val: string | undefined = undefined) => {
+  const exec = (command: string, val: string | undefined = undefined) => {
     if (!editorRef.current) return;
     editorRef.current.focus();
     document.execCommand(command, false, val);
     handleInput();
-  }, []);
+  };
 
   const handleFormatBlock = (tag: string) => {
     setSelectedFormat(tag);
@@ -69,10 +71,10 @@ export function ScriptEditor({
       textAlign === "left"
         ? "center"
         : textAlign === "center"
-        ? "right"
-        : textAlign === "right"
-        ? "justify"
-        : "left";
+          ? "right"
+          : textAlign === "right"
+            ? "justify"
+            : "left";
     setTextAlign(nextAlign);
     if (nextAlign === "left") exec("justifyLeft");
     else if (nextAlign === "center") exec("justifyCenter");
@@ -91,7 +93,10 @@ export function ScriptEditor({
   };
 
   const handleInsertVideo = () => {
-    const url = prompt("Enter YouTube / Video URL:", "https://www.youtube.com/watch?v=...");
+    const url = prompt(
+      "Enter YouTube / Video URL:",
+      "https://www.youtube.com/watch?v=...",
+    );
     if (url) {
       const videoCue = `<div style="background:#f1ede6;padding:10px 14px;border-left:4px solid #ff5338;border-radius:6px;margin:8px 0;font-family:monospace;font-size:12px;"><strong>🎬 VIDEO CUE:</strong> <a href="${url}" target="_blank" rel="noreferrer" style="color:#ff5338;text-decoration:underline;">${url}</a></div><p><br></p>`;
       exec("insertHTML", videoCue);
@@ -118,7 +123,9 @@ export function ScriptEditor({
           <span>•</span>
           <span>{charCount} characters</span>
           <span>•</span>
-          <span className="text-[#FF5338] font-bold">~{timeFormatted} speaking time</span>
+          <span className="text-[#FF5338] font-bold">
+            ~{timeFormatted} speaking time
+          </span>
         </div>
       </div>
 
@@ -191,8 +198,18 @@ export function ScriptEditor({
               <option value="pre">Code / Monospace</option>
             </select>
             <div className="absolute right-2 pointer-events-none flex flex-col items-center justify-center text-[#8C8379]">
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+              <svg
+                className="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 9l4-4 4 4m0 6l-4 4-4-4"
+                />
               </svg>
             </div>
           </div>
@@ -210,8 +227,18 @@ export function ScriptEditor({
               }}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-[#4A443E] dark:text-[#D1C9BE] hover:bg-[#EBE5DC] dark:hover:bg-[#2E2823] transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M7 6h13M7 12h13M7 18h13M3 6h.01M3 12h.01M3 18h.01" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M7 6h13M7 12h13M7 18h13M3 6h.01M3 12h.01M3 18h.01"
+                />
               </svg>
             </button>
             <button
@@ -223,8 +250,18 @@ export function ScriptEditor({
               }}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-[#4A443E] dark:text-[#D1C9BE] hover:bg-[#EBE5DC] dark:hover:bg-[#2E2823] transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 6h11M9 12h11M9 18h11M4 6h1.5M4 12h1.5M4 18h1.5" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 6h11M9 12h11M9 18h11M4 6h1.5M4 12h1.5M4 18h1.5"
+                />
               </svg>
             </button>
           </div>
@@ -300,8 +337,18 @@ export function ScriptEditor({
               }}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-[#4A443E] dark:text-[#D1C9BE] hover:bg-[#EBE5DC] dark:hover:bg-[#2E2823] transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                />
               </svg>
             </button>
             <button
@@ -313,8 +360,18 @@ export function ScriptEditor({
               }}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-[#4A443E] dark:text-[#D1C9BE] hover:bg-[#EBE5DC] dark:hover:bg-[#2E2823] transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
             </button>
             <button
@@ -326,8 +383,18 @@ export function ScriptEditor({
               }}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-[#4A443E] dark:text-[#D1C9BE] hover:bg-[#EBE5DC] dark:hover:bg-[#2E2823] transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                />
               </svg>
             </button>
             <button
@@ -339,8 +406,18 @@ export function ScriptEditor({
               }}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-[#4A443E] dark:text-[#D1C9BE] hover:bg-[#EBE5DC] dark:hover:bg-[#2E2823] transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h10M4 18h14" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h10M4 18h14"
+                />
               </svg>
             </button>
             <button

@@ -1,5 +1,8 @@
-import { api } from "./client";
+import { API_ROUTES } from "@/lib/constants";
+import type { CreateProjectInput, UpdateProjectInput } from "@/types";
 import { z } from "zod";
+import { api } from "./client";
+
 export const ProjectSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -15,25 +18,32 @@ export const ProjectSchema = z.object({
   updatedAt: z.union([z.string(), z.date()]).optional(),
   _count: z.object({ inspirations: z.number(), assets: z.number() }).optional(),
 });
+
 export const projectService = {
   list: () =>
-    api("/api/projects", { method: "GET", schema: z.array(ProjectSchema) }),
+    api(`${API_ROUTES.PROJECTS}`, {
+      method: "GET",
+      schema: z.array(ProjectSchema),
+    }),
   get: (id: string) =>
-    api(`/api/projects/${id}`, { method: "GET", schema: ProjectSchema }),
-  create: (data: any) =>
-    api("/api/projects", {
+    api(`${API_ROUTES.PROJECTS}/${id}`, {
+      method: "GET",
+      schema: ProjectSchema,
+    }),
+  create: (data: CreateProjectInput) =>
+    api(API_ROUTES.PROJECTS, {
       method: "POST",
       body: JSON.stringify(data),
       schema: ProjectSchema,
     }),
-  update: (id: string, data: any) =>
-    api(`/api/projects/${id}`, {
+  update: (id: string, data: UpdateProjectInput) =>
+    api(`${API_ROUTES.PROJECTS}/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
       schema: ProjectSchema,
     }),
   seed: () =>
-    api("/api/seed", {
+    api(API_ROUTES.SEED, {
       method: "POST",
     }),
 };

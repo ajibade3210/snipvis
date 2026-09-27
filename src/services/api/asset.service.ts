@@ -1,5 +1,8 @@
-import { api } from "./client";
+import { API_ROUTES } from "@/lib/constants";
+import type { CreateAssetInput } from "@/types";
 import { z } from "zod";
+import { api } from "./client";
+
 export const AssetSchema = z.object({
   id: z.string(),
   url: z.string(),
@@ -15,14 +18,15 @@ export const AssetSchema = z.object({
     })
     .optional(),
 });
+
 export const assetService = {
   listByProject: (projectId: string) =>
-    api(`/api/assets?projectId=${projectId}`, {
+    api(`${API_ROUTES.ASSETS}?projectId=${encodeURIComponent(projectId)}`, {
       method: "GET",
       schema: z.array(AssetSchema),
     }),
-  create: (data: any) =>
-    api("/api/assets", {
+  create: (data: CreateAssetInput) =>
+    api(API_ROUTES.ASSETS, {
       method: "POST",
       body: JSON.stringify(data),
       schema: AssetSchema,

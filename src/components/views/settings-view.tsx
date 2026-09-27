@@ -1,10 +1,11 @@
 "use client";
 
 import { useTheme } from "@/lib/theme-provider";
+import type { InspirationRecord, ProjectRecord } from "@/types";
 
 interface SettingsViewProps {
-  inspirations: any[];
-  projects: any[];
+  inspirations: InspirationRecord[];
+  projects: ProjectRecord[];
 }
 
 export function SettingsView({ inspirations, projects }: SettingsViewProps) {

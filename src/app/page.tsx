@@ -1,28 +1,29 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef, Suspense } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useProjects } from "@/hooks/use-projects";
-import { projectService } from "@/services/api/project.service";
-import {
-  useInspirationsGlobal,
-  useInspirationsByProject,
-  useTagInspiration,
-  useDeleteTagInspiration,
-  useCreateInspiration,
-} from "@/hooks/use-inspirations";
-import { Sidebar, type NavView } from "@/components/sidebar";
-import { TopHeader } from "@/components/top-header";
 import { BottomPill } from "@/components/bottom-pill";
-import { ProjectModal } from "@/components/project-modal";
 import { InspirationModal } from "@/components/inspiration-modal";
 import { NoteModal } from "@/components/note-modal";
-import { formatInspirations } from "@/lib/format-inspirations";
-import { GlobalVaultView } from "@/components/views/global-vault-view";
-import { ProjectsHubView } from "@/components/views/projects-hub-view";
+import { ProjectModal } from "@/components/project-modal";
+import { type NavView, Sidebar } from "@/components/sidebar";
+import { TopHeader } from "@/components/top-header";
 import { CompetitorSpyView } from "@/components/views/competitor-spy-view";
-import { SettingsView } from "@/components/views/settings-view";
+import { GlobalVaultView } from "@/components/views/global-vault-view";
 import { ProjectWorkspaceView } from "@/components/views/project-workspace-view";
+import { ProjectsHubView } from "@/components/views/projects-hub-view";
+import { SettingsView } from "@/components/views/settings-view";
+import {
+  useCreateInspiration,
+  useDeleteTagInspiration,
+  useInspirationsByProject,
+  useInspirationsGlobal,
+  useTagInspiration,
+} from "@/hooks/use-inspirations";
+import { useProjects } from "@/hooks/use-projects";
+import { formatInspirations } from "@/lib/format-inspirations";
+import { projectService } from "@/services/api/project.service";
+import type { FormattedInspiration } from "@/types";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 
 function CreatorLabShell() {
   const router = useRouter();
@@ -111,13 +112,13 @@ function CreatorLabShell() {
     router.push(`${pathname}${search ? `?${search}` : ""}`);
   };
 
-  const currentProject = dbProjects.find(p => p.id === selectedProjectId);
+  const currentProject = dbProjects.find((p) => p.id === selectedProjectId);
   const formattedInspirations = useMemo(
     () => formatInspirations(dbInspirations, currentProject?.name),
     [dbInspirations, currentProject?.name],
   );
 
-  const handleToggleFavorite = async (item: any) => {
+  const handleToggleFavorite = async (item: FormattedInspiration) => {
     const projId =
       selectedProjectId || item.projectContext?.projectId || dbProjects[0]?.id;
     if (!projId) {
@@ -127,12 +128,12 @@ function CreatorLabShell() {
     await tagMutation.mutateAsync({
       inspirationId: item.id,
       projectId: projId,
-      favorite: !Boolean(item.projectContext?.favorite),
+      favorite: !item.projectContext?.favorite,
       note: item.projectContext?.note || undefined,
     });
   };
 
-  const handleRemoveItem = async (item: any) => {
+  const handleRemoveItem = async (item: FormattedInspiration) => {
     if (!selectedProjectId) return;
     if (confirm("Remove this inspiration from current project?")) {
       await deleteTagMutation.mutateAsync({
@@ -147,7 +148,7 @@ function CreatorLabShell() {
       <TopHeader
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onSearchKeyDown={e => {
+        onSearchKeyDown={(e) => {
           if (e.key === "Enter" && searchQuery.includes("youtu")) {
             setInitialYoutubeUrl(searchQuery.trim());
             setIsAddInspirationOpen(true);
@@ -168,10 +169,10 @@ function CreatorLabShell() {
           totalInspirationsCount={formattedInspirations.length}
           activeNav={activeNav}
           selectedProjectId={selectedProjectId}
-          onSelectNav={nav =>
+          onSelectNav={(nav) =>
             updateUrl({ view: nav, project: null, tab: null })
           }
-          onSelectProject={id =>
+          onSelectProject={(id) =>
             updateUrl(
               id === null
                 ? { view: "global", project: null, tab: null }
@@ -186,12 +187,12 @@ function CreatorLabShell() {
             <ProjectWorkspaceView
               project={currentProject}
               activeTab={activeTab}
-              onTabChange={tab => updateUrl({ tab })}
+              onTabChange={(tab) => updateUrl({ tab })}
               inspirations={formattedInspirations}
               searchQuery={searchQuery}
               onOpenAddModal={() => setIsAddInspirationOpen(true)}
               onToggleFavorite={handleToggleFavorite}
-              onEditNote={item =>
+              onEditNote={(item) =>
                 setNoteModalData({
                   inspirationId: item.id,
                   projectId: selectedProjectId,
@@ -209,7 +210,7 @@ function CreatorLabShell() {
                   searchQuery={searchQuery}
                   onOpenAddModal={() => setIsAddInspirationOpen(true)}
                   onToggleFavorite={handleToggleFavorite}
-                  onEditNote={item =>
+                  onEditNote={(item) =>
                     setNoteModalData({
                       inspirationId: item.id,
                       projectId: dbProjects[0]?.id || "",
@@ -222,7 +223,7 @@ function CreatorLabShell() {
               {activeNav === "active-projects" && (
                 <ProjectsHubView
                   projects={dbProjects}
-                  onSelectProject={id =>
+                  onSelectProject={(id) =>
                     updateUrl({ view: null, project: id, tab: "brief" })
                   }
                   onOpenNewProject={() => setIsNewProjectOpen(true)}
@@ -230,7 +231,7 @@ function CreatorLabShell() {
               )}
               {activeNav === "competitor-spy" && (
                 <CompetitorSpyView
-                  onImportOutlier={data =>
+                  onImportOutlier={(data) =>
                     createInspirationMutation.mutateAsync(data)
                   }
                 />
@@ -256,7 +257,7 @@ function CreatorLabShell() {
       <ProjectModal
         isOpen={isNewProjectOpen}
         onClose={() => setIsNewProjectOpen(false)}
-        onCreated={id => updateUrl({ view: null, project: id, tab: "brief" })}
+        onCreated={(id) => updateUrl({ view: null, project: id, tab: "brief" })}
       />
       <InspirationModal
         isOpen={isAddInspirationOpen}

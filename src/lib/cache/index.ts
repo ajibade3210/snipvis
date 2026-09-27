@@ -1,12 +1,7 @@
-// Cache-Aside - same pattern you specced, works in Next.js Route Handlers
-type Store = {
-  get<T>(k: string): Promise<T | null>;
-  set<T>(k: string, v: T, ttl: number): Promise<void>;
-  del(k: string): Promise<void>;
-};
+import type { CacheStore, RedisLikeClient } from "@/types";
 
-export function createInMemoryStore(): Store {
-  const map = new Map<string, { v: any; exp: number }>();
+export function createInMemoryStore(): CacheStore {
+  const map = new Map<string, { v: unknown; exp: number }>();
   return {
     async get<T>(k: string) {
       const e = map.get(k);
@@ -26,7 +21,7 @@ export function createInMemoryStore(): Store {
   };
 }
 
-export function createRedisStore(redis: any): Store {
+export function createRedisStore(redis: RedisLikeClient): CacheStore {
   return {
     async get<T>(k: string) {
       const v = await redis.get(k);
@@ -42,7 +37,7 @@ export function createRedisStore(redis: any): Store {
 }
 
 export async function withCache<T>(
-  store: Store,
+  store: CacheStore,
   key: string,
   ttl: number,
   fn: () => Promise<T>,
@@ -54,4 +49,4 @@ export async function withCache<T>(
   return fresh;
 }
 
-export const cacheStore = createInMemoryStore(); // swap to createRedisStore in prod
+export const cacheStore = createInMemoryStore();

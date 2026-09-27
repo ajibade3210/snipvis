@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { tagInspirationSchema } from "@/lib/validations";
 import { useTagInspiration } from "@/hooks/use-inspirations";
+import { tagInspirationSchema } from "@/lib/validations";
+import { useState } from "react";
 
 interface NoteModalProps {
   isOpen: boolean;
@@ -48,8 +48,8 @@ export function NoteModal({
     try {
       await tagMutation.mutateAsync(result.data);
       onClose();
-    } catch (err: any) {
-      setError(err?.message || "Failed to update note");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to update note");
     }
   };
 

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 export async function api<T>(
   path: string,
   opts: RequestInit & { schema?: z.ZodType<T> } = {},

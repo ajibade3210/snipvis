@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { createProjectSchema } from "@/lib/validations";
 import { useCreateProject } from "@/hooks/use-projects";
+import { createProjectSchema } from "@/lib/validations";
+import { useState } from "react";
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -52,8 +52,8 @@ export function ProjectModal({
       if (onCreated && created?.id) {
         onCreated(created.id);
       }
-    } catch (err: any) {
-      setError(err?.message || "Failed to create project");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to create project");
     }
   };
 

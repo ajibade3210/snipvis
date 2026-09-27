@@ -1,8 +1,9 @@
 "use client";
 
-import { GlobalVaultView } from "@/components/views/global-vault-view";
-import { BriefView } from "@/components/brief-view";
 import { AssetsView } from "@/components/assets-view";
+import { BriefView } from "@/components/brief-view";
+import { GlobalVaultView } from "@/components/views/global-vault-view";
+import type { FormattedInspiration, ProjectRecord } from "@/types";
 
 interface ProjectWorkspaceViewProps {
   project: {
@@ -14,13 +15,13 @@ interface ProjectWorkspaceViewProps {
   };
   activeTab: "inspirations" | "brief" | "assets";
   onTabChange: (tab: "inspirations" | "brief" | "assets") => void;
-  inspirations: any[];
+  inspirations: FormattedInspiration[];
   searchQuery: string;
   onOpenAddModal: () => void;
-  onToggleFavorite: (item: any) => void;
-  onEditNote: (item: any) => void;
-  onRemoveItem: (item: any) => void;
-  allProjects: any[];
+  onToggleFavorite: (item: FormattedInspiration) => void;
+  onEditNote: (item: FormattedInspiration) => void;
+  onRemoveItem: (item: FormattedInspiration) => void;
+  allProjects: ProjectRecord[];
 }
 
 export function ProjectWorkspaceView({

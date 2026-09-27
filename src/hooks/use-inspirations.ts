@@ -1,7 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { inspirationService } from "@/services/api/inspiration.service";
+import type { InspirationType } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const useInspirationsGlobal = (params?: { type?: string }) =>
+export const useInspirationsGlobal = (params?: {
+  type?: InspirationType | "ALL";
+}) =>
   useQuery({
     queryKey: ["inspirations", "global", params?.type ?? "ALL"],
     queryFn: () =>
@@ -14,7 +17,7 @@ export const useInspirationsGlobal = (params?: { type?: string }) =>
 
 export const useInspirationsByProject = (
   projectId?: string | null,
-  opts?: { favorite?: boolean; type?: string },
+  opts?: { favorite?: boolean; type?: InspirationType | "ALL" },
 ) =>
   useQuery({
     queryKey: [

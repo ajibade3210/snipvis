@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useCreateInspiration } from "@/hooks/use-inspirations";
 import {
   createInspirationSchema,
   type inspirationTypeEnum,
 } from "@/lib/validations";
-import { useCreateInspiration } from "@/hooks/use-inspirations";
 import { youtubeService } from "@/services/api/youtube.service";
+import { useEffect, useState } from "react";
 
 interface InspirationModalProps {
   isOpen: boolean;
@@ -61,8 +61,12 @@ export function InspirationModal({
             if (data.thumbnailUrl) setThumbnailUrl(data.thumbnailUrl);
             if (data.sourceUrl) setSourceUrl(data.sourceUrl);
           })
-          .catch((err: any) => {
-            setYtError(err?.message || "Could not fetch YouTube info.");
+          .catch((err: unknown) => {
+            setYtError(
+              err instanceof Error
+                ? err.message
+                : "Could not fetch YouTube info.",
+            );
           })
           .finally(() => {
             setIsFetchingYt(false);
@@ -84,9 +88,11 @@ export function InspirationModal({
       if (data.channelName) setChannelName(data.channelName);
       if (data.thumbnailUrl) setThumbnailUrl(data.thumbnailUrl);
       if (data.sourceUrl) setSourceUrl(data.sourceUrl);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setYtError(
-        err?.message || "Could not fetch YouTube info. Check the URL.",
+        err instanceof Error
+          ? err.message
+          : "Could not fetch YouTube info. Check the URL.",
       );
     } finally {
       setIsFetchingYt(false);
@@ -138,8 +144,10 @@ export function InspirationModal({
       setFavorite(false);
       setYoutubeUrl("");
       onClose();
-    } catch (err: any) {
-      setFormError(err?.message || "Failed to save inspiration");
+    } catch (err: unknown) {
+      setFormError(
+        err instanceof Error ? err.message : "Failed to save inspiration",
+      );
     }
   };
 

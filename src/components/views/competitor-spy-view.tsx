@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import type { CreateInspirationInput } from "@/types";
+import { useState } from "react";
 
 interface CompetitorSpyViewProps {
-  onImportOutlier: (item: any) => void;
+  onImportOutlier: (item: CreateInspirationInput) => void;
 }
 
 export function CompetitorSpyView({ onImportOutlier }: CompetitorSpyViewProps) {
@@ -92,6 +93,7 @@ export function CompetitorSpyView({ onImportOutlier }: CompetitorSpyViewProps) {
       hook: item.hook,
       note: `Competitor Outlier (${item.multiplier}): ${item.strategy}`,
       type: "THUMBNAIL",
+      projects: [],
     });
     setImportedIds((prev) => [...prev, item.id]);
   };
@@ -162,7 +164,6 @@ export function CompetitorSpyView({ onImportOutlier }: CompetitorSpyViewProps) {
                 {/* Media Row */}
                 <div className="flex gap-4">
                   <div className="w-40 aspect-video rounded-xl overflow-hidden bg-[#F1EDE6] dark:bg-[#2A2521] shrink-0 border border-[#E3DCD3]/60 dark:border-[#3C3530]/60">
-                    {/* biome-ignore lint/a11y/noSvgWithoutTitle: thumbnail image */}
                     <img
                       src={item.thumbnailUrl}
                       alt={item.title}

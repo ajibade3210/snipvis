@@ -1,11 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createInspirationSchema } from "@/lib/validations";
+import type { InspirationType } from "@prisma/client";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const projectId = searchParams.get("projectId");
-  const type = searchParams.get("type") as any;
+  const typeParam = searchParams.get("type");
+  const type =
+    typeParam && ["THUMBNAIL", "TITLE", "HOOK"].includes(typeParam)
+      ? (typeParam as InspirationType)
+      : undefined;
   const favorite = searchParams.get("favorite");
 
   if (projectId) {
@@ -48,7 +53,7 @@ export async function POST(req: NextRequest) {
       channelName: data.channelName,
       views: data.views,
       sourceUrl: data.sourceUrl,
-      type: data.type as any,
+      type: data.type as InspirationType,
       note: data.note,
       projects: data.projects?.length
         ? {

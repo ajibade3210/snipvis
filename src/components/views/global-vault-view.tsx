@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import type { FormattedInspiration } from "@/types";
+import { useMemo, useState } from "react";
 
 interface GlobalVaultViewProps {
-  inspirations: any[];
+  inspirations: FormattedInspiration[];
   searchQuery: string;
   onOpenAddModal: () => void;
-  onToggleFavorite: (item: any) => void;
-  onEditNote: (item: any) => void;
-  onRemoveItem: (item: any) => void;
+  onToggleFavorite: (item: FormattedInspiration) => void;
+  onEditNote: (item: FormattedInspiration) => void;
+  onRemoveItem: (item: FormattedInspiration) => void;
   selectedProjectId?: string | null;
 }
 
@@ -67,8 +68,9 @@ export function GlobalVaultView({
         );
       }
       if (sortBy === "views") {
-        const parseViews = (v: string = "") => {
-          const num = parseFloat(v) || 0;
+        const parseViews = (v?: string | null) => {
+          if (!v) return 0;
+          const num = Number.parseFloat(v) || 0;
           if (v.includes("M")) return num * 1_000_000;
           if (v.includes("K")) return num * 1_000;
           return num;
@@ -76,8 +78,8 @@ export function GlobalVaultView({
         return parseViews(b.views) - parseViews(a.views);
       }
       // "ctr"
-      const parseCtr = (c: string = "") =>
-        parseFloat(c.replace(/[^0-9.]/g, "")) || 0;
+      const parseCtr = (c = "") =>
+        Number.parseFloat(c.replace(/[^0-9.]/g, "")) || 0;
       return parseCtr(b.ctrBadge) - parseCtr(a.ctrBadge);
     });
   }, [inspirations, filterChip, searchQuery, sortBy]);
@@ -199,10 +201,9 @@ export function GlobalVaultView({
             <div>
               {/* Media Thumbnail Container */}
               <div className="aspect-video bg-[#F1EDE6] dark:bg-[#2A2521] relative overflow-hidden group">
-                {/* biome-ignore lint/a11y/noSvgWithoutTitle: thumbnail image */}
                 <img
                   src={item.thumbnailUrl}
-                  alt={item.title}
+                  alt={item.title || "Inspiration thumbnail"}
                   className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
                   onError={(e) => {
                     (e.target as HTMLElement).style.display = "none";

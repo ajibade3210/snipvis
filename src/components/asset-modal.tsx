@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  createAssetSchema,
-  assetTypeEnum,
-  assetSourceEnum,
-} from "@/lib/validations";
 import { useCreateAsset } from "@/hooks/use-assets";
+import {
+  assetSourceEnum,
+  assetTypeEnum,
+  createAssetSchema,
+} from "@/lib/validations";
+import type { AssetSource, AssetType } from "@/types";
+import { useState } from "react";
 
 interface AssetModalProps {
   isOpen: boolean;
@@ -23,12 +24,8 @@ export function AssetModal({
   defaultProjectId,
 }: AssetModalProps) {
   const [url, setUrl] = useState("");
-  const [type, setType] = useState<
-    "VIDEO" | "AUDIO" | "IMAGE" | "FONT" | "OTHER"
-  >("VIDEO");
-  const [source, setSource] = useState<
-    "PEXELS" | "PIXABAY" | "MIXKIT" | "YOUTUBE" | "OTHER"
-  >("OTHER");
+  const [type, setType] = useState<AssetType>("VIDEO");
+  const [source, setSource] = useState<AssetSource>("OTHER");
   const [licenseText, setLicenseText] = useState("");
   const [note, setNote] = useState("");
   const [selectedProjectIds, setSelectedProjectIds] = useState<string[]>(
@@ -79,8 +76,8 @@ export function AssetModal({
       setLicenseText("");
       setNote("");
       onClose();
-    } catch (err: any) {
-      setError(err?.message || "Failed to create asset");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to create asset");
     }
   };
 
@@ -126,7 +123,7 @@ export function AssetModal({
               </label>
               <select
                 value={type}
-                onChange={(e) => setType(e.target.value as any)}
+                onChange={(e) => setType(e.target.value as AssetType)}
                 className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               >
                 <option value="VIDEO">Video Footage</option>
@@ -142,7 +139,7 @@ export function AssetModal({
               </label>
               <select
                 value={source}
-                onChange={(e) => setSource(e.target.value as any)}
+                onChange={(e) => setSource(e.target.value as AssetSource)}
                 className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               >
                 <option value="PEXELS">Pexels</option>

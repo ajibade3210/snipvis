@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { tagInspirationSchema } from "@/lib/validations";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -16,8 +16,16 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const projectId = searchParams.get("projectId")!;
-  const inspirationId = searchParams.get("inspirationId")!;
+  const projectId = searchParams.get("projectId");
+  const inspirationId = searchParams.get("inspirationId");
+
+  if (!projectId || !inspirationId) {
+    return NextResponse.json(
+      { error: "Missing projectId or inspirationId" },
+      { status: 400 },
+    );
+  }
+
   await prisma.projectInspiration.delete({
     where: { projectId_inspirationId: { projectId, inspirationId } },
   });

@@ -1,7 +1,9 @@
+import type { FormattedInspiration, InspirationRecord } from "@/types";
+
 export function formatInspirations(
-  inspirations: any[],
-  projectName: string = "Global Vault",
-) {
+  inspirations: InspirationRecord[],
+  projectName = "Global Vault",
+): FormattedInspiration[] {
   return inspirations.map((item, idx) => ({
     ...item,
     categoryTag:

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { ScriptEditor } from "@/components/script-editor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { updateProjectSchema } from "@/lib/validations";
 import { useProject, useUpdateProject } from "@/hooks/use-projects";
-import { ScriptEditor } from "@/components/script-editor";
+import { updateProjectSchema } from "@/lib/validations";
+import { useEffect, useState } from "react";
 
 interface BriefViewProps {
   projectId: string;
@@ -94,10 +94,11 @@ export function BriefView({ projectId }: BriefViewProps) {
         text: "Creative brief and full script saved successfully!",
       });
       setTimeout(() => setFeedback(null), 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setFeedback({
         type: "error",
-        text: err?.message || "Failed to update project brief",
+        text:
+          err instanceof Error ? err.message : "Failed to update project brief",
       });
     }
   };

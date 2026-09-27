@@ -63,9 +63,10 @@ export function ProjectsHubView({
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Inline Create New Project Card */}
-        <div
+        <button
+          type="button"
           onClick={onOpenNewProject}
-          className="rounded-2xl border-2 border-dashed border-[#E3DCD3] dark:border-[#3C3530] p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#FF5338] hover:bg-[#FFEBE7]/20 dark:hover:bg-red-950/10 transition-all min-h-[220px] group"
+          className="rounded-2xl border-2 border-dashed border-[#E3DCD3] dark:border-[#3C3530] p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#FF5338] hover:bg-[#FFEBE7]/20 dark:hover:bg-red-950/10 transition-all min-h-[220px] group w-full"
         >
           <div className="w-12 h-12 rounded-full bg-[#F1EDE6] dark:bg-[#2A2521] text-[#FF5338] flex items-center justify-center group-hover:scale-110 transition-transform mb-3">
             <svg
@@ -85,7 +86,7 @@ export function ProjectsHubView({
           <h3 className="font-extrabold text-sm text-[#1E1A17] dark:text-[#FAF8F5]">
             Start New Post
           </h3>
-        </div>
+        </button>
 
         {/* Project Cards */}
         {projects.map((proj) => {
@@ -102,12 +103,13 @@ export function ProjectsHubView({
                 {/* Title & Channel Header */}
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3
+                    <button
+                      type="button"
                       onClick={() => onSelectProject(proj.id)}
-                      className="font-extrabold text-base text-[#1E1A17] dark:text-[#FAF8F5] hover:text-[#FF5338] cursor-pointer line-clamp-1"
+                      className="font-extrabold text-base text-[#1E1A17] dark:text-[#FAF8F5] hover:text-[#FF5338] cursor-pointer line-clamp-1 text-left"
                     >
                       {proj.name}
-                    </h3>
+                    </button>
                     {proj.channel ? (
                       <span className="text-xs font-semibold text-[#8C8379]">
                         @{proj.channel}
