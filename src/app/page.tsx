@@ -4,7 +4,7 @@ import { BottomPill } from "@/components/bottom-pill";
 import { InspirationModal } from "@/components/inspiration-modal";
 import { NoteModal } from "@/components/note-modal";
 import { ProjectModal } from "@/components/project-modal";
-import { type NavView, Sidebar } from "@/components/sidebar";
+import { Sidebar } from "@/components/sidebar";
 import { TopHeader } from "@/components/top-header";
 import { CompetitorSpyView } from "@/components/views/competitor-spy-view";
 import { GlobalVaultView } from "@/components/views/global-vault-view";
@@ -21,7 +21,7 @@ import {
 import { useProjects } from "@/hooks/use-projects";
 import { formatInspirations } from "@/lib/format-inspirations";
 import { projectService } from "@/services/api/project.service";
-import type { FormattedInspiration } from "@/types";
+import type { FormattedInspiration, NavView } from "@/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 

@@ -1,12 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-
-export type NavView =
-  | "global"
-  | "active-projects"
-  | "competitor-spy"
-  | "settings";
+import type { NavView } from "@/types";
 
 interface SidebarProps {
   projects: Array<{

@@ -2,8 +2,10 @@
 
 import { AssetsView } from "@/components/assets-view";
 import { BriefView } from "@/components/brief-view";
+import { ProjectModal } from "@/components/project-modal";
 import { GlobalVaultView } from "@/components/views/global-vault-view";
 import type { FormattedInspiration, ProjectRecord } from "@/types";
+import { useState } from "react";
 
 interface ProjectWorkspaceViewProps {
   project: {
@@ -11,6 +13,7 @@ interface ProjectWorkspaceViewProps {
     name: string;
     description?: string | null;
     channel?: string | null;
+    angle?: string | null;
     _count?: { inspirations: number; assets: number };
   };
   activeTab: "inspirations" | "brief" | "assets";
@@ -36,6 +39,8 @@ export function ProjectWorkspaceView({
   onRemoveItem,
   allProjects,
 }: ProjectWorkspaceViewProps) {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   return (
     <div className="space-y-6">
       {/* Project Stage Header */}
@@ -50,6 +55,26 @@ export function ProjectWorkspaceView({
                 @{project.channel}
               </span>
             ) : null}
+            <button
+              type="button"
+              onClick={() => setIsEditModalOpen(true)}
+              title="Edit project name & target channel"
+              className="p-1.5 rounded-lg text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] transition-colors"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                />
+              </svg>
+            </button>
           </div>
           <p className="text-xs text-[#58524C] dark:text-[#A89F95] font-medium mt-1">
             {project.description ||
@@ -117,6 +142,12 @@ export function ProjectWorkspaceView({
           projects={allProjects}
         />
       )}
+
+      <ProjectModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        project={project}
+      />
     </div>
   );
 }

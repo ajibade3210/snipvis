@@ -23,6 +23,7 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
    - `npm run type-check` or `npm run check` (`tsc --noEmit` static type checking)
    - `npm run test` (Vitest test suite)
 7. **End With Completion Confirmation** — End with a one-line statement confirming whether anything important is missing: `"Nothing important appears to be missing."`
+8. **No Automatic Git Commits or Pushes** — Never execute git commits or git pushes automatically. Version control staging, committing, and pushing to GitHub must be handled manually by the user.
 
 ---
 
@@ -498,6 +499,7 @@ npm run db:studio
 - 🚫 **Avoid Bypassing Route Handlers:** Do not import `src/lib/prisma.ts` into client-side components (`"use client"`). Database calls are strictly server-side inside `src/app/api/*`.
 - 🚫 **All Keys from Environment Variables:** Do not build client-side UI inputs or use `localStorage` for storing API keys. All service keys (such as `YOUTUBE_API_KEY`) must strictly be configured in `.env` and accessed server-side.
 - 🚫 **Zero `any` Policy:** Do not use `any` in TypeScript files. Use explicit types from `@prisma/client`, `src/types/`, or Zod inferences.
+- 🚫 **No Automatic Git Commits or Pushes:** Do NOT commit (`git commit`) or push (`git push`) to GitHub. All version control staging, committing, and pushing must be performed manually by the user.
 - ⚠️ **Be Mindful of Cache Invalidation:** If adding mutations to `/api/projects`, always invalidate or delete the `projects:list` cache key in `cacheStore` (`src/lib/cache/index.ts`).
 - ⚠️ **Vitest No-Test Error:** Running `npm run test` will exit with code 1 until at least one `*.test.ts` file is created.
 

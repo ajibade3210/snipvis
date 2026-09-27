@@ -15,12 +15,13 @@ export function BriefView({ projectId }: BriefViewProps) {
   const { data: project, isLoading } = useProject(projectId);
   const updateMutation = useUpdateProject();
 
+  const [name, setName] = useState("");
+  const [channel, setChannel] = useState("");
+  const [description, setDescription] = useState("");
   const [angle, setAngle] = useState("");
   const [hook, setHook] = useState("");
   const [scriptLink, setScriptLink] = useState("");
   const [notes, setNotes] = useState("");
-  const [channel, setChannel] = useState("");
-  const [description, setDescription] = useState("");
   const [scriptContent, setScriptContent] = useState("");
 
   const [feedback, setFeedback] = useState<{
@@ -30,12 +31,13 @@ export function BriefView({ projectId }: BriefViewProps) {
 
   useEffect(() => {
     if (project) {
+      setName(project.name ?? "");
+      setChannel(project.channel ?? "");
+      setDescription(project.description ?? "");
       setAngle(project.angle ?? "");
       setHook(project.hook ?? "");
       setScriptLink(project.scriptLink ?? "");
       setNotes(project.notes ?? "");
-      setChannel(project.channel ?? "");
-      setDescription(project.description ?? "");
       setScriptContent(project.script ?? "");
       setFeedback(null);
     }
@@ -65,13 +67,22 @@ export function BriefView({ projectId }: BriefViewProps) {
     e.preventDefault();
     setFeedback(null);
 
+    if (!name.trim()) {
+      setFeedback({
+        type: "error",
+        text: "Project name is required",
+      });
+      return;
+    }
+
     const payload = {
+      name: name.trim(),
+      channel: channel.trim() ? channel.trim().replace(/^@/, "") : undefined,
+      description: description.trim() || undefined,
       angle: angle.trim() || undefined,
       hook: hook.trim() || undefined,
       scriptLink: scriptLink.trim() || undefined,
       notes: notes.trim() || undefined,
-      channel: channel.trim() || undefined,
-      description: description.trim() || undefined,
       script: scriptContent.trim() || undefined,
     };
 
@@ -91,7 +102,7 @@ export function BriefView({ projectId }: BriefViewProps) {
       });
       setFeedback({
         type: "success",
-        text: "Creative brief and full script saved successfully!",
+        text: "Project details, creative brief, and script saved!",
       });
       setTimeout(() => setFeedback(null), 3000);
     } catch (err: unknown) {
@@ -105,11 +116,22 @@ export function BriefView({ projectId }: BriefViewProps) {
 
   return (
     <form onSubmit={handleSave} className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between border-b border-border pb-4">
+      {/* Top Header & Save Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight">{project.name}</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-bold tracking-tight">
+              {name || project.name}
+            </h2>
+            {channel ? (
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-secondary text-foreground font-semibold">
+                @{channel.replace(/^@/, "")}
+              </span>
+            ) : null}
+          </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Creative Brief & Script Strategy {channel ? `• @${channel}` : ""}
+            Creative Brief & Script Strategy • Edit metadata, core angle, hook,
+            and full script.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -129,6 +151,46 @@ export function BriefView({ projectId }: BriefViewProps) {
           </Button>
         </div>
       </div>
+
+      {/* Project Identity: Name, Channel & Description */}
+      <Card className="border border-border shadow-xs bg-card/60">
+        <CardContent className="pt-5 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <span>🏷️</span> Project Name{" "}
+                <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Storytelling Formats"
+                className="w-full h-9 px-3 text-sm font-semibold rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <span>🎯</span> Target Channel
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
+                  @
+                </span>
+                <input
+                  type="text"
+                  value={channel}
+                  onChange={(e) => setChannel(e.target.value.replace(/^@/, ""))}
+                  placeholder="e.g. DeepDiveDoc"
+                  className="w-full h-9 pl-7 pr-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Core Angle */}
@@ -215,13 +277,13 @@ export function BriefView({ projectId }: BriefViewProps) {
 
             <div className="pt-2 border-t border-border">
               <label className="text-xs font-semibold text-foreground block mb-1">
-                Channel Handle
+                Project Summary / Notes
               </label>
               <input
                 type="text"
-                placeholder="Channel name or handle"
-                value={channel}
-                onChange={(e) => setChannel(e.target.value)}
+                placeholder="Brief project goal or summary"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 className="w-full h-8 px-2.5 text-xs rounded border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>

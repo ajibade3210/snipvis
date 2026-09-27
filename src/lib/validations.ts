@@ -1,5 +1,11 @@
 import { z } from "zod";
+
+/* ========================================================================= */
+/* 1. DOMAIN ENUMS                                                           */
+/* ========================================================================= */
+
 export const inspirationTypeEnum = z.enum(["THUMBNAIL", "TITLE", "HOOK"]);
+
 export const assetTypeEnum = z.enum([
   "VIDEO",
   "AUDIO",
@@ -7,6 +13,7 @@ export const assetTypeEnum = z.enum([
   "FONT",
   "OTHER",
 ]);
+
 export const assetSourceEnum = z.enum([
   "PEXELS",
   "PIXABAY",
@@ -14,6 +21,10 @@ export const assetSourceEnum = z.enum([
   "YOUTUBE",
   "OTHER",
 ]);
+
+/* ========================================================================= */
+/* 2. REQUEST & MUTATION INPUT SCHEMAS                                       */
+/* ========================================================================= */
 
 export const createProjectSchema = z.object({
   name: z.string().min(2).max(100),
@@ -29,7 +40,9 @@ export const createProjectSchema = z.object({
   notes: z.string().max(10000).optional(),
   script: z.string().optional(),
 });
+
 export const updateProjectSchema = createProjectSchema.partial();
+
 export const createInspirationSchema = z.object({
   thumbnailUrl: z.string().url(),
   title: z.string().max(500).optional(),
@@ -49,12 +62,14 @@ export const createInspirationSchema = z.object({
     )
     .default([]),
 });
+
 export const tagInspirationSchema = z.object({
   inspirationId: z.string().cuid(),
   projectId: z.string().cuid(),
   note: z.string().max(1000).optional(),
   favorite: z.boolean().optional(),
 });
+
 export const createAssetSchema = z.object({
   url: z.string().url(),
   type: assetTypeEnum.default("VIDEO"),
@@ -67,6 +82,7 @@ export const createAssetSchema = z.object({
     )
     .min(1),
 });
+
 export const fetchYoutubeSchema = z.object({
   url: z
     .string()
@@ -75,4 +91,69 @@ export const fetchYoutubeSchema = z.object({
       (v) => v.includes("youtube.com") || v.includes("youtu.be"),
       "Must be YouTube URL",
     ),
+});
+
+/* ========================================================================= */
+/* 3. RESPONSE & ENTITY DTO SCHEMAS                                          */
+/* ========================================================================= */
+
+export const ProjectSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().nullable().optional(),
+  channel: z.string().nullable().optional(),
+  angle: z.string().nullable().optional(),
+  hook: z.string().nullable().optional(),
+  scriptLink: z.string().nullable().optional(),
+  notes: z.string().nullable().optional(),
+  script: z.string().nullable().optional(),
+  createdAt: z.union([z.string(), z.date()]).optional(),
+  updatedAt: z.union([z.string(), z.date()]).optional(),
+  _count: z.object({ inspirations: z.number(), assets: z.number() }).optional(),
+});
+
+export const InspirationSchema = z.object({
+  id: z.string(),
+  thumbnailUrl: z.string(),
+  title: z.string().nullable().optional(),
+  hook: z.string().nullable().optional(),
+  channelName: z.string().nullable().optional(),
+  views: z.string().nullable().optional(),
+  sourceUrl: z.string().nullable().optional(),
+  type: inspirationTypeEnum,
+  note: z.string().nullable().optional(),
+  createdAt: z.union([z.string(), z.date()]).optional(),
+  updatedAt: z.union([z.string(), z.date()]).optional(),
+  projectContext: z
+    .object({
+      projectId: z.string(),
+      note: z.string().nullable().optional(),
+      favorite: z.boolean().optional(),
+    })
+    .optional(),
+});
+
+export const AssetSchema = z.object({
+  id: z.string(),
+  url: z.string(),
+  type: z.string(),
+  source: z.string().optional(),
+  licenseText: z.string().nullable().optional(),
+  note: z.string().nullable().optional(),
+  createdAt: z.union([z.string(), z.date()]).optional(),
+  projectContext: z
+    .object({
+      projectId: z.string(),
+      note: z.string().nullable().optional(),
+    })
+    .optional(),
+});
+
+export const YoutubeInfoSchema = z.object({
+  title: z.string().optional(),
+  channelName: z.string().optional(),
+  thumbnailUrl: z.string().optional(),
+  sourceUrl: z.string().optional(),
+  videoId: z.string().optional(),
 });

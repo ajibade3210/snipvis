@@ -1,5 +1,8 @@
-import type { z } from "zod";
 import type {
+  AssetSchema,
+  InspirationSchema,
+  ProjectSchema,
+  YoutubeInfoSchema,
   assetSourceEnum,
   assetTypeEnum,
   createAssetSchema,
@@ -9,7 +12,8 @@ import type {
   inspirationTypeEnum,
   tagInspirationSchema,
   updateProjectSchema,
-} from "../lib/validations";
+} from "@/lib/validations";
+import type { z } from "zod";
 
 export type InspirationType = z.infer<typeof inspirationTypeEnum>;
 export type AssetType = z.infer<typeof assetTypeEnum>;
@@ -22,9 +26,14 @@ export type TagInspirationInput = z.infer<typeof tagInspirationSchema>;
 export type CreateAssetInput = z.infer<typeof createAssetSchema>;
 export type FetchYoutubeInput = z.infer<typeof fetchYoutubeSchema>;
 
+export type ProjectResponse = z.infer<typeof ProjectSchema>;
+export type InspirationResponse = z.infer<typeof InspirationSchema>;
+export type AssetResponse = z.infer<typeof AssetSchema>;
+export type YoutubeInfoResponse = z.infer<typeof YoutubeInfoSchema>;
+
 export type NavView =
+  | "global"
   | "active-projects"
-  | "global-vault"
   | "competitor-spy"
   | "settings";
 

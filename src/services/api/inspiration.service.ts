@@ -1,4 +1,5 @@
 import { API_ROUTES } from "@/lib/constants";
+import { InspirationSchema } from "@/lib/validations";
 import type {
   CreateInspirationInput,
   InspirationType,
@@ -6,27 +7,6 @@ import type {
 } from "@/types";
 import { z } from "zod";
 import { api } from "./client";
-
-export const InspirationSchema = z.object({
-  id: z.string(),
-  thumbnailUrl: z.string(),
-  title: z.string().nullable().optional(),
-  hook: z.string().nullable().optional(),
-  channelName: z.string().nullable().optional(),
-  views: z.string().nullable().optional(),
-  sourceUrl: z.string().nullable().optional(),
-  type: z.enum(["THUMBNAIL", "TITLE", "HOOK"]),
-  note: z.string().nullable().optional(),
-  createdAt: z.union([z.string(), z.date()]).optional(),
-  updatedAt: z.union([z.string(), z.date()]).optional(),
-  projectContext: z
-    .object({
-      projectId: z.string(),
-      note: z.string().nullable().optional(),
-      favorite: z.boolean().optional(),
-    })
-    .optional(),
-});
 
 export const inspirationService = {
   listGlobal: (p?: { type?: InspirationType | "ALL" }) =>
