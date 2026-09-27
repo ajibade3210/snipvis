@@ -28,6 +28,8 @@ export type NavView =
   | "competitor-spy"
   | "settings";
 
+export type Theme = "light" | "dark";
+
 export type ButtonVariant = "default" | "ghost" | "outline";
 
 export interface ProjectRecord {

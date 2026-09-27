@@ -1,23 +1,34 @@
 "use client";
+import { STORAGE_KEYS } from "@/lib/constants";
+import type { Theme } from "@/types";
 import { createContext, useContext, useEffect, useState } from "react";
-type Theme = "light" | "dark";
-const Ctx = createContext<{ theme: Theme; toggle: () => void }>({
+
+interface ThemeContextValue {
+  theme: Theme;
+  toggle: () => void;
+}
+
+const Ctx = createContext<ThemeContextValue>({
   theme: "dark",
   toggle: () => {},
 });
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("dark");
+
   useEffect(() => {
-    const saved = localStorage.getItem("sv-theme") as Theme | null;
+    const saved = localStorage.getItem(STORAGE_KEYS.THEME) as Theme | null;
     if (saved) setTheme(saved);
     else if (window.matchMedia("(prefers-color-scheme: light)").matches)
       setTheme("light");
   }, []);
+
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
     document.documentElement.classList.add(theme);
-    localStorage.setItem("sv-theme", theme);
+    localStorage.setItem(STORAGE_KEYS.THEME, theme);
   }, [theme]);
+
   return (
     <Ctx.Provider
       value={{
@@ -29,4 +40,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     </Ctx.Provider>
   );
 }
+
 export const useTheme = () => useContext(Ctx);

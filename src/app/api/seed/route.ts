@@ -1,3 +1,5 @@
+import { cacheStore } from "@/lib/cache";
+import { CACHE_KEYS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -199,6 +201,8 @@ export async function POST() {
       },
     },
   });
+
+  await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
 
   return NextResponse.json({
     success: true,

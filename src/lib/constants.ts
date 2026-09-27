@@ -14,3 +14,13 @@ export const API_ROUTES = {
   YOUTUBE: "/api/youtube",
   SEED: "/api/seed",
 } as const;
+
+export const STORAGE_KEYS = {
+  THEME: "sv-theme",
+} as const;
+
+export const QUERY_KEYS = {
+  PROJECTS: "projects",
+  INSPIRATIONS: "inspirations",
+  ASSETS: "assets",
+} as const;

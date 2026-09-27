@@ -1,3 +1,4 @@
+import { QUERY_KEYS } from "@/lib/constants";
 import { inspirationService } from "@/services/api/inspiration.service";
 import type { InspirationType } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,7 +7,7 @@ export const useInspirationsGlobal = (params?: {
   type?: InspirationType | "ALL";
 }) =>
   useQuery({
-    queryKey: ["inspirations", "global", params?.type ?? "ALL"],
+    queryKey: [QUERY_KEYS.INSPIRATIONS, "global", params?.type ?? "ALL"],
     queryFn: () =>
       inspirationService.listGlobal(
         params?.type && params.type !== "ALL"
@@ -21,7 +22,7 @@ export const useInspirationsByProject = (
 ) =>
   useQuery({
     queryKey: [
-      "inspirations",
+      QUERY_KEYS.INSPIRATIONS,
       "project",
       projectId,
       opts?.favorite ? "fav" : "all",
@@ -42,8 +43,8 @@ export const useCreateInspiration = () => {
   return useMutation({
     mutationFn: inspirationService.create,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["inspirations"] });
-      qc.invalidateQueries({ queryKey: ["projects"] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.INSPIRATIONS] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
     },
   });
 };
@@ -53,8 +54,8 @@ export const useTagInspiration = () => {
   return useMutation({
     mutationFn: inspirationService.tag,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["inspirations"] });
-      qc.invalidateQueries({ queryKey: ["projects"] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.INSPIRATIONS] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
     },
   });
 };
@@ -70,8 +71,8 @@ export const useDeleteTagInspiration = () => {
       inspirationId: string;
     }) => inspirationService.deleteTag(projectId, inspirationId),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["inspirations"] });
-      qc.invalidateQueries({ queryKey: ["projects"] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.INSPIRATIONS] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
     },
   });
 };
