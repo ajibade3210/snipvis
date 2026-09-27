@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Inspiration {
+  id           String               @id @default(cuid())
+  thumbnailUrl String
+  title        String?
+  hook         String?
+  channelName  String?
+  views        String?
+  sourceUrl    String?
+  type         InspirationType      @default(THUMBNAIL)
+  note         String?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  projects     ProjectInspiration[]
+}
+
+model Project {
+  id           String               @id @default(cuid())
+  name         String
+  slug         String               @unique
+  description  String?
+  channel      String?
+  angle        String?              @db.Text
+  hook         String?              @db.Text
+  scriptLink   String?
+  notes        String?              @db.Text
+  script       String?              @db.Text
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  inspirations ProjectInspiration[]
+  assets       ProjectAsset[]
+}
+
+model ProjectInspiration {
+  projectId     String
+  inspirationId String
+  note          String?
+  favorite      Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  inspiration   Inspiration @relation(fields: [inspirationId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, inspirationId])
+  @@index([projectId])
+}
+
+model Asset {
+  id          String         @id @default(cuid())
+  url         String
+  type        AssetType      @default(VIDEO)
+  source      AssetSource    @default(OTHER)
+  licenseText String?
+  note        String?
+  createdAt   DateTime       @default(now())
+  projects    ProjectAsset[]
+}
+
+model ProjectAsset {
+  projectId String
+  assetId   String
+  note      String?
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, assetId])
+}
+
+enum InspirationType {
+  THUMBNAIL
+  TITLE
+  HOOK
+}
+
+enum AssetType {
+  VIDEO
+  AUDIO
+  IMAGE
+  FONT
+  OTHER
+}
+
+enum AssetSource {
+  PEXELS
+  PIXABAY
+  MIXKIT
+  YOUTUBE
+  OTHER
+}

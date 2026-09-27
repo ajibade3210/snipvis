@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 34 33% 97%; /* #FAF8F5 */
+    --foreground: 24 13% 10%; /* #1E1A17 */
+    --card: 0 0% 100%; /* #ffffff */
+    --card-foreground: 24 13% 10%;
+    --primary: 9 100% 61%; /* #FF5338 Electric Vermilion */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 32 100% 50%; /* #FF8A00 Tangerine */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 36 21% 92%; /* #F1EDE6 Surface container */
+    --muted-foreground: 30 7% 32%; /* #58524C On-surface variant */
+    --accent: 36 30% 95%; /* #F7F4EF Surface container low */
+    --accent-foreground: 24 13% 10%;
+    --border: 32 20% 86%; /* #E3DCD3 Outline variant */
+    --input: 32 20% 86%;
+    --ring: 9 100% 61%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 24 12% 8%; /* #171412 */
+    --foreground: 36 33% 94%; /* #FAF8F5 */
+    --card: 24 12% 11%; /* #221E1A */
+    --card-foreground: 36 33% 94%;
+    --primary: 9 100% 61%; /* #FF5338 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 32 100% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 24 10% 17%;
+    --muted-foreground: 30 10% 65%;
+    --accent: 24 10% 15%;
+    --accent-foreground: 36 33% 94%;
+    --border: 24 10% 22%;
+    --input: 24 10% 22%;
+    --ring: 9 100% 61%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+.tactile-btn {
+  box-shadow: 0 3px 0 #d9381e;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tactile-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #d9381e;
+}
+
+.card-lift {
+  box-shadow: 0 4px 0 rgba(30, 26, 23, 0.04), 0 8px 18px -4px
+    rgba(255, 83, 56, 0.08);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s
+    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 rgba(30, 26, 23, 0.06), 0 16px 24px -4px
+    rgba(255, 83, 56, 0.14);
+}
