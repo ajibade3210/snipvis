@@ -1,10 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { HOOK_EMOTION_STYLES } from "@/constants/ai";
 import { useAnalyzeHook } from "@/hooks/use-analyze-hook";
 import { useCreateInspiration } from "@/hooks/use-inspirations";
-import type { AiHookBreakdown, AnalyzeHookResponse } from "@/types";
+import {
+  type AnalyzeHookResponse,
+  HOOK_TYPE_LABELS,
+  RISK_FLAG_LABELS,
+  getStrengthScoreBadgeStyle,
+} from "@/types/hook-analysis";
 import { useEffect, useRef, useState } from "react";
 
 interface AnalyzeHookModalProps {
@@ -44,6 +48,7 @@ export function AnalyzeHookModal({
   );
   const [isSavedSuccess, setIsSavedSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Loading animation phase
   const [loadingPhase, setLoadingPhase] = useState(0);
@@ -64,6 +69,7 @@ export function AnalyzeHookModal({
       setAnalysisResult(null);
       setShowManualFallback(false);
       setFallbackMessage(null);
+      setCopiedField(null);
     }
   }, [isOpen, initialUrl]);
 
@@ -83,6 +89,15 @@ export function AnalyzeHookModal({
   }, [analyzeMutation.isPending]);
 
   if (!isOpen) return null;
+
+  // Copy helper with brief state indicator
+  const copyToClipboard = (text: string, identifier: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(identifier);
+    setTimeout(() => {
+      setCopiedField((prev) => (prev === identifier ? null : prev));
+    }, 2000);
+  };
 
   // Client-side canvas image downscaler to guarantee payload < 300KB
   const handleImageFile = (file: File) => {
@@ -198,6 +213,15 @@ export function AnalyzeHookModal({
         channelName: analysisResult.channelName || "Creator Analysis",
         type: "HOOK",
         note: combinedNote,
+        hook_type: analysisResult.hook_type,
+        hook_formula: analysisResult.hook_formula,
+        triggered_emotion: analysisResult.triggered_emotion,
+        strength_score: analysisResult.strength_score,
+        score_reason: analysisResult.score_reason,
+        improvements: analysisResult.improvements,
+        title_variants: analysisResult.title_variants,
+        recreation_ideas: analysisResult.recreation_ideas,
+        risk_flags: analysisResult.risk_flags,
         projects: targetProjectId
           ? [
               {
@@ -235,7 +259,7 @@ export function AnalyzeHookModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
       <div className="bg-white dark:bg-[#1E1A17] border border-[#E3DCD3] dark:border-[#3C3530] rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
         {/* Modal Header */}
-        <div className="p-5 border-b border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-between bg-[#FAF8F5] dark:bg-[#25201C]">
+        <div className="p-5 border-b border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-between bg-[#FAF8F5] dark:bg-[#25201C] shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[#FF5338] text-white flex items-center justify-center font-bold text-base shadow-xs">
               ✨
@@ -360,6 +384,11 @@ export function AnalyzeHookModal({
               {/* Tab 2: Thumbnail Image Mode (Vision) */}
               {activeTab === "image" && (
                 <div className="space-y-4">
+                  <div className="p-3 rounded-xl border border-blue-500/20 bg-blue-500/5 text-blue-700 dark:text-blue-400 text-xs font-medium">
+                    ℹ️ Note: DeepSeek operates text-only. Visual image teardown
+                    requires a vision-capable provider (e.g. OpenRouter).
+                  </div>
+
                   <button
                     type="button"
                     onDragOver={(e) => e.preventDefault()}
@@ -425,7 +454,7 @@ export function AnalyzeHookModal({
                 </div>
               )}
 
-              {/* Loading Skeleton during DeepSeek Analysis */}
+              {/* Loading Skeleton during Analysis */}
               {analyzeMutation.isPending && (
                 <div className="p-4 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221D19] space-y-3 animate-pulse">
                   <div className="flex items-center gap-2 text-xs font-bold text-[#FF5338]">
@@ -434,65 +463,199 @@ export function AnalyzeHookModal({
                   </div>
                   <div className="h-4 bg-[#E3DCD3]/70 dark:bg-[#3C3530] rounded w-3/4" />
                   <div className="h-4 bg-[#E3DCD3]/50 dark:bg-[#3C3530]/70 rounded w-1/2" />
-                  <div className="h-16 bg-[#E3DCD3]/30 dark:bg-[#3C3530]/40 rounded-xl" />
+                  <div className="h-20 bg-[#E3DCD3]/30 dark:bg-[#3C3530]/40 rounded-xl" />
                 </div>
               )}
             </>
           ) : (
-            /* Result Breakdown Display */
+            /* Result Breakdown Display (11 fields) */
             <div className="space-y-4 animate-in fade-in duration-200">
-              {/* Perceived Copy Card */}
-              <div className="p-4 rounded-xl bg-gradient-to-br from-[#FAF8F5] to-[#F1EDE6] dark:from-[#25201C] dark:to-[#1A1613] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2">
-                <div className="flex items-center justify-between">
+              {/* 1. Perceived Hook Card */}
+              <div className="p-4 rounded-xl bg-gradient-to-br from-[#FAF8F5] to-[#F1EDE6] dark:from-[#25201C] dark:to-[#1A1613] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#8C8379]">
                     Perceived Hook / Title
                   </span>
-                  <span
-                    className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border ${emotionStyle.bg} ${emotionStyle.text} ${emotionStyle.border}`}
-                  >
-                    ⚡ {analysisResult.triggered_emotion}
-                  </span>
-                </div>
-                <h3 className="text-base font-extrabold text-[#1E1A17] dark:text-[#FAF8F5] leading-snug">
-                  "{analysisResult.perceived_copy}"
-                </h3>
-              </div>
-
-              {/* Why It Works Breakdown */}
-              <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-1.5">
-                <h4 className="text-xs font-bold text-[#FF5338] flex items-center gap-1.5">
-                  <span>🧠</span>
-                  <span>Why It Works (Psychological Breakdown)</span>
-                </h4>
-                <p className="text-xs text-[#58524C] dark:text-[#A89F95] leading-relaxed">
-                  {analysisResult.why_it_works}
-                </p>
-              </div>
-
-              {/* Recreation Ideas */}
-              <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2.5">
-                <h4 className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1.5">
-                  <span>🎯</span>
-                  <span>Actionable Creator Recreation Ideas</span>
-                </h4>
-                <div className="space-y-2">
-                  {analysisResult.recreation_ideas.map((idea, idx) => (
-                    <div
-                      key={`idea-${idx}-${idea.slice(0, 16)}`}
-                      className="flex items-start gap-2.5 p-2 rounded-lg bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3]/50 dark:border-[#3C3530]/50"
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {/* Emotion badge */}
+                    <span
+                      className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border ${emotionStyle.bg} ${emotionStyle.text} ${emotionStyle.border}`}
                     >
-                      <span className="w-5 h-5 rounded-full bg-[#FF5338] text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
-                        {idx + 1}
-                      </span>
-                      <p className="text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] leading-relaxed">
-                        {idea}
-                      </p>
-                    </div>
-                  ))}
+                      ⚡ {analysisResult.triggered_emotion}
+                    </span>
+
+                    {/* Hook Type human-readable badge */}
+                    <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20">
+                      🎯{" "}
+                      {HOOK_TYPE_LABELS[analysisResult.hook_type] ||
+                        analysisResult.hook_type}
+                    </span>
+
+                    {/* Strength Score badge (1-4 red, 5-7 amber, 8-10 green) */}
+                    <span
+                      className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border ${getStrengthScoreBadgeStyle(
+                        analysisResult.strength_score,
+                      )}`}
+                    >
+                      ⭐ {analysisResult.strength_score}/10
+                    </span>
+                  </div>
                 </div>
+
+                <h3 className="text-base font-extrabold text-[#1E1A17] dark:text-[#FAF8F5] leading-snug">
+                  "
+                  {analysisResult.perceived_copy ||
+                    "No analyzable copy detected"}
+                  "
+                </h3>
+
+                {/* Score Reason caption */}
+                {analysisResult.score_reason && (
+                  <p className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed pt-0.5 border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50">
+                    <span className="font-semibold not-italic text-[#1E1A17] dark:text-[#FAF8F5]">
+                      Score breakdown:
+                    </span>{" "}
+                    {analysisResult.score_reason}
+                  </p>
+                )}
+
+                {/* Risk Flags (only rendered if non-empty) */}
+                {analysisResult.risk_flags &&
+                  analysisResult.risk_flags.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                      {analysisResult.risk_flags.map((flag) => (
+                        <span
+                          key={flag}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                        >
+                          <span>⚠️</span>
+                          <span>{RISK_FLAG_LABELS[flag] || flag}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
               </div>
 
-              {/* Project Destination Selector */}
+              {/* 2. Why It Works & Hook Formula Card */}
+              <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-3">
+                <div className="space-y-1.5">
+                  <h4 className="text-xs font-bold text-[#FF5338] flex items-center gap-1.5">
+                    <span>🧠</span>
+                    <span>Why It Works (Psychological Breakdown)</span>
+                  </h4>
+                  <p className="text-xs text-[#58524C] dark:text-[#A89F95] leading-relaxed">
+                    {analysisResult.why_it_works}
+                  </p>
+                </div>
+
+                {analysisResult.hook_formula && (
+                  <div className="p-3 rounded-lg bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 flex items-center justify-between gap-3">
+                    <div className="space-y-1 min-w-0 flex-1">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#8C8379] block">
+                        Hook Formula Template
+                      </span>
+                      <code className="text-xs font-mono font-bold text-[#1E1A17] dark:text-[#FAF8F5] block truncate">
+                        {analysisResult.hook_formula}
+                      </code>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        copyToClipboard(analysisResult.hook_formula, "formula")
+                      }
+                      className="shrink-0 px-2.5 py-1 text-[11px] font-bold rounded-md bg-white dark:bg-[#2A2521] border border-[#E3DCD3] dark:border-[#3C3530] text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
+                    >
+                      {copiedField === "formula" ? "✓ Copied" : "Copy"}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* 3. Improve This Hook Card */}
+              {analysisResult.improvements &&
+                analysisResult.improvements.length > 0 && (
+                  <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2">
+                    <h4 className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1.5">
+                      <span>💡</span>
+                      <span>Improve This Hook</span>
+                    </h4>
+                    <ul className="space-y-1.5 pl-1">
+                      {analysisResult.improvements.map((improvement, idx) => (
+                        <li
+                          key={`improvement-${idx}-${improvement.slice(0, 10)}`}
+                          className="flex items-start gap-2 text-xs text-[#58524C] dark:text-[#A89F95] leading-relaxed"
+                        >
+                          <span className="text-[#FF5338] font-bold text-sm leading-none mt-0.5">
+                            •
+                          </span>
+                          <span>{improvement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+              {/* 4. Title Variants Card */}
+              {analysisResult.title_variants &&
+                analysisResult.title_variants.length > 0 && (
+                  <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2.5">
+                    <h4 className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1.5">
+                      <span>🔀</span>
+                      <span>Title Variants</span>
+                    </h4>
+                    <div className="space-y-2">
+                      {analysisResult.title_variants.map((variant, idx) => (
+                        <div
+                          key={`variant-${idx}-${variant.slice(0, 10)}`}
+                          className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3]/50 dark:border-[#3C3530]/50"
+                        >
+                          <p className="text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] leading-snug flex-1">
+                            {variant}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              copyToClipboard(variant, `variant-${idx}`)
+                            }
+                            className="shrink-0 px-2 py-1 text-[10px] font-bold rounded-md bg-white dark:bg-[#2A2521] border border-[#E3DCD3] dark:border-[#3C3530] text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
+                          >
+                            {copiedField === `variant-${idx}`
+                              ? "✓ Copied"
+                              : "Copy"}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* 5. Recreation Ideas */}
+              {analysisResult.recreation_ideas &&
+                analysisResult.recreation_ideas.length > 0 && (
+                  <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2.5">
+                    <h4 className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1.5">
+                      <span>🎯</span>
+                      <span>Actionable Creator Recreation Ideas</span>
+                    </h4>
+                    <div className="space-y-2">
+                      {analysisResult.recreation_ideas.map((idea, idx) => (
+                        <div
+                          key={`idea-${idx}-${idea.slice(0, 16)}`}
+                          className="flex items-start gap-2.5 p-2 rounded-lg bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3]/50 dark:border-[#3C3530]/50"
+                        >
+                          <span className="w-5 h-5 rounded-full bg-[#FF5338] text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
+                            {idx + 1}
+                          </span>
+                          <p className="text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] leading-relaxed">
+                            {idea}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* 6. Project Destination Selector */}
               <div className="p-3.5 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#25201C] space-y-1.5">
                 <label className="text-xs font-bold text-[#58524C] dark:text-[#A89F95] block">
                   Save Destination
@@ -516,8 +679,8 @@ export function AnalyzeHookModal({
           )}
         </div>
 
-        {/* Modal Actions Footer */}
-        <div className="p-4 border-t border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-between bg-[#FAF8F5] dark:bg-[#25201C]">
+        {/* Modal Actions Footer - Pinned */}
+        <div className="p-4 border-t border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-between bg-[#FAF8F5] dark:bg-[#25201C] shrink-0">
           {!analysisResult ? (
             <>
               <button
@@ -571,7 +734,6 @@ export function AnalyzeHookModal({
                   <span>✓ Saved to Vault!</span>
                 ) : (
                   <>
-                    <span>💾</span>
                     <span>Save to Vault</span>
                   </>
                 )}

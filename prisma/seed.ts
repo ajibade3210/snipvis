@@ -80,19 +80,45 @@ export const initialProjects = [
 ];
 
 export async function seedProjects() {
-  console.info("📦 Seeding projects with complete scripts...");
+  console.info("📦 Seeding channels and projects with complete scripts...");
+
+  const defaultChannels = [
+    { name: "DeepDiveDoc", link: "https://youtube.com/@deepdivedoc" },
+    { name: "MrBeast", link: "https://youtube.com/@mrbeast" },
+    { name: "TechCraft", link: "https://youtube.com/@techcraft" },
+    { name: "BrainWave", link: "https://youtube.com/@brainwave" },
+  ];
+
+  for (const ch of defaultChannels) {
+    await prisma.channel.upsert({
+      where: { name: ch.name },
+      update: { link: ch.link },
+      create: ch,
+    });
+  }
+
+  const channels = await prisma.channel.findMany();
+  const channelMap = new Map(channels.map((c) => [c.name, c.id]));
 
   for (const proj of initialProjects) {
+    const channelId = channelMap.get(proj.channel);
     await prisma.project.upsert({
       where: { slug: proj.slug },
       update: {
         name: proj.name,
-        channel: proj.channel,
+        channel: channelId ? { connect: { id: channelId } } : undefined,
         hook: proj.hook,
         scriptLink: proj.scriptLink,
         script: proj.script,
       },
-      create: proj,
+      create: {
+        name: proj.name,
+        slug: proj.slug,
+        channel: channelId ? { connect: { id: channelId } } : undefined,
+        hook: proj.hook,
+        scriptLink: proj.scriptLink,
+        script: proj.script,
+      },
     });
   }
 

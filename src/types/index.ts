@@ -36,9 +36,8 @@ import type {
 } from "@/lib/validations";
 import type { z } from "zod";
 
-export type AnalyzeHookInput = z.infer<typeof analyzeHookRequestSchema>;
-export type AiHookBreakdown = z.infer<typeof aiHookBreakdownSchema>;
-export type AnalyzeHookResponse = z.infer<typeof analyzeHookResponseSchema>;
+import type { ChannelRecord } from "./channel";
+import type { HookType, RiskFlag, TriggeredEmotion } from "./hook-analysis";
 
 export type ProjectStatus = z.infer<typeof projectStatusEnum>;
 export type InspirationType = z.infer<typeof inspirationTypeEnum>;
@@ -91,6 +90,7 @@ export type StorageEnvConfig = z.infer<typeof storageEnvSchema>;
 export type NavView =
   | "global"
   | "projects"
+  | "channels"
   | "active-projects"
   | "competitor-spy"
   | "settings";
@@ -122,7 +122,8 @@ export interface ProjectRecord {
   name: string;
   slug: string;
   description?: string | null;
-  channel?: string | null;
+  channelId?: string | null;
+  channel?: ChannelRecord | string | null;
   hook?: string | null;
   scriptLink?: string | null;
   script?: string | null;
@@ -146,6 +147,23 @@ export interface InspirationRecord {
   sourceUrl?: string | null;
   type: InspirationType;
   note?: string | null;
+  hook_type?: HookType | null;
+  hookType?: string | null;
+  hook_formula?: string | null;
+  hookFormula?: string | null;
+  triggered_emotion?: TriggeredEmotion | null;
+  triggeredEmotion?: string | null;
+  strength_score?: number | null;
+  strengthScore?: number | null;
+  score_reason?: string | null;
+  scoreReason?: string | null;
+  improvements?: string[] | null;
+  title_variants?: string[] | null;
+  titleVariants?: string[] | null;
+  recreation_ideas?: string[] | null;
+  recreationIdeas?: string[] | null;
+  risk_flags?: RiskFlag[] | null;
+  riskFlags?: string[] | null;
   createdAt?: string | Date;
   updatedAt?: string | Date;
   projectContext?: {

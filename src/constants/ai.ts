@@ -51,8 +51,11 @@ export const HOOK_EMOTIONS = [
   "Fear",
   "Ambition",
   "Surprise",
+  "Desire",
+  "Outrage",
+  "Belonging",
   "Urgency",
-  "Validation",
+  "Nostalgia",
 ] as const;
 
 export const DEFAULT_CHANNEL_NAME = "Creator" as const;
@@ -81,10 +84,30 @@ export const HOOK_EMOTION_STYLES: Record<
     text: "text-purple-500",
     border: "border-purple-500/20",
   },
+  Desire: {
+    bg: "bg-pink-500/10",
+    text: "text-pink-500",
+    border: "border-pink-500/20",
+  },
+  Outrage: {
+    bg: "bg-rose-600/10",
+    text: "text-rose-600",
+    border: "border-rose-600/20",
+  },
+  Belonging: {
+    bg: "bg-teal-500/10",
+    text: "text-teal-500",
+    border: "border-teal-500/20",
+  },
   Urgency: {
     bg: "bg-orange-500/10",
     text: "text-orange-500",
     border: "border-orange-500/20",
+  },
+  Nostalgia: {
+    bg: "bg-indigo-500/10",
+    text: "text-indigo-500",
+    border: "border-indigo-500/20",
   },
   Validation: {
     bg: "bg-emerald-500/10",

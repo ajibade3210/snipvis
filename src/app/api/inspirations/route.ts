@@ -1,8 +1,23 @@
 import { handleApiError } from "@/lib/api-error";
 import { prisma } from "@/lib/prisma";
 import { createInspirationSchema } from "@/lib/validations";
-import type { InspirationType } from "@prisma/client";
+import type { Inspiration, InspirationType } from "@prisma/client";
 import { type NextRequest, NextResponse } from "next/server";
+
+function formatInspirationPayload(insp: Inspiration) {
+  return {
+    ...insp,
+    hook_type: insp.hookType,
+    hook_formula: insp.hookFormula,
+    triggered_emotion: insp.triggeredEmotion,
+    strength_score: insp.strengthScore,
+    score_reason: insp.scoreReason,
+    improvements: insp.improvements,
+    title_variants: insp.titleVariants,
+    recreation_ideas: insp.recreationIdeas,
+    risk_flags: insp.riskFlags,
+  };
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -27,7 +42,7 @@ export async function GET(req: NextRequest) {
       });
       return NextResponse.json(
         links.map((l) => ({
-          ...l.inspiration,
+          ...formatInspirationPayload(l.inspiration),
           projectContext: {
             projectId: l.projectId,
             note: l.note,
@@ -41,7 +56,7 @@ export async function GET(req: NextRequest) {
       where: { ...(type ? { type } : {}) },
       orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(inspirations);
+    return NextResponse.json(inspirations.map(formatInspirationPayload));
   } catch (err: unknown) {
     return handleApiError(err);
   }
@@ -61,6 +76,15 @@ export async function POST(req: NextRequest) {
         sourceUrl: data.sourceUrl,
         type: data.type as InspirationType,
         note: data.note,
+        hookType: data.hook_type || data.hookType,
+        hookFormula: data.hook_formula || data.hookFormula,
+        triggeredEmotion: data.triggered_emotion || data.triggeredEmotion,
+        strengthScore: data.strength_score ?? data.strengthScore,
+        scoreReason: data.score_reason || data.scoreReason,
+        improvements: data.improvements || [],
+        titleVariants: data.title_variants || data.titleVariants || [],
+        recreationIdeas: data.recreation_ideas || data.recreationIdeas || [],
+        riskFlags: data.risk_flags || data.riskFlags || [],
         projects: data.projects?.length
           ? {
               create: data.projects.map((p) => ({
@@ -72,7 +96,9 @@ export async function POST(req: NextRequest) {
           : undefined,
       },
     });
-    return NextResponse.json(inspiration, { status: 201 });
+    return NextResponse.json(formatInspirationPayload(inspiration), {
+      status: 201,
+    });
   } catch (err: unknown) {
     return handleApiError(err);
   }

@@ -2,12 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { useCreateInspiration } from "@/hooks/use-inspirations";
-import {
-  createInspirationSchema,
-  type inspirationTypeEnum,
-} from "@/lib/validations";
+import { createInspirationSchema } from "@/lib/validations";
 import { mediaService } from "@/services/api/media.service";
 import { youtubeService } from "@/services/api/youtube.service";
+import type { InspirationType } from "@/types";
 import { useEffect, useRef, useState } from "react";
 
 interface InspirationModalProps {
@@ -34,7 +32,7 @@ export function InspirationModal({
   const thumbInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<"THUMBNAIL" | "TITLE" | "HOOK">("THUMBNAIL");
+  const [type, setType] = useState<InspirationType>("THUMBNAIL");
   const [hook, setHook] = useState("");
   const [channelName, setChannelName] = useState("");
   const [views, setViews] = useState("");

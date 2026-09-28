@@ -6,6 +6,7 @@ import { NoteModal } from "@/components/note-modal";
 import { ProjectModal } from "@/components/project-modal";
 import { Sidebar } from "@/components/sidebar";
 import { TopHeader } from "@/components/top-header";
+import { ChannelsView } from "@/components/views/channels-view";
 import { CompetitorSpyView } from "@/components/views/competitor-spy-view";
 import { GlobalVaultView } from "@/components/views/global-vault-view";
 import { ProjectWorkspaceView } from "@/components/views/project-workspace-view";
@@ -20,7 +21,6 @@ import {
 } from "@/hooks/use-inspirations";
 import { useProjects } from "@/hooks/use-projects";
 import { formatInspirations } from "@/lib/format-inspirations";
-import { projectService } from "@/services/api/project.service";
 import type { FormattedInspiration, NavView } from "@/types";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
@@ -47,6 +47,9 @@ function CreatorLabShell() {
   const [initialYoutubeUrl, setInitialYoutubeUrl] = useState("");
 
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
+  const [newProjectDefaultChannelId, setNewProjectDefaultChannelId] = useState<
+    string | null
+  >(null);
   const [isAddInspirationOpen, setIsAddInspirationOpen] = useState(false);
   const [isAnalyzeHookOpen, setIsAnalyzeHookOpen] = useState(false);
   const [noteModalData, setNoteModalData] = useState<{
@@ -93,23 +96,11 @@ function CreatorLabShell() {
   const deleteTagMutation = useDeleteTagInspiration();
   const createInspirationMutation = useCreateInspiration();
 
-  useEffect(() => {
-    if (
-      dbProjects.length === 0 &&
-      !globalQuery.isLoading &&
-      globalQuery.data?.length === 0
-    ) {
-      projectService
-        .seed()
-        .then(() => globalQuery.refetch())
-        .catch(() => {});
-    }
-  }, [dbProjects.length, globalQuery]);
-
   const updateUrl = (params: {
     view?: string | null;
     project?: string | null;
     tab?: string | null;
+    channel?: string | null;
   }) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     for (const [key, value] of Object.entries(params)) {
@@ -181,16 +172,19 @@ function CreatorLabShell() {
           activeNav={activeNav}
           selectedProjectId={selectedProjectId}
           onSelectNav={(nav) =>
-            updateUrl({ view: nav, project: null, tab: null })
+            updateUrl({ view: nav, project: null, tab: null, channel: null })
           }
           onSelectProject={(id) =>
             updateUrl(
               id === null
-                ? { view: "global", project: null, tab: null }
-                : { view: null, project: id, tab: "brief" },
+                ? { view: "global", project: null, tab: null, channel: null }
+                : { view: null, project: id, tab: "brief", channel: null },
             )
           }
-          onOpenNewProject={() => setIsNewProjectOpen(true)}
+          onOpenNewProject={() => {
+            setNewProjectDefaultChannelId(null);
+            setIsNewProjectOpen(true);
+          }}
           onAnalyzeUrl={() => {
             setIsAnalyzeHookOpen(true);
           }}
@@ -234,14 +228,37 @@ function CreatorLabShell() {
                   onRemoveItem={() => {}}
                 />
               )}
+              {activeNav === "channels" && (
+                <ChannelsView
+                  onSelectChannel={(channelId) =>
+                    updateUrl({
+                      view: "projects",
+                      channel: channelId,
+                      project: null,
+                      tab: null,
+                    })
+                  }
+                  onOpenNewProjectForChannel={(channelId) => {
+                    setNewProjectDefaultChannelId(channelId);
+                    setIsNewProjectOpen(true);
+                  }}
+                />
+              )}
               {(activeNav === "projects" ||
                 activeNav === "active-projects") && (
                 <ProjectsHubView
                   projects={dbProjects}
+                  selectedChannelId={searchParams.get("channel")}
+                  onClearChannelFilter={() => updateUrl({ channel: null })}
                   onSelectProject={(id) =>
                     updateUrl({ view: null, project: id, tab: "brief" })
                   }
-                  onOpenNewProject={() => setIsNewProjectOpen(true)}
+                  onOpenNewProject={() => {
+                    setNewProjectDefaultChannelId(
+                      searchParams.get("channel") || null,
+                    );
+                    setIsNewProjectOpen(true);
+                  }}
                 />
               )}
               {activeNav === "competitor-spy" && (
@@ -264,7 +281,11 @@ function CreatorLabShell() {
 
       <ProjectModal
         isOpen={isNewProjectOpen}
-        onClose={() => setIsNewProjectOpen(false)}
+        defaultChannelId={newProjectDefaultChannelId}
+        onClose={() => {
+          setIsNewProjectOpen(false);
+          setNewProjectDefaultChannelId(null);
+        }}
         onCreated={(id) => updateUrl({ view: null, project: id, tab: "brief" })}
       />
       <InspirationModal

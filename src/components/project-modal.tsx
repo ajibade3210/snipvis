@@ -1,18 +1,22 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useChannels, useCreateChannel } from "@/hooks/use-channels";
 import { useCreateProject, useUpdateProject } from "@/hooks/use-projects";
 import { createProjectSchema, updateProjectSchema } from "@/lib/validations";
+import type { ChannelRecord } from "@/types/channel";
 import { useEffect, useState } from "react";
 
 interface ProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCreated?: (projectId: string) => void;
+  defaultChannelId?: string | null;
   project?: {
     id: string;
     name: string;
-    channel?: string | null;
+    channelId?: string | null;
+    channel?: ChannelRecord | string | null;
     description?: string | null;
   } | null;
 }
@@ -21,13 +25,22 @@ export function ProjectModal({
   isOpen,
   onClose,
   onCreated,
+  defaultChannelId,
   project,
 }: ProjectModalProps) {
   const [name, setName] = useState("");
-  const [channel, setChannel] = useState("");
+  const [selectedChannelId, setSelectedChannelId] = useState("");
+  const [isCreatingChannelInline, setIsCreatingChannelInline] = useState(false);
+  const [inlineChannelName, setInlineChannelName] = useState("");
+  const [inlineChannelLink, setInlineChannelLink] = useState("");
+  const [inlineChannelError, setInlineChannelError] = useState<string | null>(
+    null,
+  );
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const { data: channels = [] } = useChannels();
+  const createChannelMutation = useCreateChannel();
   const createProject = useCreateProject();
   const updateProject = useUpdateProject();
   const isEditing = Boolean(project?.id);
@@ -35,17 +48,50 @@ export function ProjectModal({
   useEffect(() => {
     if (project && isOpen) {
       setName(project.name ?? "");
-      setChannel(project.channel ?? "");
       setDescription(project.description ?? "");
+      const initialChanId =
+        project.channelId ??
+        (typeof project.channel === "object" && project.channel
+          ? project.channel.id
+          : "");
+      setSelectedChannelId(initialChanId ?? "");
     } else if (!project && isOpen) {
       setName("");
-      setChannel("");
       setDescription("");
+      setSelectedChannelId(defaultChannelId ?? "");
     }
+    setIsCreatingChannelInline(false);
+    setInlineChannelName("");
+    setInlineChannelLink("");
+    setInlineChannelError(null);
     setError(null);
-  }, [project, isOpen]);
+  }, [project, isOpen, defaultChannelId]);
 
   if (!isOpen) return null;
+
+  const handleCreateChannelInline = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setInlineChannelError(null);
+    const trimmed = inlineChannelName.trim();
+    if (!trimmed) {
+      setInlineChannelError("Channel name is required");
+      return;
+    }
+    try {
+      const created = await createChannelMutation.mutateAsync({
+        name: trimmed,
+        link: inlineChannelLink.trim() || undefined,
+      });
+      setSelectedChannelId(created.id);
+      setIsCreatingChannelInline(false);
+      setInlineChannelName("");
+      setInlineChannelLink("");
+    } catch (err: unknown) {
+      setInlineChannelError(
+        err instanceof Error ? err.message : "Failed to create channel",
+      );
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +99,7 @@ export function ProjectModal({
 
     const payload = {
       name: name.trim(),
-      channel: channel.trim() ? channel.trim().replace(/^@/, "") : undefined,
+      channelId: selectedChannelId || null,
       description: description.trim() || undefined,
     };
 
@@ -83,7 +129,7 @@ export function ProjectModal({
       try {
         const created = await createProject.mutateAsync(result.data);
         setName("");
-        setChannel("");
+        setSelectedChannelId("");
         setDescription("");
         onClose();
         if (onCreated && created?.id) {
@@ -142,18 +188,83 @@ export function ProjectModal({
             <label className="block text-xs font-medium mb-1.5 text-foreground">
               Target Channel (Optional)
             </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
-                @
-              </span>
-              <input
-                type="text"
-                placeholder="AliAbdaal or Veritasium"
-                value={channel}
-                onChange={(e) => setChannel(e.target.value.replace(/^@/, ""))}
-                className="w-full h-9 pl-7 pr-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-              />
-            </div>
+            <select
+              value={isCreatingChannelInline ? "__NEW__" : selectedChannelId}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "__NEW__") {
+                  setIsCreatingChannelInline(true);
+                } else {
+                  setIsCreatingChannelInline(false);
+                  setSelectedChannelId(val);
+                }
+              }}
+              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              <option value="">None (No Channel)</option>
+              {channels.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+              <option value="__NEW__">+ Add new channel...</option>
+            </select>
+
+            {isCreatingChannelInline && (
+              <div className="mt-2.5 p-3 rounded-lg border border-primary/20 bg-primary/5 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-foreground">
+                    New Channel
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCreatingChannelInline(false);
+                      setInlineChannelError(null);
+                    }}
+                    className="text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                {inlineChannelError && (
+                  <div className="text-[11px] text-destructive">
+                    {inlineChannelError}
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    placeholder="Channel Name (e.g. MrBeast)"
+                    value={inlineChannelName}
+                    onChange={(e) => setInlineChannelName(e.target.value)}
+                    className="w-full h-8 px-2.5 text-xs rounded border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                  <input
+                    type="url"
+                    placeholder="Channel Link (optional, e.g. https://youtube.com/@...)"
+                    value={inlineChannelLink}
+                    onChange={(e) => setInlineChannelLink(e.target.value)}
+                    className="w-full h-8 px-2.5 text-xs rounded border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  <Button
+                    type="button"
+                    onClick={handleCreateChannelInline}
+                    disabled={createChannelMutation.isPending}
+                    className="h-7 px-3 text-xs"
+                  >
+                    {createChannelMutation.isPending
+                      ? "Creating..."
+                      : "Save & Select"}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
           <div>

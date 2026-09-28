@@ -1,6 +1,7 @@
 "use client";
 
 import type { FormattedInspiration } from "@/types";
+import { getStrengthScoreBadgeStyle } from "@/types/hook-analysis";
 import { useMemo, useState } from "react";
 
 interface GlobalVaultViewProps {
@@ -15,7 +16,7 @@ interface GlobalVaultViewProps {
 
 type FilterChip = "ALL" | "THUMBNAIL" | "TITLE" | "HOOK" | "OUTLIER";
 type ViewMode = "grid" | "masonry" | "compact";
-type SortOption = "ctr" | "views" | "recent";
+type SortOption = "score" | "ctr" | "views" | "recent";
 
 export function GlobalVaultView({
   inspirations,
@@ -61,6 +62,11 @@ export function GlobalVaultView({
     });
 
     return list.sort((a, b) => {
+      if (sortBy === "score") {
+        const scoreA = a.strength_score ?? a.strengthScore ?? 0;
+        const scoreB = b.strength_score ?? b.strengthScore ?? 0;
+        return scoreB - scoreA;
+      }
       if (sortBy === "recent") {
         return (
           new Date(b.createdAt || 0).getTime() -
@@ -143,6 +149,7 @@ export function GlobalVaultView({
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="h-9 px-3.5 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#221E1A] text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#FF5338] shadow-xs cursor-pointer appearance-none pr-8"
             >
+              <option value="score">Sort: Highest AI Score</option>
               <option value="ctr">Sort: Highest CTR</option>
               <option value="views">Sort: Most Views</option>
               <option value="recent">Sort: Most Recent</option>
@@ -218,14 +225,25 @@ export function GlobalVaultView({
                 </div>
                 <div className="p-4 space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
-                        item.categoryColor ||
-                        "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
-                      }`}
-                    >
-                      {item.categoryTag || "Viral Benchmark"}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
+                          item.categoryColor ||
+                          "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
+                        }`}
+                      >
+                        {item.categoryTag || "Viral Benchmark"}
+                      </span>
+                      {(item.strength_score ?? item.strengthScore) != null && (
+                        <span
+                          className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full border ${getStrengthScoreBadgeStyle(
+                            item.strength_score ?? item.strengthScore,
+                          )}`}
+                        >
+                          ⭐ {item.strength_score ?? item.strengthScore}/10
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[100px]">
                       @{item.channelName || "Creator"}
                     </span>
@@ -354,6 +372,15 @@ export function GlobalVaultView({
                   >
                     {item.categoryTag || "Benchmark"}
                   </span>
+                  {(item.strength_score ?? item.strengthScore) != null && (
+                    <span
+                      className={`text-[9px] font-extrabold px-1.5 py-px rounded-full border ${getStrengthScoreBadgeStyle(
+                        item.strength_score ?? item.strengthScore,
+                      )}`}
+                    >
+                      ⭐ {item.strength_score ?? item.strengthScore}/10
+                    </span>
+                  )}
                   <span className="text-[10px] text-[#8C8379] dark:text-[#A89F95] truncate">
                     @{item.channelName || "Creator"}
                   </span>
@@ -452,14 +479,25 @@ export function GlobalVaultView({
                 {/* Card Body */}
                 <div className="p-4 space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
-                        item.categoryColor ||
-                        "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
-                      }`}
-                    >
-                      {item.categoryTag || "Viral Benchmark"}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
+                          item.categoryColor ||
+                          "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
+                        }`}
+                      >
+                        {item.categoryTag || "Viral Benchmark"}
+                      </span>
+                      {(item.strength_score ?? item.strengthScore) != null && (
+                        <span
+                          className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full border ${getStrengthScoreBadgeStyle(
+                            item.strength_score ?? item.strengthScore,
+                          )}`}
+                        >
+                          ⭐ {item.strength_score ?? item.strengthScore}/10
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[100px]">
                       @{item.channelName || "Creator"}
                     </span>

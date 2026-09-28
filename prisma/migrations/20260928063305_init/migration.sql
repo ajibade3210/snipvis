@@ -21,10 +21,30 @@ CREATE TABLE "Inspiration" (
     "sourceUrl" TEXT,
     "type" "InspirationType" NOT NULL DEFAULT 'THUMBNAIL',
     "note" TEXT,
+    "hook_type" TEXT,
+    "hook_formula" TEXT,
+    "triggered_emotion" TEXT,
+    "strength_score" INTEGER,
+    "score_reason" TEXT,
+    "improvements" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "titleVariants" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "recreationIdeas" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "riskFlags" TEXT[] DEFAULT ARRAY[]::TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Inspiration_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Channel" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "link" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Channel_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -33,7 +53,7 @@ CREATE TABLE "Project" (
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "description" TEXT,
-    "channel" TEXT,
+    "channelId" TEXT,
     "hook" TEXT,
     "scriptLink" TEXT,
     "script" TEXT,
@@ -101,13 +121,25 @@ CREATE TABLE "UserProfile" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Channel_name_key" ON "Channel"("name");
+
+-- CreateIndex
+CREATE INDEX "Channel_name_idx" ON "Channel"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Project_slug_key" ON "Project"("slug");
+
+-- CreateIndex
+CREATE INDEX "Project_channelId_idx" ON "Project"("channelId");
 
 -- CreateIndex
 CREATE INDEX "ProjectInspiration_projectId_idx" ON "ProjectInspiration"("projectId");
 
 -- CreateIndex
 CREATE INDEX "ProjectThumbnail_projectId_idx" ON "ProjectThumbnail"("projectId");
+
+-- AddForeignKey
+ALTER TABLE "Project" ADD CONSTRAINT "Project_channelId_fkey" FOREIGN KEY ("channelId") REFERENCES "Channel"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProjectInspiration" ADD CONSTRAINT "ProjectInspiration_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;

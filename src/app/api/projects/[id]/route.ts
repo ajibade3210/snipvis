@@ -13,6 +13,7 @@ export async function GET(
     const project = await prisma.project.findUnique({
       where: { id: params.id },
       include: {
+        channel: true,
         inspirations: { include: { inspiration: true } },
         assets: { include: { asset: true } },
         thumbnails: { orderBy: { createdAt: "asc" } },
@@ -46,16 +47,29 @@ export async function PATCH(
   try {
     const body = await req.json();
     const data = updateProjectSchema.parse(body);
+    const { channel: _legacyChannel, channelId, ...restData } = data;
+
     const project = await prisma.project.update({
       where: { id: params.id },
-      data,
+      data: {
+        ...restData,
+        ...(channelId !== undefined
+          ? {
+              channel: channelId
+                ? { connect: { id: channelId } }
+                : { disconnect: true },
+            }
+          : {}),
+      },
       include: {
+        channel: true,
         inspirations: { include: { inspiration: true } },
         assets: { include: { asset: true } },
         thumbnails: { orderBy: { createdAt: "asc" } },
       },
     });
     await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
+    await cacheStore.del(CACHE_KEYS.CHANNELS_LIST);
     return NextResponse.json(project);
   } catch (err: unknown) {
     return handleApiError(err);

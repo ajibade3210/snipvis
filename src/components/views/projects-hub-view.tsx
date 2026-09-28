@@ -5,12 +5,16 @@ import type { ProjectRecord } from "@/types";
 
 interface ProjectsHubViewProps {
   projects: ProjectRecord[];
+  selectedChannelId?: string | null;
+  onClearChannelFilter?: () => void;
   onSelectProject: (id: string) => void;
   onOpenNewProject: () => void;
 }
 
 export function ProjectsHubView({
   projects,
+  selectedChannelId,
+  onClearChannelFilter,
   onSelectProject,
   onOpenNewProject,
 }: ProjectsHubViewProps) {
@@ -25,9 +29,33 @@ export function ProjectsHubView({
     return DEFAULT_PROJECT_GRADIENTS[index];
   };
 
+  const filteredProjects = selectedChannelId
+    ? projects.filter(
+        (p) =>
+          p.channelId === selectedChannelId ||
+          (typeof p.channel === "object" &&
+            p.channel?.id === selectedChannelId),
+      )
+    : projects;
+
+  const activeChannelName = selectedChannelId
+    ? (() => {
+        const match = projects.find(
+          (p) =>
+            p.channelId === selectedChannelId ||
+            (typeof p.channel === "object" &&
+              p.channel?.id === selectedChannelId),
+        );
+        if (match?.channel && typeof match.channel === "object") {
+          return match.channel.name;
+        }
+        return null;
+      })()
+    : null;
+
   // Group into Active and Completed
-  const activeProjects = projects.filter((p) => p.status !== "DONE");
-  const doneProjects = projects.filter((p) => p.status === "DONE");
+  const activeProjects = filteredProjects.filter((p) => p.status !== "DONE");
+  const doneProjects = filteredProjects.filter((p) => p.status === "DONE");
   const activeCount = activeProjects.length;
 
   const renderProjectCard = (proj: ProjectRecord, isDone: boolean) => {
@@ -45,6 +73,13 @@ export function ProjectsHubView({
       .map((w) => w[0])
       .join("")
       .toUpperCase();
+
+    const channelName =
+      typeof proj.channel === "object" && proj.channel
+        ? proj.channel.name
+        : typeof proj.channel === "string"
+          ? proj.channel
+          : null;
 
     return (
       <button
@@ -99,8 +134,8 @@ export function ProjectsHubView({
           <div
             className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradientTheme.gradient} shrink-0 flex items-center justify-center text-white font-extrabold text-xs shadow-xs border border-white/10`}
           >
-            {proj.channel
-              ? proj.channel.slice(0, 1).toUpperCase()
+            {channelName
+              ? channelName.slice(0, 1).toUpperCase()
               : initials.slice(0, 1) || "S"}
           </div>
 
@@ -113,8 +148,8 @@ export function ProjectsHubView({
 
             {/* Channel handle */}
             <div className="text-xs font-semibold text-[#8C8379] dark:text-[#A89F95] mt-1 flex items-center gap-1.5 truncate">
-              {proj.channel ? (
-                <span>@{proj.channel}</span>
+              {channelName ? (
+                <span>@{channelName}</span>
               ) : (
                 <span>Snipvis Creator</span>
               )}
@@ -161,6 +196,31 @@ export function ProjectsHubView({
           <span>Create New Project</span>
         </button>
       </div>
+
+      {/* Filter Pill Banner */}
+      {selectedChannelId && (
+        <div className="flex items-center justify-between p-3 px-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs text-foreground">
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">Filtered by Channel:</span>
+            <span className="font-bold text-foreground">
+              {activeChannelName || "Selected Channel"}
+            </span>
+            <span className="text-muted-foreground">
+              ({filteredProjects.length} project
+              {filteredProjects.length === 1 ? "" : "s"})
+            </span>
+          </div>
+          {onClearChannelFilter && (
+            <button
+              type="button"
+              onClick={onClearChannelFilter}
+              className="text-xs font-semibold text-[#FF5338] hover:underline cursor-pointer"
+            >
+              ✕ View All Projects
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Active Projects Grid (YouTube-Style) */}
       <div className="space-y-4">

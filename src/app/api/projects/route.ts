@@ -16,6 +16,7 @@ export async function GET() {
         prisma.project.findMany({
           orderBy: { updatedAt: "desc" },
           include: {
+            channel: true,
             _count: { select: { inspirations: true, assets: true } },
             thumbnails: { orderBy: { createdAt: "asc" } },
           },
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
       name: data.name,
       slug,
       description: data.description,
-      channel: data.channel,
+      channel: data.channelId ? { connect: { id: data.channelId } } : undefined,
       hook: data.hook,
       scriptLink: data.scriptLink || null,
       script: data.script,
@@ -48,11 +49,13 @@ export async function POST(req: NextRequest) {
     const project = await prisma.project.create({
       data: projectInput,
       include: {
+        channel: true,
         thumbnails: true,
         _count: { select: { inspirations: true, assets: true } },
       },
     });
     await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
+    await cacheStore.del(CACHE_KEYS.CHANNELS_LIST);
     return NextResponse.json(project, { status: 201 });
   } catch (err: unknown) {
     return handleApiError(err);

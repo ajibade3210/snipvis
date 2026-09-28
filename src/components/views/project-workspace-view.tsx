@@ -11,6 +11,7 @@ import type {
   ProjectRecord,
   ProjectThumbnailRecord,
 } from "@/types";
+import type { ChannelRecord } from "@/types/channel";
 import { useState } from "react";
 
 interface ProjectWorkspaceViewProps {
@@ -18,7 +19,8 @@ interface ProjectWorkspaceViewProps {
     id: string;
     name: string;
     description?: string | null;
-    channel?: string | null;
+    channelId?: string | null;
+    channel?: ChannelRecord | string | null;
     status?: "ACTIVE" | "DONE";
     thumbnails?: ProjectThumbnailRecord[];
     _count?: { inspirations: number; assets: number };
@@ -76,11 +78,19 @@ export function ProjectWorkspaceView({
             {project.name}
           </h1>
 
-          {project.channel ? (
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-white font-bold">
-              @{project.channel}
-            </span>
-          ) : null}
+          {(() => {
+            const channelName =
+              typeof project.channel === "object" && project.channel
+                ? project.channel.name
+                : typeof project.channel === "string"
+                  ? project.channel
+                  : null;
+            return channelName ? (
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-white font-bold">
+                @{channelName}
+              </span>
+            ) : null;
+          })()}
 
           {/* Edit Project Details button */}
           <button

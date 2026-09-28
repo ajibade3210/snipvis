@@ -14,7 +14,7 @@
 # MANDATORY: Check When Done — NEVER SKIP THIS
 AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 1. **No Magic Strings Allowed** — Define named constants, cache key identifiers, API route paths, or configuration maps in `src/lib/constants.ts` or `src/config/constants/`.
-2. **Types & Interfaces in `src/types/`**: Every exported domain interface, type alias, or DTO must live in `src/types/` and be imported from there (or be derived from its Zod schema via `z.infer`). Apply this wherever it fits, but skip extraction when it would be over-engineering, such as a single-use component prop type or a private, non-exported type.
+2. **Types & Interfaces in `src/types/` — Direct File Imports (No Re-Export Barrels)**: Every exported domain interface, type alias, or DTO must live in its dedicated file in `src/types/` (e.g. `src/types/channel.ts`, `src/types/hook-analysis.ts`). Never add barrel re-exports (`export * from "./..."`) inside `src/types/index.ts`. Consumers must always import types directly from their specific file (e.g. `import type { ChannelRecord } from "@/types/channel"`, `import type { HookType } from "@/types/hook-analysis"`). Apply domain type extraction wherever it fits, but skip extraction when it would be over-engineering, such as a single-use component prop type or a private, non-exported type.
 3. **Scan Related Files** — Check Next.js API Route Handlers (`src/app/api/`), client services (`src/services/api/`), React Query hooks (`src/hooks/`), Zod validation schemas (`src/lib/validations.ts`), Prisma schema/migrations (`prisma/`), and UI components (`src/components/`) for anything missing, broken, or inconsistent with your change.
 4. **Briefly Explain Changes** — Provide a concise summary of the problem, the fix applied, and any important architectural considerations.
 5. **Call Out Breaking Changes** — Explicitly warn if a change impacts DB schema, Prisma migrations, API response contracts, cache structures, or client state.
@@ -132,7 +132,7 @@ flowchart TD
 | **Shared Shell Components** | Global top navigation, filter bar, tactile controls, and quick-capture.   | `src/components/top-header.tsx`, `src/components/sidebar.tsx`                                                                                                                                                   |
 | **Client Hooks**            | Reactive data fetching and mutation handling via React Query.             | `src/hooks/use-projects.ts`, `src/hooks/use-inspirations.ts`, `src/hooks/use-assets.ts`                                                                                                                                                         |
 | **Client API Services**     | Type-safe abstractions over HTTP endpoints using Zod schema verification. | `src/services/api/client.ts`, `src/services/api/project.service.ts`, `src/services/api/inspiration.service.ts`, `src/services/api/asset.service.ts`, `src/services/api/youtube.service.ts`                                                      |
-| **API Route Handlers**      | Next.js server endpoints implementing REST handlers.                      | `src/app/api/projects/route.ts`, `src/app/api/projects/[id]/route.ts`, `src/app/api/inspirations/route.ts`, `src/app/api/inspirations/tag/route.ts`, `src/app/api/assets/route.ts`, `src/app/api/youtube/route.ts`, `src/app/api/seed/route.ts` |
+| **API Route Handlers**      | Next.js server endpoints implementing REST handlers.                      | `src/app/api/projects/route.ts`, `src/app/api/projects/[id]/route.ts`, `src/app/api/inspirations/route.ts`, `src/app/api/inspirations/tag/route.ts`, `src/app/api/assets/route.ts`, `src/app/api/youtube/route.ts`, `src/app/api/channels/route.ts` |
 | **Database & Cache Layer**  | Database pooling singleton and swappable Cache-Aside key-value store.     | `src/lib/prisma.ts`, `src/lib/cache/index.ts`, `prisma.config.ts`, `prisma/schema.prisma`                                                                                                                                                       |
 | **Validation Layer**        | Zod schemas shared across API validation and UI form handling.            | `src/lib/validations.ts`                                                                                                                                                                                                                        |
 | **Shared Types**            | Canonical TypeScript interfaces and inferred domain types.                | `src/types/index.ts`                                                                                                                                                                                                                            |
@@ -219,7 +219,6 @@ snipvis/
     │       ├── inspirations/tag/route.ts    # POST /api/inspirations/tag, DELETE /api/inspirations/tag
     │       ├── projects/route.ts            # GET /api/projects, POST /api/projects
     │       ├── projects/[id]/route.ts       # GET /api/projects/:id, PATCH /api/projects/:id
-    │       ├── seed/route.ts                # POST/GET /api/seed (Initial demo data seeder)
     │       └── youtube/route.ts             # POST /api/youtube (oEmbed scraper & thumbnail resolver)
     ├── components/
     │   ├── asset-modal.tsx                  # New asset creation modal
@@ -287,7 +286,7 @@ snipvis/
    - `QueryClientProvider` registers TanStack Query client.
 3. **CreatorLabShell Boot:** `src/app/page.tsx` mounts inside a React `Suspense` boundary.
 4. **URL State Synchronization:** The shell parses search params (`view`, `project`, `tab`) to render either the active project workspace or one of the global studio tools.
-5. **Auto-Seed Fallback:** If `dbProjects.length === 0` and the initial global query resolves with zero inspirations, an effect automatically triggers `projectService.seed()` (`POST /api/seed`) to populate demonstration data.
+
 
 ---
 
@@ -453,7 +452,7 @@ npm run db:studio
    - Multiple `as any` type assertions previously existed in `src/app/api/assets/route.ts` and `src/app/api/inspirations/route.ts` for enum assignments. These must be replaced with strict types according to the Zero `any` policy.
    - Import order sorting (`organizeImports`) and `useImportType` rule flags will trigger warnings/errors when running `npm run lint`.
 3. **Serverless Cache Isolation:** The in-memory cache store in `src/lib/cache/index.ts` is instantiated in process memory. On serverless environments (like Vercel), this cache is not shared across lambda instances. For multi-instance caching, `cacheStore` must be switched to `createRedisStore` with Upstash Redis or standard Redis.
-4. **Auto-Seed Concurrency:** `src/app/page.tsx` initiates database seeding client-side when zero projects are detected. If multiple clients connect to a newly deployed blank database concurrently, both may trigger `/api/seed` simultaneously (though guarded partially by `projectCount > 0` check in `route.ts`).
+
 5. **Legacy Residual Directory:** A `client/` folder exists at the repository root containing an old `.next/` build artifact from an earlier multi-repo / split architecture. It is unused and can be safely deleted.
 6. **No Multi-Tenancy / User Authentication:** All data is global to the database instance. Multi-user separation requires adding a `User` model, workspace relations, and auth middleware (e.g. NextAuth/Auth.js or Supabase Auth).
 

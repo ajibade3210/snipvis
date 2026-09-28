@@ -1,6 +1,9 @@
 import { API_ROUTES } from "@/constants/routes";
 import { analyzeHookResponseSchema } from "@/lib/validations";
-import type { AnalyzeHookInput, AnalyzeHookResponse } from "@/types";
+import type {
+  AnalyzeHookInput,
+  AnalyzeHookResponse,
+} from "@/types/hook-analysis";
 import { api } from "./client";
 
 export const aiService = {

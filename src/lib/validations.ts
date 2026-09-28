@@ -1,3 +1,12 @@
+import { channelSchema } from "@/types/channel";
+import {
+  aiHookBreakdownSchema,
+  analyzeHookRequestSchema,
+  analyzeHookResponseSchema,
+  hookTypeEnum,
+  riskFlagEnum,
+  triggeredEmotionEnum,
+} from "@/types/hook-analysis";
 import { z } from "zod";
 
 /* ========================================================================= */
@@ -35,6 +44,7 @@ export const createProjectSchema = z.object({
     .regex(/^[a-z0-9-]+$/)
     .optional(),
   description: z.string().max(500).optional().nullable(),
+  channelId: z.string().optional().nullable(),
   channel: z.string().max(100).optional().nullable(),
   hook: z.string().max(5000).optional().nullable(),
   scriptLink: z.string().url().optional().or(z.literal("")).nullable(),
@@ -53,6 +63,23 @@ export const createInspirationSchema = z.object({
   sourceUrl: z.string().url().optional(),
   type: inspirationTypeEnum.default("THUMBNAIL"),
   note: z.string().optional(),
+  hook_type: hookTypeEnum.optional().nullable(),
+  hookType: z.string().optional().nullable(),
+  hook_formula: z.string().optional().nullable(),
+  hookFormula: z.string().optional().nullable(),
+  triggered_emotion: triggeredEmotionEnum.optional().nullable(),
+  triggeredEmotion: z.string().optional().nullable(),
+  strength_score: z.number().int().min(1).max(10).optional().nullable(),
+  strengthScore: z.number().int().min(1).max(10).optional().nullable(),
+  score_reason: z.string().optional().nullable(),
+  scoreReason: z.string().optional().nullable(),
+  improvements: z.array(z.string()).optional().nullable(),
+  title_variants: z.array(z.string()).optional().nullable(),
+  titleVariants: z.array(z.string()).optional().nullable(),
+  recreation_ideas: z.array(z.string()).optional().nullable(),
+  recreationIdeas: z.array(z.string()).optional().nullable(),
+  risk_flags: z.array(riskFlagEnum).optional().nullable(),
+  riskFlags: z.array(z.string()).optional().nullable(),
   projects: z
     .array(
       z.object({
@@ -142,7 +169,8 @@ export const ProjectSchema = z.object({
   name: z.string(),
   slug: z.string(),
   description: z.string().nullable().optional(),
-  channel: z.string().nullable().optional(),
+  channelId: z.string().nullable().optional(),
+  channel: z.union([z.string(), channelSchema]).nullable().optional(),
   hook: z.string().nullable().optional(),
   scriptLink: z.string().nullable().optional(),
   script: z.string().nullable().optional(),
@@ -286,25 +314,11 @@ export const storageEnvSchema = z.object({
 /* 7. AI HOOK BREAKDOWN SCHEMAS                                              */
 /* ========================================================================= */
 
-export const analyzeHookRequestSchema = z.object({
-  inputType: z.enum(["url", "image", "text"]),
-  url: z.string().optional().or(z.literal("")),
-  manualText: z.string().max(4000).optional().or(z.literal("")),
-  imageBase64: z.string().optional().or(z.literal("")),
-  imageUrl: z.string().url().optional().or(z.literal("")),
-});
-
-export const aiHookBreakdownSchema = z.object({
-  perceived_copy: z.string(),
-  why_it_works: z.string(),
-  triggered_emotion: z.string(),
-  recreation_ideas: z.array(z.string()).min(1).max(5),
-});
-
-export const analyzeHookResponseSchema = aiHookBreakdownSchema.extend({
-  thumbnailUrl: z.string().optional(),
-  sourceUrl: z.string().optional(),
-  channelName: z.string().optional(),
-  needsManualFallback: z.boolean().optional(),
-  extractedTitle: z.string().optional(),
-});
+export {
+  hookTypeEnum,
+  triggeredEmotionEnum,
+  riskFlagEnum,
+  aiHookBreakdownSchema,
+  analyzeHookRequestSchema,
+  analyzeHookResponseSchema,
+};

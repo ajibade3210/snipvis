@@ -16,9 +16,29 @@ model Inspiration {
   sourceUrl    String?
   type         InspirationType      @default(THUMBNAIL)
   note         String?
+  hookType         String?              @map("hook_type")
+  hookFormula      String?              @map("hook_formula")
+  triggeredEmotion String?              @map("triggered_emotion")
+  strengthScore    Int?                 @map("strength_score")
+  scoreReason      String?              @map("score_reason")
+  improvements     String[]             @default([])
+  titleVariants    String[]             @default([])
+  recreationIdeas  String[]             @default([])
+  riskFlags        String[]             @default([])
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
   projects     ProjectInspiration[]
+}
+
+model Channel {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  link      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projects  Project[]
+
+  @@index([name])
 }
 
 model Project {
@@ -26,7 +46,8 @@ model Project {
   name         String
   slug         String               @unique
   description  String?
-  channel      String?
+  channelId    String?
+  channel      Channel?             @relation(fields: [channelId], references: [id], onDelete: SetNull)
   hook         String?              @db.Text
   scriptLink   String?
   script       String?              @db.Text
@@ -36,6 +57,8 @@ model Project {
   inspirations ProjectInspiration[]
   assets       ProjectAsset[]
   thumbnails   ProjectThumbnail[]
+
+  @@index([channelId])
 }
 
 model ProjectInspiration {

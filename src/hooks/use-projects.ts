@@ -22,6 +22,7 @@ export const useCreateProject = () => {
     mutationFn: projectService.create,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.CHANNELS] });
     },
   });
 };
@@ -34,6 +35,7 @@ export const useUpdateProject = () => {
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
       qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS, variables.id] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.CHANNELS] });
     },
   });
 };

@@ -1,7 +1,9 @@
 "use client";
 
+import { useChannels } from "@/hooks/use-channels";
 import { BRAND_ASSETS, STORAGE_KEYS } from "@/lib/constants";
 import type { NavView } from "@/types";
+import type { ChannelRecord } from "@/types/channel";
 import { useEffect, useState } from "react";
 
 interface SidebarProps {
@@ -9,8 +11,9 @@ interface SidebarProps {
     id: string;
     name: string;
     slug?: string;
-    channel?: string | null;
+    channel?: ChannelRecord | string | null;
     status?: "ACTIVE" | "DONE";
+    updatedAt?: string | Date;
     _count?: { inspirations: number; assets: number };
   }>;
   totalInspirationsCount: number;
@@ -33,11 +36,33 @@ export function Sidebar({
   onAnalyzeUrl,
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { data: channels = [] } = useChannels();
 
-  const activeProjects = projects.filter((p) => p.status !== "DONE");
-  const doneProjects = projects.filter((p) => p.status === "DONE");
-  const sortedProjects = [...activeProjects, ...doneProjects];
-  const activeCount = activeProjects.length;
+  // Active state for top navigation buttons
+  const isGlobalActive = selectedProjectId === null && activeNav === "global";
+  const isProjectsActive =
+    selectedProjectId === null &&
+    (activeNav === "projects" || activeNav === "active-projects");
+  const isChannelsActive =
+    selectedProjectId === null && activeNav === "channels";
+  const isCompetitorSpyActive =
+    selectedProjectId === null && activeNav === "competitor-spy";
+  const isSettingsActive =
+    selectedProjectId === null && activeNav === "settings";
+
+  // Top 4 active projects sorted by last updated
+  const topActiveProjects = projects
+    .filter((p) => p.status !== "DONE")
+    .sort((a, b) => {
+      const timeA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+      const timeB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+      return timeB - timeA;
+    })
+    .slice(0, 4);
+
+  const activeProjectsCount = projects.filter(
+    (p) => p.status !== "DONE",
+  ).length;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -230,21 +255,19 @@ export function Sidebar({
         <button
           type="button"
           onClick={() => onSelectNav("projects")}
-          title={`Projects (${activeCount} active)`}
+          title={`Projects (${activeProjectsCount} active)`}
           aria-label="Projects"
           className={
             isCollapsed
               ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                  selectedProjectId === null &&
-                  (activeNav === "projects" || activeNav === "active-projects")
-                    ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5]"
-                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/70 dark:hover:bg-[#2A2521]"
+                  isProjectsActive
+                    ? "bg-[#FF5338] text-white shadow-sm"
+                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
                 }`
-              : `w-full text-left px-3.5 py-2 rounded-xl font-semibold text-xs tracking-tight flex items-center justify-between transition-colors cursor-pointer ${
-                  selectedProjectId === null &&
-                  (activeNav === "projects" || activeNav === "active-projects")
-                    ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5]"
-                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/70 dark:hover:bg-[#2A2521]"
+              : `w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
+                  isProjectsActive
+                    ? "bg-[#FF5338] text-white shadow-sm"
+                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
                 }`
           }
         >
@@ -271,8 +294,66 @@ export function Sidebar({
             {!isCollapsed && <span>Projects</span>}
           </div>
           {!isCollapsed && (
-            <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold font-grotesk bg-[#EBE5DC] dark:bg-[#322C28] text-[#58524C] dark:text-[#A89F95]">
-              {activeCount}
+            <span
+              className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold font-grotesk ${
+                isProjectsActive
+                  ? "bg-white/25 text-white"
+                  : "bg-[#EBE5DC] dark:bg-[#322C28] text-[#58524C] dark:text-[#A89F95]"
+              }`}
+            >
+              {activeProjectsCount}
+            </span>
+          )}
+        </button>
+
+        {/* Channels */}
+        <button
+          type="button"
+          onClick={() => onSelectNav("channels")}
+          title={`Channels (${channels.length})`}
+          aria-label="Channels"
+          className={
+            isCollapsed
+              ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                  isChannelsActive
+                    ? "bg-[#FF5338] text-white shadow-sm"
+                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                }`
+              : `w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
+                  isChannelsActive
+                    ? "bg-[#FF5338] text-white shadow-sm"
+                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                }`
+          }
+        >
+          <div
+            className={
+              isCollapsed
+                ? "flex items-center justify-center"
+                : "flex items-center gap-2.5"
+            }
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <rect width="20" height="15" x="2" y="7" rx="2" ry="2" />
+              <polyline points="17 2 12 7 7 2" />
+            </svg>
+            {!isCollapsed && <span>Channels</span>}
+          </div>
+          {!isCollapsed && (
+            <span
+              className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold font-grotesk ${
+                isChannelsActive
+                  ? "bg-white/25 text-white"
+                  : "bg-[#EBE5DC] dark:bg-[#322C28] text-[#58524C] dark:text-[#A89F95]"
+              }`}
+            >
+              {channels.length}
             </span>
           )}
         </button>
@@ -286,14 +367,14 @@ export function Sidebar({
           className={
             isCollapsed
               ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                  selectedProjectId === null && activeNav === "competitor-spy"
-                    ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5]"
-                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/70 dark:hover:bg-[#2A2521]"
+                  isCompetitorSpyActive
+                    ? "bg-[#FF5338] text-white shadow-sm"
+                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
                 }`
-              : `w-full text-left px-3.5 py-2 rounded-xl font-semibold text-xs tracking-tight flex items-center justify-between transition-colors cursor-pointer ${
-                  selectedProjectId === null && activeNav === "competitor-spy"
-                    ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5]"
-                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/70 dark:hover:bg-[#2A2521]"
+              : `w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
+                  isCompetitorSpyActive
+                    ? "bg-[#FF5338] text-white shadow-sm"
+                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
                 }`
           }
         >
@@ -319,7 +400,11 @@ export function Sidebar({
             </svg>
             {!isCollapsed && <span>Competitor Spy</span>}
           </div>
-          <span className="w-2 h-2 rounded-full bg-[#FF8A00]" />
+          <span
+            className={`w-2 h-2 rounded-full ${
+              isCompetitorSpyActive ? "bg-white" : "bg-[#FF8A00]"
+            }`}
+          />
         </button>
 
         {/* Settings */}
@@ -331,14 +416,14 @@ export function Sidebar({
           className={
             isCollapsed
               ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                  selectedProjectId === null && activeNav === "settings"
-                    ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5]"
-                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/70 dark:hover:bg-[#2A2521]"
+                  isSettingsActive
+                    ? "bg-[#FF5338] text-white shadow-sm"
+                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
                 }`
-              : `w-full text-left px-3.5 py-2 rounded-xl font-semibold text-xs tracking-tight flex items-center gap-2.5 transition-colors cursor-pointer ${
-                  selectedProjectId === null && activeNav === "settings"
-                    ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5]"
-                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/70 dark:hover:bg-[#2A2521]"
+              : `w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs tracking-tight flex items-center gap-2.5 transition-all cursor-pointer ${
+                  isSettingsActive
+                    ? "bg-[#FF5338] text-white shadow-sm"
+                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
                 }`
           }
         >
@@ -369,7 +454,7 @@ export function Sidebar({
         {!isCollapsed && (
           <div className="flex items-center justify-between px-3 mb-2">
             <span className="text-[11px] font-bold tracking-wider uppercase text-[#8C8379]">
-              PROJECTS ({activeCount})
+              PROJECTS ({topActiveProjects.length})
             </span>
             <svg
               className="w-3.5 h-3.5 text-[#8C8379]"
@@ -394,11 +479,11 @@ export function Sidebar({
               : "space-y-0.5"
           }
         >
-          {sortedProjects.length === 0 ? (
+          {topActiveProjects.length === 0 ? (
             !isCollapsed ? (
               <div className="p-3 text-center rounded-xl bg-white/50 dark:bg-[#221E1A]/50 border border-dashed border-[#E3DCD3] dark:border-[#3C3530]">
                 <p className="text-xs text-[#58524C] dark:text-[#A89F95]">
-                  No projects added yet.
+                  No active projects.
                 </p>
                 <button
                   type="button"
@@ -410,33 +495,25 @@ export function Sidebar({
               </div>
             ) : null
           ) : (
-            sortedProjects.map((proj, idx) => {
+            topActiveProjects.map((proj, idx) => {
               const isSelected = selectedProjectId === proj.id;
-              const isDone = proj.status === "DONE";
-              const emoji = isDone
-                ? "✓"
-                : projectEmojis[idx % projectEmojis.length];
-              const count = proj._count?.inspirations ?? 0;
+              const emoji = projectEmojis[idx % projectEmojis.length];
 
               return (
                 <button
                   key={proj.id}
                   type="button"
                   onClick={() => onSelectProject(proj.id)}
-                  title={`${proj.name} ${isDone ? "(Completed)" : ""} (${count} inspirations)`}
+                  title={proj.name}
                   aria-label={proj.name}
                   className={
                     isCollapsed
                       ? `w-10 h-10 rounded-xl text-xs font-bold tracking-tight flex items-center justify-center transition-all cursor-pointer ${
-                          isDone ? "opacity-60 hover:opacity-100" : ""
-                        } ${
                           isSelected
                             ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5] ring-2 ring-[#FF5338]/40 shadow-xs"
                             : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/60 dark:hover:bg-[#2A2521]"
                         }`
                       : `w-full text-left px-3 py-2 rounded-xl text-xs font-bold tracking-tight flex items-center justify-between transition-all group cursor-pointer ${
-                          isDone ? "opacity-60 hover:opacity-100" : ""
-                        } ${
                           isSelected
                             ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs"
                             : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/60 dark:hover:bg-[#2A2521]"
@@ -444,20 +521,11 @@ export function Sidebar({
                   }
                 >
                   <div className="flex items-center gap-2 truncate pr-2">
-                    <span
-                      className={`text-sm shrink-0 ${isDone ? "text-emerald-500 font-bold" : ""}`}
-                    >
-                      {emoji}
-                    </span>
+                    <span className="text-sm shrink-0">{emoji}</span>
                     {!isCollapsed && (
                       <span className="truncate">{proj.name}</span>
                     )}
                   </div>
-                  {!isCollapsed && (
-                    <span className="text-[11px] font-grotesk text-[#8C8379] shrink-0 font-semibold">
-                      {count}
-                    </span>
-                  )}
                 </button>
               );
             })

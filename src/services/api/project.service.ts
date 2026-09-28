@@ -48,8 +48,4 @@ export const projectService = {
       method: "DELETE",
       schema: z.object({ success: z.boolean(), id: z.string() }),
     }),
-  seed: (opts?: { force?: boolean }) =>
-    api(`${API_ROUTES.SEED}${opts?.force ? "?force=true" : ""}`, {
-      method: "POST",
-    }),
 };

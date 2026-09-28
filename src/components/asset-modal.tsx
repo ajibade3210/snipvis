@@ -2,11 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useCreateAsset } from "@/hooks/use-assets";
-import {
-  assetSourceEnum,
-  assetTypeEnum,
-  createAssetSchema,
-} from "@/lib/validations";
+import { createAssetSchema } from "@/lib/validations";
+
 import { mediaService } from "@/services/api/media.service";
 import type { AssetSource, AssetType } from "@/types";
 import { useRef, useState } from "react";
