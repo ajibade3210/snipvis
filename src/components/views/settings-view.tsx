@@ -198,9 +198,16 @@ export function SettingsView({ inspirations, projects }: SettingsViewProps) {
               className="flex-1 flex flex-col sm:flex-row items-start sm:items-end gap-3"
             >
               <div className="w-full sm:max-w-md space-y-1">
-                <label className="text-xs font-bold text-[#58524C] dark:text-[#A89F95]">
-                  Display Name / Channel Handle
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-[#58524C] dark:text-[#A89F95]">
+                    Display Name / Channel Handle
+                  </label>
+                  {userProfile?.email && (
+                    <span className="text-[11px] font-mono text-[#8C8379]">
+                      {userProfile.email}
+                    </span>
+                  )}
+                </div>
                 <input
                   type="text"
                   placeholder="e.g. Jack Neel, TechCraft"

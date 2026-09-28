@@ -2,6 +2,7 @@ import { handleApiError } from "@/lib/api-error";
 import { cacheStore } from "@/lib/cache";
 import { CACHE_KEYS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 import { createProjectThumbnailSchema } from "@/lib/validations";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -10,8 +11,9 @@ export async function POST(
   { params }: { params: { id: string } },
 ) {
   try {
-    const project = await prisma.project.findUnique({
-      where: { id: params.id },
+    const user = await requireUser();
+    const project = await prisma.project.findFirst({
+      where: { id: params.id, userId: user.id },
       select: { id: true, _count: { select: { thumbnails: true } } },
     });
 
@@ -33,7 +35,7 @@ export async function POST(
       },
     });
 
-    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
+    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST(user.id));
     return NextResponse.json(thumbnail, { status: 201 });
   } catch (err: unknown) {
     return handleApiError(err);

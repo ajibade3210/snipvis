@@ -24,6 +24,7 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
    - `npm run test` (Vitest test suite)
 7. **End With Completion Confirmation** — End with a one-line statement confirming whether anything important is missing: `"Nothing important appears to be missing."`
 8. **No Automatic Git Commits or Pushes** — Never execute git commits or git pushes automatically. Version control staging, committing, and pushing to GitHub must be handled manually by the user.
+9. **No Automatic Install Commands** — Never run dependency install or package-manager commands (`npm install`, `npm i`, `npm add`, `npm ci`, `npm uninstall`, `yarn add`, `pnpm add`, or similar). When a dependency is needed, stop, provide the exact command in a code block, and wait. The user runs it manually and asks you to continue afterward.
 
 ---
 
@@ -500,6 +501,7 @@ npm run db:studio
 - 🚫 **No Automatic Git Commits or Pushes:** Do NOT commit (`git commit`) or push (`git push`) to GitHub. All version control staging, committing, and pushing must be performed manually by the user.
 - ⚠️ **Be Mindful of Cache Invalidation:** If adding mutations to `/api/projects`, always invalidate or delete the `projects:list` cache key in `cacheStore` (`src/lib/cache/index.ts`).
 - ⚠️ **Vitest No-Test Error:** Running `npm run test` will exit with code 1 until at least one `*.test.ts` file is created.
+- 🚫 **No Automatic Install Commands:** Do NOT run `npm install` or any other package install/uninstall command. Pause, give the user the exact command, and resume only after the user confirms it has been run.
 
 ---
 

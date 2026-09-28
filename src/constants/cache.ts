@@ -1,7 +1,7 @@
 export const CACHE_KEYS = {
-  PROJECTS_LIST: "projects:list",
-  USER_PROFILE: "user:profile",
-  CHANNELS_LIST: "channels:list",
+  PROJECTS_LIST: (userId: string) => `projects:list:${userId}`,
+  USER_PROFILE: (userId: string) => `user:profile:${userId}`,
+  CHANNELS_LIST: (userId: string) => `channels:list:${userId}`,
 } as const;
 
 export const CACHE_TTL = {

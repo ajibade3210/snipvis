@@ -1,6 +1,16 @@
 import * as storage from "@/lib/storage";
 import type { NextRequest } from "next/server";
 import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@/lib/session", () => ({
+  requireUser: vi
+    .fn()
+    .mockResolvedValue({ id: "creator-01", email: "creator@test.com" }),
+  getCurrentUser: vi
+    .fn()
+    .mockResolvedValue({ id: "creator-01", email: "creator@test.com" }),
+}));
+
 import { DELETE as deleteMediaRoute, POST as mediaRoute } from "./route";
 import { POST as uploadRoute } from "./upload/route";
 
@@ -71,11 +81,11 @@ describe("Consolidated Media API Route Handlers", () => {
   it("deletes media asset by key via query parameter", async () => {
     const deleteSpy = vi.spyOn(storage, "deleteObject").mockResolvedValueOnce({
       success: true,
-      key: "general/creator/images/test-to-delete.png",
+      key: "general/creator-01/images/test-to-delete.png",
     });
 
     const fakeReq = new Request(
-      "http://localhost:3000/api/media?key=general/creator/images/test-to-delete.png",
+      "http://localhost:3000/api/media?key=general/creator-01/images/test-to-delete.png",
       {
         method: "DELETE",
       },
@@ -85,9 +95,9 @@ describe("Consolidated Media API Route Handlers", () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.success).toBe(true);
-    expect(data.key).toBe("general/creator/images/test-to-delete.png");
+    expect(data.key).toBe("general/creator-01/images/test-to-delete.png");
     expect(deleteSpy).toHaveBeenCalledWith(
-      "general/creator/images/test-to-delete.png",
+      "general/creator-01/images/test-to-delete.png",
     );
   });
 

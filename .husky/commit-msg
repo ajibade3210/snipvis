@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+
+echo "[Husky] Validating commit message format..."
+pnpm commitlint --edit "$1"

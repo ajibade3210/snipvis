@@ -1,4 +1,5 @@
 import { handleApiError } from "@/lib/api-error";
+import { requireUser } from "@/lib/session";
 import { uploadBuffer } from "@/lib/storage";
 import { mediaFolderCategoryEnum } from "@/lib/validations";
 import type { MediaFolderCategory } from "@/types";
@@ -6,6 +7,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
+    const user = await requireUser();
     const formData = await req.formData();
     const files = [
       ...formData.getAll("files"),
@@ -20,7 +22,6 @@ export async function POST(req: NextRequest) {
     }
 
     const projectId = formData.get("projectId");
-    const userId = formData.get("userId");
     const rawCategory = formData.get("category");
 
     let category: MediaFolderCategory | undefined;
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
           contentType: file.type || "application/octet-stream",
           size: file.size,
           projectId: typeof projectId === "string" ? projectId : undefined,
-          userId: typeof userId === "string" ? userId : undefined,
+          userId: user.id,
           category,
         });
       }),

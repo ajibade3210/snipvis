@@ -49,6 +49,12 @@ export function InspirationModal({
 
   const createInspiration = useCreateInspiration();
 
+  useEffect(() => {
+    if (isOpen) {
+      setTargetProjectId(defaultProjectId || (projects[0]?.id ?? ""));
+    }
+  }, [isOpen, defaultProjectId, projects]);
+
   // If initialUrl is passed when opened, populate and auto-fetch
   useEffect(() => {
     if (isOpen && initialUrl) {

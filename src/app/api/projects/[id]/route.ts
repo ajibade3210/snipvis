@@ -2,6 +2,7 @@ import { handleApiError } from "@/lib/api-error";
 import { cacheStore } from "@/lib/cache";
 import { CACHE_KEYS, DEFAULT_PROJECT_SCRIPTS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 import { updateProjectSchema } from "@/lib/validations";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -10,8 +11,9 @@ export async function GET(
   { params }: { params: { id: string } },
 ) {
   try {
-    const project = await prisma.project.findUnique({
-      where: { id: params.id },
+    const user = await requireUser();
+    const project = await prisma.project.findFirst({
+      where: { id: params.id, userId: user.id },
       include: {
         channel: true,
         inspirations: { include: { inspiration: true } },
@@ -45,6 +47,14 @@ export async function PATCH(
   { params }: { params: { id: string } },
 ) {
   try {
+    const user = await requireUser();
+    const existing = await prisma.project.findFirst({
+      where: { id: params.id, userId: user.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
     const body = await req.json();
     const data = updateProjectSchema.parse(body);
     const { channel: _legacyChannel, channelId, ...restData } = data;
@@ -68,8 +78,8 @@ export async function PATCH(
         thumbnails: { orderBy: { createdAt: "asc" } },
       },
     });
-    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
-    await cacheStore.del(CACHE_KEYS.CHANNELS_LIST);
+    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST(user.id));
+    await cacheStore.del(CACHE_KEYS.CHANNELS_LIST(user.id));
     return NextResponse.json(project);
   } catch (err: unknown) {
     return handleApiError(err);

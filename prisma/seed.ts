@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 import { Pool } from "pg";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -83,8 +84,50 @@ export const initialProjects = [
   },
 ];
 
-export async function seedProjects() {
-  console.info("📦 Seeding channels and projects with complete scripts...");
+export async function seedUsers() {
+  console.info("👤 Seeding authenticated users...");
+
+  const demoPassword =
+    process.env.DEMO_USER_PASSWORD ||
+    process.env.DEMO_PASSWORD ||
+    "@Snipvis";
+  const demoPasswordHash = await bcrypt.hash(demoPassword, 12);
+
+  const demoUser = await prisma.user.upsert({
+    where: { email: "demo@choicegrid.app" },
+    update: {
+      name: "Demo Creator",
+      passwordHash: demoPasswordHash,
+    },
+    create: {
+      email: "demo@choicegrid.app",
+      name: "Demo Creator",
+      passwordHash: demoPasswordHash,
+    },
+  });
+
+  const emptyPassword = process.env.DEMO_USER_PASSWORD || "SnipVisUser2026!";
+  const emptyPasswordHash = await bcrypt.hash(emptyPassword, 12);
+
+  await prisma.user.upsert({
+    where: { email: "holaszyd1@gmail.com" },
+    update: {
+      name: "Hola Szyd",
+      passwordHash: emptyPasswordHash,
+    },
+    create: {
+      email: "holaszyd1@gmail.com",
+      name: "Hola Szyd",
+      passwordHash: emptyPasswordHash,
+    },
+  });
+
+  console.info("✓ Seeded demo user (demo@choicegrid.app) and empty user (holaszyd1@gmail.com)");
+  return demoUser;
+}
+
+export async function seedProjects(demoUserId: string) {
+  console.info("📦 Seeding channels and projects for demo user...");
 
   const defaultChannels = [
     { name: "DeepDiveDoc", link: "https://youtube.com/@deepdivedoc" },
@@ -95,23 +138,37 @@ export async function seedProjects() {
 
   for (const ch of defaultChannels) {
     await prisma.channel.upsert({
-      where: { name: ch.name },
+      where: {
+        userId_name: {
+          userId: demoUserId,
+          name: ch.name,
+        },
+      },
       update: { link: ch.link },
-      create: ch,
+      create: {
+        name: ch.name,
+        link: ch.link,
+        userId: demoUserId,
+      },
     });
   }
 
-  const channels = await prisma.channel.findMany();
+  const channels = await prisma.channel.findMany({ where: { userId: demoUserId } });
   const channelMap = new Map(channels.map((c) => [c.name, c.id]));
 
   for (const proj of initialProjects) {
     const channelId = channelMap.get(proj.channel);
     await prisma.project.upsert({
-      where: { slug: proj.slug },
+      where: {
+        userId_slug: {
+          userId: demoUserId,
+          slug: proj.slug,
+        },
+      },
       update: {
         name: proj.name,
         emoji: proj.emoji,
-        channel: channelId ? { connect: { id: channelId } } : undefined,
+        channelId: channelId || null,
         hook: proj.hook,
         scriptLink: proj.scriptLink,
         script: proj.script,
@@ -120,10 +177,11 @@ export async function seedProjects() {
         name: proj.name,
         slug: proj.slug,
         emoji: proj.emoji,
-        channel: channelId ? { connect: { id: channelId } } : undefined,
+        channelId: channelId || null,
         hook: proj.hook,
         scriptLink: proj.scriptLink,
         script: proj.script,
+        userId: demoUserId,
       },
     });
   }
@@ -131,10 +189,10 @@ export async function seedProjects() {
   console.info(`✓ Seeded ${initialProjects.length} projects`);
 }
 
-export async function seedInspirations() {
-  console.info("💡 Seeding inspirations and tagging...");
+export async function seedInspirations(demoUserId: string) {
+  console.info("💡 Seeding inspirations and tagging for demo user...");
 
-  const projects = await prisma.project.findMany();
+  const projects = await prisma.project.findMany({ where: { userId: demoUserId } });
   const projectMap = new Map(projects.map((p) => [p.slug, p.id]));
 
   const initialInspirations = [
@@ -186,7 +244,10 @@ export async function seedInspirations() {
 
   for (const item of initialInspirations) {
     const existing = await prisma.inspiration.findFirst({
-      where: { title: item.title },
+      where: {
+        userId: demoUserId,
+        title: item.title,
+      },
     });
 
     const projectId = projectMap.get(item.projectSlug);
@@ -201,6 +262,7 @@ export async function seedInspirations() {
           views: item.views,
           sourceUrl: item.sourceUrl,
           note: item.note,
+          userId: demoUserId,
           projects: projectId
             ? {
                 create: {
@@ -221,23 +283,9 @@ export async function seedInspirations() {
 async function main() {
   console.info("🌱 Seeding Snipvis database...\n");
 
-  // Ensure script column exists and notes/angle columns are removed from Postgres
-  try {
-    await prisma.$executeRawUnsafe(
-      `ALTER TABLE "Project" ADD COLUMN IF NOT EXISTS "script" TEXT;`,
-    );
-    await prisma.$executeRawUnsafe(
-      `ALTER TABLE "Project" DROP COLUMN IF EXISTS "notes";`,
-    );
-    await prisma.$executeRawUnsafe(
-      `ALTER TABLE "Project" DROP COLUMN IF EXISTS "angle";`,
-    );
-  } catch (err) {
-    console.warn("Notice: Column check skipped or already applied:", err);
-  }
-
-  await seedProjects();
-  await seedInspirations();
+  const demoUser = await seedUsers();
+  await seedProjects(demoUser.id);
+  await seedInspirations(demoUser.id);
 
   console.info("\n✅ All seeders complete");
 }

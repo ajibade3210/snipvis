@@ -1,5 +1,6 @@
 import { AI_PROVIDER_CONFIG, DEFAULT_CHANNEL_NAME } from "@/constants/ai";
 import { handleApiError } from "@/lib/api-error";
+import { requireUser } from "@/lib/session";
 import { generateHookPlaceholderSvg } from "@/lib/svg-placeholder";
 import {
   aiHookBreakdownSchema,
@@ -55,6 +56,7 @@ interface DeepSeekChatMessage {
 
 export async function POST(req: NextRequest) {
   try {
+    await requireUser();
     const rawBody = await req.json();
     const input = analyzeHookRequestSchema.parse(rawBody);
 

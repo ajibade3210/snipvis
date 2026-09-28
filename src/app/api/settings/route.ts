@@ -1,23 +1,27 @@
 import { handleApiError } from "@/lib/api-error";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 import { updateUserProfileSchema } from "@/lib/validations";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const profile = await prisma.userProfile.findUnique({
-      where: { id: "default" },
+    const user = await requireUser();
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
     });
 
-    if (!profile) {
-      return NextResponse.json({
-        id: "default",
-        name: null,
-        avatarUrl: null,
-      });
+    if (!dbUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json(profile);
+    return NextResponse.json({
+      id: dbUser.id,
+      email: dbUser.email,
+      name: dbUser.name,
+      avatarUrl: dbUser.image,
+      image: dbUser.image,
+    });
   } catch (err: unknown) {
     return handleApiError(err);
   }
@@ -25,23 +29,27 @@ export async function GET() {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const user = await requireUser();
     const body = await req.json();
     const data = updateUserProfileSchema.parse(body);
 
-    const profile = await prisma.userProfile.upsert({
-      where: { id: "default" },
-      create: {
-        id: "default",
-        name: data.name || null,
-        avatarUrl: data.avatarUrl || null,
-      },
-      update: {
+    const targetImage = data.image !== undefined ? data.image : data.avatarUrl;
+
+    const updated = await prisma.user.update({
+      where: { id: user.id },
+      data: {
         name: data.name !== undefined ? data.name : undefined,
-        avatarUrl: data.avatarUrl !== undefined ? data.avatarUrl : undefined,
+        image: targetImage !== undefined ? targetImage : undefined,
       },
     });
 
-    return NextResponse.json(profile);
+    return NextResponse.json({
+      id: updated.id,
+      email: updated.email,
+      name: updated.name,
+      avatarUrl: updated.image,
+      image: updated.image,
+    });
   } catch (err: unknown) {
     return handleApiError(err);
   }

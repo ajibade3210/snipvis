@@ -2,6 +2,7 @@ import { handleApiError } from "@/lib/api-error";
 import { cacheStore } from "@/lib/cache";
 import { CACHE_KEYS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 import { deleteObject } from "@/lib/storage";
 import { updateProjectThumbnailSchema } from "@/lib/validations";
 import { type NextRequest, NextResponse } from "next/server";
@@ -11,10 +12,18 @@ export async function PATCH(
   { params }: { params: { id: string; thumbId: string } },
 ) {
   try {
+    const user = await requireUser();
+    const project = await prisma.project.findFirst({
+      where: { id: params.id, userId: user.id },
+    });
+    if (!project) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
     const body = await req.json();
     const data = updateProjectThumbnailSchema.parse(body);
 
-    const thumbnail = await prisma.projectThumbnail.findUnique({
+    const thumbnail = await prisma.projectThumbnail.findFirst({
       where: { id: params.thumbId, projectId: params.id },
     });
 
@@ -40,7 +49,7 @@ export async function PATCH(
         }),
       ]);
 
-      await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
+      await cacheStore.del(CACHE_KEYS.PROJECTS_LIST(user.id));
       return NextResponse.json(updated);
     }
 
@@ -52,7 +61,7 @@ export async function PATCH(
       },
     });
 
-    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
+    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST(user.id));
     return NextResponse.json(updated);
   } catch (err: unknown) {
     return handleApiError(err);
@@ -64,7 +73,15 @@ export async function DELETE(
   { params }: { params: { id: string; thumbId: string } },
 ) {
   try {
-    const thumbnail = await prisma.projectThumbnail.findUnique({
+    const user = await requireUser();
+    const project = await prisma.project.findFirst({
+      where: { id: params.id, userId: user.id },
+    });
+    if (!project) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    const thumbnail = await prisma.projectThumbnail.findFirst({
       where: { id: params.thumbId, projectId: params.id },
     });
 
@@ -104,7 +121,7 @@ export async function DELETE(
       }
     }
 
-    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
+    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST(user.id));
     return NextResponse.json({ success: true, id: params.thumbId });
   } catch (err: unknown) {
     return handleApiError(err);

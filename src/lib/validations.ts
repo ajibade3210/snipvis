@@ -140,9 +140,29 @@ export const updateProjectThumbnailSchema = z.object({
   label: z.string().max(80).optional(),
 });
 
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .pipe(z.string().email("Invalid email address")),
+  password: z.string().min(1, "Password is required"),
+});
+
+export const createUserCliSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .pipe(z.string().email("Invalid email address")),
+  password: z.string().min(8, "Password must be at least 8 characters long"),
+  name: z.string().max(100).optional(),
+});
+
 export const updateUserProfileSchema = z.object({
   name: z.string().max(100).nullable().optional(),
   avatarUrl: z.string().url().nullable().optional(),
+  image: z.string().url().nullable().optional(),
 });
 
 /* ========================================================================= */
@@ -160,8 +180,10 @@ export const ProjectThumbnailSchema = z.object({
 
 export const UserProfileSchema = z.object({
   id: z.string(),
+  email: z.string().email().nullable().optional(),
   name: z.string().nullable().optional(),
   avatarUrl: z.string().nullable().optional(),
+  image: z.string().nullable().optional(),
   updatedAt: z.union([z.string(), z.date()]).optional(),
 });
 

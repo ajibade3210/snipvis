@@ -1,6 +1,16 @@
 import { generateHookPlaceholderSvg } from "@/lib/svg-placeholder";
 import type { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@/lib/session", () => ({
+  requireUser: vi
+    .fn()
+    .mockResolvedValue({ id: "creator-01", email: "creator@test.com" }),
+  getCurrentUser: vi
+    .fn()
+    .mockResolvedValue({ id: "creator-01", email: "creator@test.com" }),
+}));
+
 import { POST as analyzeHookRoute } from "./route";
 
 describe("Analyze Hook API Route Handler", () => {

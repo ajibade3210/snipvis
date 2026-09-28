@@ -2,17 +2,22 @@ import { handleApiError } from "@/lib/api-error";
 import { cacheStore, withCache } from "@/lib/cache";
 import { CACHE_KEYS, CACHE_TTL } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 import { createChannelSchema } from "@/types/channel";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    const user = await requireUser();
+    const cacheKey = CACHE_KEYS.CHANNELS_LIST(user.id);
+
     const channels = await withCache(
       cacheStore,
-      CACHE_KEYS.CHANNELS_LIST,
+      cacheKey,
       CACHE_TTL.CHANNELS_LIST_SECONDS,
       () =>
         prisma.channel.findMany({
+          where: { userId: user.id },
           orderBy: { name: "asc" },
           include: {
             _count: { select: { projects: true } },
@@ -27,11 +32,13 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const user = await requireUser();
     const body = await req.json();
     const data = createChannelSchema.parse(body);
 
     const existing = await prisma.channel.findFirst({
       where: {
+        userId: user.id,
         name: { equals: data.name, mode: "insensitive" },
       },
       include: {
@@ -48,7 +55,7 @@ export async function POST(req: NextRequest) {
             _count: { select: { projects: true } },
           },
         });
-        await cacheStore.del(CACHE_KEYS.CHANNELS_LIST);
+        await cacheStore.del(CACHE_KEYS.CHANNELS_LIST(user.id));
         return NextResponse.json(updated, { status: 200 });
       }
       return NextResponse.json(existing, { status: 200 });
@@ -58,13 +65,14 @@ export async function POST(req: NextRequest) {
       data: {
         name: data.name,
         link: data.link || null,
+        userId: user.id,
       },
       include: {
         _count: { select: { projects: true } },
       },
     });
 
-    await cacheStore.del(CACHE_KEYS.CHANNELS_LIST);
+    await cacheStore.del(CACHE_KEYS.CHANNELS_LIST(user.id));
     return NextResponse.json(channel, { status: 201 });
   } catch (err: unknown) {
     return handleApiError(err);

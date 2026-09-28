@@ -6,115 +6,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model Inspiration {
-  id           String               @id @default(cuid())
-  thumbnailUrl String
-  title        String?
-  hook         String?
-  channelName  String?
-  views        String?
-  sourceUrl    String?
-  type         InspirationType      @default(THUMBNAIL)
-  note         String?
-  hookType         String?              @map("hook_type")
-  hookFormula      String?              @map("hook_formula")
-  triggeredEmotion String?              @map("triggered_emotion")
-  strengthScore    Int?                 @map("strength_score")
-  scoreReason      String?              @map("score_reason")
-  improvements     String[]             @default([])
-  titleVariants    String[]             @default([])
-  recreationIdeas  String[]             @default([])
-  riskFlags        String[]             @default([])
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-  projects     ProjectInspiration[]
-}
-
-model Channel {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  link      String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  projects  Project[]
-
-  @@index([name])
-}
-
-model Project {
-  id           String               @id @default(cuid())
-  name         String
-  slug         String               @unique
-  emoji        String?
-  description  String?
-  channelId    String?
-  channel      Channel?             @relation(fields: [channelId], references: [id], onDelete: SetNull)
-  hook         String?              @db.Text
-  scriptLink   String?
-  script       String?              @db.Text
-  status       ProjectStatus        @default(ACTIVE)
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-  inspirations ProjectInspiration[]
-  assets       ProjectAsset[]
-  thumbnails   ProjectThumbnail[]
-
-  @@index([channelId])
-}
-
-model ProjectInspiration {
-  projectId     String
-  inspirationId String
-  note          String?
-  favorite      Boolean     @default(false)
-  createdAt     DateTime    @default(now())
-  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  inspiration   Inspiration @relation(fields: [inspirationId], references: [id], onDelete: Cascade)
-
-  @@id([projectId, inspirationId])
-  @@index([projectId])
-}
-
-model Asset {
-  id          String         @id @default(cuid())
-  url         String
-  type        AssetType      @default(VIDEO)
-  source      AssetSource    @default(OTHER)
-  licenseText String?
-  note        String?
-  createdAt   DateTime       @default(now())
-  projects    ProjectAsset[]
-}
-
-model ProjectAsset {
-  projectId String
-  assetId   String
-  note      String?
-  createdAt DateTime @default(now())
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
-
-  @@id([projectId, assetId])
-}
-
-model ProjectThumbnail {
-  id        String   @id @default(cuid())
-  projectId String
-  url       String
-  isMain    Boolean  @default(false)
-  label     String?
-  createdAt DateTime @default(now())
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@index([projectId])
-}
-
-model UserProfile {
-  id        String   @id @default("default")
-  name      String?
-  avatarUrl String?
-  updatedAt DateTime @updatedAt
-}
 
 enum ProjectStatus {
   ACTIVE
@@ -141,4 +32,189 @@ enum AssetSource {
   MIXKIT
   YOUTUBE
   OTHER
+}
+
+
+// ---------------------------------------------------------
+// 1. AUTHENTICATION & MULTI-TENANCY CORE
+// ---------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  passwordHash  String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts     Account[]
+  sessions     Session[]
+  projects     Project[]
+  channels     Channel[]
+  inspirations Inspiration[]
+  assets       Asset[]
+
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------------------------------------------------------
+// 2. STUDIO DOMAIN MODELS (TENANT-ISOLATED)
+// ---------------------------------------------------------
+
+model Inspiration {
+  id               String               @id @default(cuid())
+  thumbnailUrl     String
+  title            String?
+  hook             String?
+  channelName      String?
+  views            String?
+  sourceUrl        String?
+  type             InspirationType      @default(THUMBNAIL)
+  note             String?
+  hookType         String?              @map("hook_type")
+  hookFormula      String?              @map("hook_formula")
+  triggeredEmotion String?              @map("triggered_emotion")
+  strengthScore    Int?                 @map("strength_score")
+  scoreReason      String?              @map("score_reason")
+  improvements     String[]             @default([])
+  titleVariants    String[]             @default([])
+  recreationIdeas  String[]             @default([])
+  riskFlags        String[]             @default([])
+  userId           String
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  projects         ProjectInspiration[]
+
+  @@index([userId])
+}
+
+model Channel {
+  id        String    @id @default(cuid())
+  name      String
+  link      String?
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projects  Project[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model Project {
+  id           String               @id @default(cuid())
+  name         String
+  slug         String
+  emoji        String?
+  description  String?
+  channelId    String?
+  channel      Channel?             @relation(fields: [channelId], references: [id], onDelete: SetNull)
+  hook         String?              @db.Text
+  scriptLink   String?
+  script       String?              @db.Text
+  status       ProjectStatus        @default(ACTIVE)
+  userId       String
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  inspirations ProjectInspiration[]
+  assets       ProjectAsset[]
+  thumbnails   ProjectThumbnail[]
+
+  @@unique([userId, slug])
+  @@index([userId])
+  @@index([channelId])
+}
+
+model ProjectInspiration {
+  projectId     String
+  inspirationId String
+  note          String?
+  favorite      Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  inspiration   Inspiration @relation(fields: [inspirationId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, inspirationId])
+  @@index([projectId])
+}
+
+model Asset {
+  id          String         @id @default(cuid())
+  url         String
+  type        AssetType      @default(VIDEO)
+  source      AssetSource    @default(OTHER)
+  licenseText String?
+  note        String?
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime       @default(now())
+  projects    ProjectAsset[]
+
+  @@index([userId])
+}
+
+model ProjectAsset {
+  projectId String
+  assetId   String
+  note      String?
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, assetId])
+}
+
+model ProjectThumbnail {
+  id        String   @id @default(cuid())
+  projectId String
+  url       String
+  isMain    Boolean  @default(false)
+  label     String?
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
 }

@@ -6,7 +6,7 @@ import { createAssetSchema } from "@/lib/validations";
 
 import { mediaService } from "@/services/api/media.service";
 import type { AssetSource, AssetType } from "@/types";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface AssetModalProps {
   isOpen: boolean;
@@ -34,6 +34,18 @@ export function AssetModal({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const createAsset = useCreateAsset();
+
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedProjectIds(
+        defaultProjectId
+          ? [defaultProjectId]
+          : projects[0]
+            ? [projects[0].id]
+            : [],
+      );
+    }
+  }, [isOpen, defaultProjectId, projects]);
 
   if (!isOpen) return null;
 

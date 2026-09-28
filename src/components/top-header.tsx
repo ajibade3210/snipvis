@@ -2,6 +2,8 @@
 
 import { useUserProfile } from "@/hooks/use-settings";
 import { useTheme } from "@/lib/theme-provider";
+import { useQueryClient } from "@tanstack/react-query";
+import { signOut } from "next-auth/react";
 import type { RefObject } from "react";
 
 interface TopHeaderProps {
@@ -25,6 +27,13 @@ export function TopHeader({
 }: TopHeaderProps) {
   const { theme, toggle } = useTheme();
   const { data: userProfile } = useUserProfile();
+  const queryClient = useQueryClient();
+
+  const handleSignOut = async () => {
+    queryClient.clear();
+    await signOut({ redirect: false });
+    window.location.href = "/login";
+  };
 
   return (
     <header className="h-[65px] border-b border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5]/95 dark:bg-[#171412]/95 backdrop-blur-md sticky top-0 z-40 px-6 flex items-center justify-between gap-4">
@@ -102,7 +111,11 @@ export function TopHeader({
         <button
           type="button"
           onClick={onOpenSettings}
-          title="Creator Profile & Settings"
+          title={
+            userProfile?.email
+              ? `${userProfile.name || "Creator"} (${userProfile.email})`
+              : "Creator Profile & Settings"
+          }
           className="w-8 h-8 rounded-full overflow-hidden border border-[#E3DCD3] dark:border-[#3C3530] shadow-xs cursor-pointer flex items-center justify-center bg-[#F1EDE6] dark:bg-[#2A2521] transition-transform active:scale-95"
         >
           {userProfile?.avatarUrl ? (
@@ -115,9 +128,32 @@ export function TopHeader({
             <span className="text-[11px] font-black font-grotesk text-[#FF5338]">
               {userProfile?.name
                 ? userProfile.name.slice(0, 2).toUpperCase()
-                : "SV"}
+                : userProfile?.email
+                  ? userProfile.email.slice(0, 2).toUpperCase()
+                  : "SV"}
             </span>
           )}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleSignOut}
+          title="Sign out"
+          className="w-8 h-8 rounded-full flex items-center justify-center text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] hover:text-[#FF5338] transition-colors cursor-pointer"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
         </button>
       </div>
     </header>

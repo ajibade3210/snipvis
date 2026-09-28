@@ -2,6 +2,7 @@ import { handleApiError } from "@/lib/api-error";
 import { cacheStore } from "@/lib/cache";
 import { CACHE_KEYS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 import { updateAssetSchema } from "@/lib/validations";
 import type { AssetSource, AssetType } from "@prisma/client";
 import { type NextRequest, NextResponse } from "next/server";
@@ -11,6 +12,14 @@ export async function PATCH(
   { params }: { params: { id: string } },
 ) {
   try {
+    const user = await requireUser();
+    const existing = await prisma.asset.findFirst({
+      where: { id: params.id, userId: user.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "Asset not found" }, { status: 404 });
+    }
+
     const body = await req.json();
     const data = updateAssetSchema.parse(body);
 
@@ -25,6 +34,7 @@ export async function PATCH(
       },
     });
 
+    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST(user.id));
     return NextResponse.json(updated);
   } catch (err: unknown) {
     return handleApiError(err);
@@ -36,8 +46,9 @@ export async function DELETE(
   { params }: { params: { id: string } },
 ) {
   try {
-    const asset = await prisma.asset.findUnique({
-      where: { id: params.id },
+    const user = await requireUser();
+    const asset = await prisma.asset.findFirst({
+      where: { id: params.id, userId: user.id },
     });
 
     if (!asset) {
@@ -53,7 +64,7 @@ export async function DELETE(
       where: { id: params.id },
     });
 
-    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
+    await cacheStore.del(CACHE_KEYS.PROJECTS_LIST(user.id));
     return NextResponse.json({ success: true, id: params.id });
   } catch (err: unknown) {
     return handleApiError(err);

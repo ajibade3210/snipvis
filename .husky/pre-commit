@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+echo "[Husky] Running TypeScript type check..."
+pnpm type-check
+
+echo "[Husky] Running Biome check and architecture rules..."
+pnpm check
+
+echo "[Husky] Running unit tests..."
+pnpm test

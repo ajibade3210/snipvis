@@ -214,13 +214,17 @@ function CreatorLabShell() {
                   searchQuery={searchQuery}
                   onOpenAddModal={() => setIsAddInspirationOpen(true)}
                   onToggleFavorite={handleToggleFavorite}
-                  onEditNote={(item) =>
+                  onEditNote={(item) => {
+                    if (dbProjects.length === 0) {
+                      setIsNewProjectOpen(true);
+                      return;
+                    }
                     setNoteModalData({
                       inspirationId: item.id,
                       projectId: dbProjects[0]?.id || "",
                       note: item.note,
-                    })
-                  }
+                    });
+                  }}
                   onRemoveItem={() => {}}
                 />
               )}

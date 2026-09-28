@@ -1,9 +1,11 @@
 import { handleApiError } from "@/lib/api-error";
+import { requireUser } from "@/lib/session";
 import { fetchYoutubeSchema } from "@/lib/validations";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
+    await requireUser();
     const { url } = fetchYoutubeSchema.parse(await req.json());
     const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
     const res = await fetch(oembedUrl);
