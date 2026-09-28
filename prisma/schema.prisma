@@ -232,11 +232,14 @@ model Competitor {
   description            String?   @db.Text
   subscriberCountAtAdd   String?   @map("subscriber_count_at_add")
   currentSubscriberCount String?   @map("current_subscriber_count")
+  avgViewCount           String?   @map("avg_view_count")
   lastUploadDate         DateTime? @map("last_upload_date")
   mostPopularVideoUrl    String?   @map("most_popular_video_url")
   mostPopularVideoTitle  String?   @map("most_popular_video_title")
   mostPopularVideoThumb  String?   @map("most_popular_video_thumb")
   uploadFrequency        String?   @map("upload_frequency")
+  startedDate            DateTime? @map("started_date")
+  reproducible           Boolean   @default(false)
   personalNote           String?   @map("personal_note") @db.Text
 
   userId                 String

@@ -11,6 +11,8 @@ export const YoutubeChannelMetaSchema = z.object({
   mostPopularVideoTitle: z.string().optional().nullable(),
   mostPopularVideoUrl: z.string().optional().nullable(),
   mostPopularVideoThumb: z.string().optional().nullable(),
+  startedDate: z.string().optional().nullable(),
+  avgViewCount: z.string().optional().nullable(),
   recentUploadDates: z.array(z.string()).optional(),
 });
 

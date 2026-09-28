@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
         subscriberCountAtAdd:
           data.subscriberCountAtAdd || data.currentSubscriberCount || null,
         currentSubscriberCount: data.currentSubscriberCount || null,
+        avgViewCount: data.avgViewCount || null,
         lastUploadDate:
           data.lastUploadDate &&
           !Number.isNaN(new Date(data.lastUploadDate).getTime())
@@ -68,6 +69,12 @@ export async function POST(req: NextRequest) {
         mostPopularVideoTitle: data.mostPopularVideoTitle || null,
         mostPopularVideoThumb: data.mostPopularVideoThumb || null,
         uploadFrequency: data.uploadFrequency || null,
+        startedDate:
+          data.startedDate &&
+          !Number.isNaN(new Date(data.startedDate).getTime())
+            ? new Date(data.startedDate)
+            : null,
+        reproducible: data.reproducible ?? false,
         personalNote: data.personalNote || null,
         userId: user.id,
       },

@@ -37,6 +37,19 @@ export async function PATCH(
               ? new Date(data.lastUploadDate)
               : null
             : undefined,
+        startedDate:
+          data.startedDate !== undefined
+            ? data.startedDate &&
+              !Number.isNaN(new Date(data.startedDate).getTime())
+              ? new Date(data.startedDate)
+              : null
+            : undefined,
+        avgViewCount:
+          data.avgViewCount !== undefined
+            ? data.avgViewCount || null
+            : undefined,
+        reproducible:
+          data.reproducible !== undefined ? data.reproducible : undefined,
       },
     });
 

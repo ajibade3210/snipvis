@@ -8,11 +8,14 @@ export const CompetitorSchema = z.object({
   description: z.string().nullable(),
   subscriberCountAtAdd: z.string().nullable(),
   currentSubscriberCount: z.string().nullable(),
+  avgViewCount: z.string().nullable().optional(),
   lastUploadDate: z.string().nullable(),
   mostPopularVideoUrl: z.string().nullable(),
   mostPopularVideoTitle: z.string().nullable(),
   mostPopularVideoThumb: z.string().nullable(),
   uploadFrequency: z.string().nullable(),
+  startedDate: z.string().nullable().optional(),
+  reproducible: z.boolean(),
   personalNote: z.string().nullable(),
   userId: z.string(),
   createdAt: z.string().datetime(),
@@ -28,11 +31,14 @@ export type CreateCompetitorInput = {
   description?: string;
   subscriberCountAtAdd?: string;
   currentSubscriberCount?: string;
+  avgViewCount?: string;
   lastUploadDate?: string;
   mostPopularVideoUrl?: string;
   mostPopularVideoTitle?: string;
   mostPopularVideoThumb?: string;
   uploadFrequency?: string;
+  startedDate?: string;
+  reproducible?: boolean;
   personalNote?: string;
 };
 

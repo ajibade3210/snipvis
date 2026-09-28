@@ -90,6 +90,9 @@ function AddCompetitorForm({
   const [mostPopularVideoThumb, setMostPopularVideoThumb] = useState("");
   const [description, setDescription] = useState("");
   const [personalNote, setPersonalNote] = useState("");
+  const [startedDate, setStartedDate] = useState("");
+  const [avgViewCount, setAvgViewCount] = useState("");
+  const [reproducible, setReproducible] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
 
@@ -116,12 +119,27 @@ function AddCompetitorForm({
       if (data.subscriberCount) setCurrentSubscriberCount(data.subscriberCount);
       if (data.uploadFrequency) setUploadFrequency(data.uploadFrequency);
 
+      if (data.avgViewCount) {
+        setAvgViewCount(data.avgViewCount);
+      }
+
       if (data.lastUploadDate) {
         try {
           const isoDate = new Date(data.lastUploadDate)
             .toISOString()
             .split("T")[0];
           setLastUploadDate(isoDate);
+        } catch {
+          // ignore date parse fallback
+        }
+      }
+
+      if (data.startedDate) {
+        try {
+          const isoDate = new Date(data.startedDate)
+            .toISOString()
+            .split("T")[0];
+          setStartedDate(isoDate);
         } catch {
           // ignore date parse fallback
         }
@@ -140,7 +158,9 @@ function AddCompetitorForm({
       setAutoFilledBadge(
         `✨ Auto-filled: ${data.channelName}${
           data.subscriberCount ? ` • ${data.subscriberCount} subs` : ""
-        }${data.uploadFrequency ? ` • ${data.uploadFrequency}` : ""}`,
+        }${data.avgViewCount ? ` • ~${data.avgViewCount} avg views` : ""}${
+          data.uploadFrequency ? ` • ${data.uploadFrequency}` : ""
+        }`,
       );
       setShowAdvanced(true);
     } catch {
@@ -160,11 +180,17 @@ function AddCompetitorForm({
       channelUrl: channelUrl.trim(),
       avatarUrl: avatarUrl.trim() || undefined,
       currentSubscriberCount: currentSubscriberCount.trim() || undefined,
+      avgViewCount: avgViewCount.trim() || undefined,
       uploadFrequency: uploadFrequency.trim() || undefined,
       lastUploadDate:
         lastUploadDate && !Number.isNaN(new Date(lastUploadDate).getTime())
           ? new Date(lastUploadDate).toISOString()
           : undefined,
+      startedDate:
+        startedDate && !Number.isNaN(new Date(startedDate).getTime())
+          ? new Date(startedDate).toISOString()
+          : undefined,
+      reproducible,
       mostPopularVideoTitle: mostPopularVideoTitle.trim() || undefined,
       mostPopularVideoUrl: mostPopularVideoUrl.trim() || undefined,
       mostPopularVideoThumb: mostPopularVideoThumb.trim() || undefined,
@@ -396,6 +422,31 @@ function AddCompetitorForm({
                 className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
               />
             </div>
+
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+                Channel Started Date
+              </label>
+              <input
+                type="date"
+                value={startedDate}
+                onChange={(e) => setStartedDate(e.target.value)}
+                className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+                Avg Views / Video
+              </label>
+              <input
+                type="text"
+                value={avgViewCount}
+                onChange={(e) => setAvgViewCount(e.target.value)}
+                placeholder="e.g. 250K or 1.2M"
+                className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+              />
+            </div>
           </>
         )}
 
@@ -410,6 +461,26 @@ function AddCompetitorForm({
             placeholder="Why you're tracking this channel..."
             className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
           />
+        </div>
+
+        {/* Reproducible Niche Toggle */}
+        <div className="flex items-center gap-3 md:col-span-2 p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#221E1A] border border-[#E3DCD3] dark:border-[#3C3530]">
+          <input
+            type="checkbox"
+            id="competitor-reproducible-checkbox"
+            checked={reproducible}
+            onChange={(e) => setReproducible(e.target.checked)}
+            className="w-4 h-4 rounded text-[#FF5338] accent-[#FF5338] focus:ring-[#FF5338] border-[#E3DCD3] dark:border-[#3C3530] cursor-pointer"
+          />
+          <label
+            htmlFor="competitor-reproducible-checkbox"
+            className="text-xs font-semibold text-[#1E1A17] dark:text-[#FAF8F5] cursor-pointer select-none"
+          >
+            Reproducible Niche{" "}
+            <span className="text-[11px] font-normal text-[#8C8379]">
+              (Can we reproduce/execute this channel&apos;s format and niche?)
+            </span>
+          </label>
         </div>
       </div>
 
@@ -573,6 +644,13 @@ function CompetitorCard({
       })
     : null;
 
+  const startedFormatted = competitor.startedDate
+    ? new Date(competitor.startedDate).toLocaleDateString("en-GB", {
+        month: "short",
+        year: "numeric",
+      })
+    : null;
+
   const hasSubGrowth =
     competitor.subscriberCountAtAdd && competitor.currentSubscriberCount;
 
@@ -607,6 +685,27 @@ function CompetitorCard({
               >
                 {competitor.channelUrl.replace("https://", "")} ↗
               </a>
+              <div className="mt-1.5 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    onUpdate({ reproducible: !competitor.reproducible })
+                  }
+                  title="Click to toggle reproducible niche status"
+                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all border ${
+                    competitor.reproducible
+                      ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100"
+                      : "bg-[#FAF8F5] dark:bg-[#221E1A] text-[#8C8379] border-[#E3DCD3] dark:border-[#3C3530] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
+                  }`}
+                >
+                  <span>{competitor.reproducible ? "✓" : "○"}</span>
+                  <span>
+                    {competitor.reproducible
+                      ? "Reproducible Niche"
+                      : "Mark Reproducible"}
+                  </span>
+                </button>
+              </div>
             </div>
             <button
               type="button"
@@ -652,6 +751,28 @@ function CompetitorCard({
                 was {competitor.subscriberCountAtAdd}
               </p>
             )}
+          </div>
+        )}
+
+        {competitor.avgViewCount && (
+          <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-3 space-y-0.5">
+            <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+              Avg Views / Video
+            </p>
+            <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
+              {competitor.avgViewCount}
+            </p>
+          </div>
+        )}
+
+        {startedFormatted && (
+          <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-3 space-y-0.5">
+            <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+              Channel Started
+            </p>
+            <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
+              {startedFormatted}
+            </p>
           </div>
         )}
 
@@ -787,6 +908,7 @@ function CompetitorCard({
 
 export function CompetitorSpyView() {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [filter, setFilter] = useState<"all" | "reproducible">("all");
 
   const { data: competitors = [], isLoading } = useCompetitors();
   const createMutation = useCreateCompetitor();
@@ -805,6 +927,12 @@ export function CompetitorSpyView() {
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
   };
+
+  const reproducibleCount = competitors.filter((c) => c.reproducible).length;
+  const displayedCompetitors =
+    filter === "reproducible"
+      ? competitors.filter((c) => c.reproducible)
+      : competitors;
 
   return (
     <div className="space-y-6">
@@ -838,6 +966,34 @@ export function CompetitorSpyView() {
         />
       )}
 
+      {/* Filter Tabs */}
+      {!isLoading && competitors.length > 0 && (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setFilter("all")}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors ${
+              filter === "all"
+                ? "bg-[#1E1A17] text-white dark:bg-[#FAF8F5] dark:text-[#1E1A17]"
+                : "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#58524C] dark:text-[#A89F95] hover:bg-[#E3DCD3] dark:hover:bg-[#3C3530]"
+            }`}
+          >
+            All Channels ({competitors.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilter("reproducible")}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5 ${
+              filter === "reproducible"
+                ? "bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white"
+                : "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#58524C] dark:text-[#A89F95] hover:bg-[#E3DCD3] dark:hover:bg-[#3C3530]"
+            }`}
+          >
+            <span>✓</span> Reproducible Niche ({reproducibleCount})
+          </button>
+        </div>
+      )}
+
       {/* Cards Grid */}
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -860,9 +1016,19 @@ export function CompetitorSpyView() {
             upload cadence, subscribers, and top-performing content.
           </p>
         </div>
+      ) : displayedCompetitors.length === 0 ? (
+        <div className="py-16 text-center rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#1E1A17] space-y-2">
+          <p className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
+            No reproducible competitors marked yet
+          </p>
+          <p className="text-xs text-[#58524C] dark:text-[#A89F95]">
+            Click &quot;Mark Reproducible&quot; on any channel card to flag
+            niches you can reproduce.
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {competitors.map((c) => (
+          {displayedCompetitors.map((c) => (
             <CompetitorCard
               key={c.id}
               competitor={c}

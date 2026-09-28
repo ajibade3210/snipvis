@@ -358,6 +358,7 @@ export const createCompetitorSchema = z.object({
   description: z.string().optional().nullable(),
   subscriberCountAtAdd: z.string().optional().nullable(),
   currentSubscriberCount: z.string().optional().nullable(),
+  avgViewCount: z.string().optional().nullable(),
   lastUploadDate: z.string().optional().nullable(),
   mostPopularVideoUrl: z.string().url().optional().or(z.literal("")).nullable(),
   mostPopularVideoTitle: z.string().optional().nullable(),
@@ -368,6 +369,8 @@ export const createCompetitorSchema = z.object({
     .or(z.literal(""))
     .nullable(),
   uploadFrequency: z.string().optional().nullable(),
+  startedDate: z.string().optional().nullable(),
+  reproducible: z.boolean().default(false).optional(),
   personalNote: z.string().optional().nullable(),
 });
 

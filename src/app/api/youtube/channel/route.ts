@@ -41,6 +41,19 @@ function normalizeYoutubeUrl(raw: string): {
   return { normalizedUrl, isVideo };
 }
 
+function formatViews(count: number): string {
+  if (count >= 1_000_000_000) {
+    return `${(count / 1_000_000_000).toFixed(1).replace(/\.0$/, "")}B`;
+  }
+  if (count >= 1_000_000) {
+    return `${(count / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
+  }
+  if (count >= 1_000) {
+    return `${(count / 1_000).toFixed(1).replace(/\.0$/, "")}K`;
+  }
+  return count.toLocaleString();
+}
+
 async function fetchRssVideos(channelId: string) {
   try {
     const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
@@ -64,7 +77,11 @@ async function fetchRssVideos(channelId: string) {
       ...xml.matchAll(/<link rel="alternate" href="([^"]+)"\/>/g),
     ].map((m) => m[1]);
 
-    return { publishedDates, titles, links };
+    const viewCounts = [...xml.matchAll(/<media:statistics\s+views="(\d+)"/g)]
+      .map((m) => Number.parseInt(m[1], 10))
+      .filter((n) => !Number.isNaN(n) && n > 0);
+
+    return { publishedDates, titles, links, viewCounts };
   } catch {
     return null;
   }
@@ -85,6 +102,7 @@ export async function POST(req: NextRequest) {
     let mostPopularVideoUrl: string | null = null;
     let mostPopularVideoThumb: string | null = null;
     let channelId: string | null = null;
+    let startedDate: string | null = null;
 
     if (isVideo) {
       // 1. Fetch video metadata via oEmbed
@@ -166,6 +184,19 @@ export async function POST(req: NextRequest) {
         if (subMatch?.[1]) {
           subscriberCount = subMatch[1].replace(/subscribers?/i, "").trim();
         }
+
+        // Extract channel joined / started date if present
+        const startDateMatch =
+          html.match(/<meta itemprop="startDate" content="([^"]+)"/) ||
+          html.match(
+            /"joinedDateText":\{"runs":\[\{"text":"Joined "\},\{"text":"([^"]+)"\}/i,
+          );
+        if (startDateMatch?.[1]) {
+          const parsed = new Date(startDateMatch[1]);
+          if (!Number.isNaN(parsed.getTime())) {
+            startedDate = parsed.toISOString();
+          }
+        }
       }
     } catch {
       // Fall back if channel scraping is blocked
@@ -174,6 +205,7 @@ export async function POST(req: NextRequest) {
     // 3. If channelId found, fetch public RSS to get recent video dates & compute cadence
     let lastUploadDate: string | null = null;
     let uploadFrequency: string | null = null;
+    let avgViewCount: string | null = null;
     let recentUploadDates: string[] = [];
 
     if (channelId) {
@@ -183,6 +215,11 @@ export async function POST(req: NextRequest) {
         if (recentUploadDates.length > 0) {
           lastUploadDate = recentUploadDates[0];
           uploadFrequency = computeUploadFrequency(recentUploadDates);
+        }
+        if (rssData.viewCounts && rssData.viewCounts.length > 0) {
+          const sum = rssData.viewCounts.reduce((a, b) => a + b, 0);
+          const avg = Math.round(sum / rssData.viewCounts.length);
+          avgViewCount = formatViews(avg);
         }
         if (!mostPopularVideoTitle && rssData.titles.length > 0) {
           mostPopularVideoTitle = rssData.titles[0];
@@ -203,11 +240,13 @@ export async function POST(req: NextRequest) {
       avatarUrl,
       description,
       subscriberCount,
+      avgViewCount,
       lastUploadDate,
       uploadFrequency,
       mostPopularVideoTitle,
       mostPopularVideoUrl,
       mostPopularVideoThumb,
+      startedDate,
       recentUploadDates,
     };
 
