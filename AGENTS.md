@@ -25,6 +25,7 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 7. **End With Completion Confirmation** — End with a one-line statement confirming whether anything important is missing: `"Nothing important appears to be missing."`
 8. **No Automatic Git Commits or Pushes** — Never execute git commits or git pushes automatically. Version control staging, committing, and pushing to GitHub must be handled manually by the user.
 9. **No Automatic Install Commands** — Never run dependency install or package-manager commands (`npm install`, `npm i`, `npm add`, `npm ci`, `npm uninstall`, `yarn add`, `pnpm add`, or similar). When a dependency is needed, stop, provide the exact command in a code block, and wait. The user runs it manually and asks you to continue afterward.
+10. **STRICTLY NEVER RUN `prisma db push` — MIGRATION DISCIPLINE ONLY**: Never execute `npx prisma db push` or `prisma db push` under any circumstances. Using `prisma db push` bypasses the migration tracking table (`_prisma_migrations`), desynchronizes the live database schema from migration history, and causes catastrophic drift errors during `npx prisma migrate dev` and `npx prisma migrate deploy`. All database schema changes MUST be executed through version-controlled migration files in `prisma/migrations/` using `npx prisma migrate dev` (or applying timestamped migration SQL with `npx prisma migrate deploy`).
 
 ---
 
@@ -502,6 +503,7 @@ npm run db:studio
 - ⚠️ **Be Mindful of Cache Invalidation:** If adding mutations to `/api/projects`, always invalidate or delete the `projects:list` cache key in `cacheStore` (`src/lib/cache/index.ts`).
 - ⚠️ **Vitest No-Test Error:** Running `npm run test` will exit with code 1 until at least one `*.test.ts` file is created.
 - 🚫 **No Automatic Install Commands:** Do NOT run `npm install` or any other package install/uninstall command. Pause, give the user the exact command, and resume only after the user confirms it has been run.
+- 🚫 **STRICTLY NEVER RUN `prisma db push`:** Never run `prisma db push`. It bypasses migration history tracking in `_prisma_migrations`, causing schema drift errors and prompting destructive schema resets that wipe out development data. Always use `npx prisma migrate dev` (or create a migration in `prisma/migrations/` and apply with `npx prisma migrate deploy`).
 
 ---
 
