@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
     const projectInput: Prisma.ProjectCreateInput = {
       name: data.name,
       slug,
+      emoji: data.emoji || null,
       description: data.description,
       channel: data.channelId ? { connect: { id: data.channelId } } : undefined,
       hook: data.hook,

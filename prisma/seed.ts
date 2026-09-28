@@ -11,6 +11,7 @@ export const initialProjects = [
   {
     name: "Storytelling Formats",
     slug: "storytelling-formats",
+    emoji: "🎬",
     channel: "DeepDiveDoc",
     hook: "The moment the federal agents entered the penthouse, they discovered 12 empty hard drives...",
     scriptLink: "https://figma.com",
@@ -31,6 +32,7 @@ export const initialProjects = [
   {
     name: "MrBeast Teardown",
     slug: "mrbeast-teardown",
+    emoji: "💰",
     channel: "MrBeast",
     hook: "In the next 7 minutes, I will test if anyone can survive 100 hours in an impenetrable vault...",
     scriptLink: "https://docs.google.com",
@@ -49,6 +51,7 @@ export const initialProjects = [
   {
     name: "Tech Essay 2026",
     slug: "tech-essay-2026",
+    emoji: "⚡",
     channel: "TechCraft",
     hook: "Every major tech company is hiding the exact same secret about their 2026 releases...",
     scriptLink: "https://notion.so",
@@ -64,6 +67,7 @@ export const initialProjects = [
   {
     name: "Finance Hooks",
     slug: "finance-hooks",
+    emoji: "🔥",
     channel: "BrainWave",
     hook: "Why 84% of high earners are secretly planning to quit before the end of the quarter...",
     scriptLink: "https://docs.google.com",
@@ -106,6 +110,7 @@ export async function seedProjects() {
       where: { slug: proj.slug },
       update: {
         name: proj.name,
+        emoji: proj.emoji,
         channel: channelId ? { connect: { id: channelId } } : undefined,
         hook: proj.hook,
         scriptLink: proj.scriptLink,
@@ -114,6 +119,7 @@ export async function seedProjects() {
       create: {
         name: proj.name,
         slug: proj.slug,
+        emoji: proj.emoji,
         channel: channelId ? { connect: { id: channelId } } : undefined,
         hook: proj.hook,
         scriptLink: proj.scriptLink,

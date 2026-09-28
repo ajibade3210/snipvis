@@ -70,10 +70,6 @@ export function ChannelsView({
               {channels.length}
             </span>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Manage creator channels and quickly filter associated production
-            projects.
-          </p>
         </div>
 
         <Button
@@ -372,22 +368,22 @@ export function ChannelsView({
 
                       {/* Actions */}
                       <td className="py-3 px-4 text-right">
-                        <Button
-                          variant="ghost"
+                        <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             onOpenNewProjectForChannel(channel.id);
                           }}
-                          title="New Project"
-                          aria-label="New Project"
-                          className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground inline-flex items-center justify-center ml-auto"
+                          title={`Add project for ${channel.name}`}
+                          aria-label={`Add project for ${channel.name}`}
+                          className="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-[#221E1A] hover:bg-[#F1EDE6] dark:hover:bg-[#2C2723] text-muted-foreground hover:text-[#FF5338] dark:hover:text-[#FF5338] transition-colors shadow-xs cursor-pointer"
                         >
                           <svg
-                            className="w-4 h-4"
+                            className="w-3.5 h-3.5"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
-                            strokeWidth="2"
+                            strokeWidth="2.5"
                           >
                             <path
                               strokeLinecap="round"
@@ -395,7 +391,7 @@ export function ChannelsView({
                               d="M12 4.5v15m7.5-7.5h-15"
                             />
                           </svg>
-                        </Button>
+                        </button>
                       </td>
                     </tr>
                   );

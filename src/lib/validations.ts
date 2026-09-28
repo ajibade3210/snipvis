@@ -43,6 +43,7 @@ export const createProjectSchema = z.object({
     .string()
     .regex(/^[a-z0-9-]+$/)
     .optional(),
+  emoji: z.string().trim().max(10).optional().nullable(),
   description: z.string().max(500).optional().nullable(),
   channelId: z.string().optional().nullable(),
   channel: z.string().max(100).optional().nullable(),
@@ -168,6 +169,7 @@ export const ProjectSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
+  emoji: z.string().nullable().optional(),
   description: z.string().nullable().optional(),
   channelId: z.string().nullable().optional(),
   channel: z.union([z.string(), channelSchema]).nullable().optional(),

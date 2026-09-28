@@ -6,6 +6,7 @@ import { ProjectModal } from "@/components/project-modal";
 import { ThumbnailGallery } from "@/components/thumbnail-gallery";
 import { GlobalVaultView } from "@/components/views/global-vault-view";
 import { useProject, useUpdateProject } from "@/hooks/use-projects";
+import { DEFAULT_PROJECT_EMOJIS } from "@/lib/constants";
 import type {
   FormattedInspiration,
   ProjectRecord,
@@ -18,10 +19,13 @@ interface ProjectWorkspaceViewProps {
   project: {
     id: string;
     name: string;
+    emoji?: string | null;
     description?: string | null;
     channelId?: string | null;
     channel?: ChannelRecord | string | null;
     status?: "ACTIVE" | "DONE";
+    hook?: string | null;
+    script?: string | null;
     thumbnails?: ProjectThumbnailRecord[];
     _count?: { inspirations: number; assets: number };
   };
@@ -52,14 +56,28 @@ export function ProjectWorkspaceView({
 }: ProjectWorkspaceViewProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const updateProjectMutation = useUpdateProject();
   const { data: liveProject } = useProject(project.id);
-  const isDone = project.status === "DONE";
+  const currentProject = liveProject ?? project;
+  const isDone = currentProject.status === "DONE";
+
+  const handleUpdateEmoji = async (newEmoji: string | null) => {
+    setIsEmojiPickerOpen(false);
+    try {
+      await updateProjectMutation.mutateAsync({
+        id: currentProject.id,
+        data: { emoji: newEmoji },
+      });
+    } catch (err) {
+      console.error("Failed to update project emoji:", err);
+    }
+  };
 
   const handleToggleDone = async () => {
     try {
       await updateProjectMutation.mutateAsync({
-        id: project.id,
+        id: currentProject.id,
         data: { status: isDone ? "ACTIVE" : "DONE" },
       });
     } catch (err) {
@@ -67,23 +85,90 @@ export function ProjectWorkspaceView({
     }
   };
 
-  const thumbnailCount = project.thumbnails?.length ?? 0;
+  const thumbnailCount = currentProject.thumbnails?.length ?? 0;
 
   return (
     <div className="space-y-6">
       {/* Project Stage Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E3DCD3] dark:border-[#3C3530] pb-5">
         <div className="flex flex-wrap items-center gap-3">
+          {/* Project Emoji & Quick Picker */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsEmojiPickerOpen((prev) => !prev)}
+              title={
+                currentProject.emoji
+                  ? "Change or remove emoji"
+                  : "Add project emoji"
+              }
+              className="p-1 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center justify-center cursor-pointer group"
+            >
+              {currentProject.emoji ? (
+                <span className="text-2xl sm:text-3xl leading-none">
+                  {currentProject.emoji}
+                </span>
+              ) : (
+                <span className="text-xs font-bold text-muted-foreground group-hover:text-foreground px-2 py-1 rounded-lg border border-dashed border-black/15 dark:border-white/15">
+                  + Add Icon
+                </span>
+              )}
+            </button>
+
+            {isEmojiPickerOpen && (
+              <>
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  aria-label="Close emoji picker"
+                  className="fixed inset-0 z-40 bg-transparent cursor-default border-none p-0 w-full h-full"
+                  onClick={() => setIsEmojiPickerOpen(false)}
+                />
+                <div className="absolute left-0 top-full mt-2 z-50 p-2.5 bg-card border border-border rounded-xl shadow-xl w-64 space-y-2 animate-in fade-in-0 zoom-in-95">
+                  <div className="flex items-center justify-between text-xs font-bold text-muted-foreground pb-1 border-b border-border/50">
+                    <span>Project Emoji</span>
+                    {currentProject.emoji ? (
+                      <button
+                        type="button"
+                        onClick={() => handleUpdateEmoji(null)}
+                        className="text-[11px] text-destructive hover:underline cursor-pointer"
+                      >
+                        Delete
+                      </button>
+                    ) : null}
+                  </div>
+                  <div className="grid grid-cols-6 gap-1.5">
+                    {DEFAULT_PROJECT_EMOJIS.map((em) => (
+                      <button
+                        key={em}
+                        type="button"
+                        onClick={() => handleUpdateEmoji(em)}
+                        className={`w-8 h-8 rounded-lg text-lg flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-transform active:scale-90 cursor-pointer ${
+                          currentProject.emoji === em
+                            ? "bg-primary/20 ring-1 ring-primary"
+                            : ""
+                        }`}
+                      >
+                        {em}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
-            {project.name}
+            {currentProject.name}
           </h1>
 
           {(() => {
             const channelName =
-              typeof project.channel === "object" && project.channel
-                ? project.channel.name
-                : typeof project.channel === "string"
-                  ? project.channel
+              typeof currentProject.channel === "object" &&
+              currentProject.channel
+                ? currentProject.channel.name
+                : typeof currentProject.channel === "string"
+                  ? currentProject.channel
                   : null;
             return channelName ? (
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-white font-bold">
@@ -240,7 +325,7 @@ export function ProjectWorkspaceView({
                 : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white"
             }`}
           >
-            📎 Assets ({project._count?.assets ?? 0})
+            📎 Assets ({currentProject._count?.assets ?? 0})
           </button>
         </div>
       </div>
@@ -260,9 +345,9 @@ export function ProjectWorkspaceView({
 
       {activeTab === "thumbnails" && (
         <ThumbnailGallery
-          projectId={project.id}
-          projectName={project.name}
-          thumbnails={project.thumbnails}
+          projectId={currentProject.id}
+          projectName={currentProject.name}
+          thumbnails={currentProject.thumbnails}
         />
       )}
 
@@ -303,8 +388,8 @@ export function ProjectWorkspaceView({
 
       {activeTab === "assets" && (
         <AssetsView
-          projectId={project.id}
-          projectName={project.name}
+          projectId={currentProject.id}
+          projectName={currentProject.name}
           projects={allProjects}
         />
       )}
@@ -312,7 +397,7 @@ export function ProjectWorkspaceView({
       <ProjectModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        project={project}
+        project={currentProject}
       />
 
       {/* Script Preview Overlay — clean standalone content view */}
@@ -329,7 +414,7 @@ export function ProjectWorkspaceView({
                 Preview
               </span>
               <span className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5] truncate max-w-xs">
-                {project.name}
+                {currentProject.name}
               </span>
             </div>
             <button
@@ -357,23 +442,23 @@ export function ProjectWorkspaceView({
           {/* Content Area */}
           <div className="max-w-3xl mx-auto px-6 py-12">
             {/* Hook */}
-            {liveProject?.hook && (
+            {currentProject.hook && (
               <div className="mb-10 p-5 rounded-xl bg-[#FFEBE7]/60 dark:bg-red-950/20 border border-[#FF5338]/20">
                 <p className="text-[10px] font-black uppercase tracking-widest text-[#FF5338] mb-2">
                   🎣 Opening Hook
                 </p>
                 <p className="text-sm leading-relaxed text-[#1E1A17] dark:text-[#FAF8F5] whitespace-pre-wrap font-medium">
-                  {liveProject.hook}
+                  {currentProject.hook}
                 </p>
               </div>
             )}
 
             {/* Script body */}
-            {liveProject?.script ? (
+            {currentProject.script ? (
               <div
                 className="prose prose-sm dark:prose-invert max-w-none text-[#1E1A17] dark:text-[#FAF8F5] leading-relaxed"
                 // biome-ignore lint/security/noDangerouslySetInnerHtml: script is user-authored rich text from ScriptEditor
-                dangerouslySetInnerHTML={{ __html: liveProject.script }}
+                dangerouslySetInnerHTML={{ __html: currentProject.script }}
               />
             ) : (
               <div className="text-center py-20 text-[#8C8379] dark:text-[#A89F95]">

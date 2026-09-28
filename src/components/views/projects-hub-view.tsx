@@ -108,7 +108,7 @@ export function ProjectsHubView({
 
               <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner mb-2 border border-white/30 group-hover:scale-110 transition-transform">
                 <span className="font-black text-xl tracking-tight text-white drop-shadow-sm">
-                  {initials || "SV"}
+                  {proj.emoji || initials || "SV"}
                 </span>
               </div>
 
@@ -143,6 +143,7 @@ export function ProjectsHubView({
           <div className="flex-1 min-w-0">
             {/* Title (2-line clamp, bold) */}
             <h3 className="font-extrabold text-sm md:text-base text-[#1E1A17] dark:text-[#FAF8F5] leading-snug line-clamp-2 group-hover:text-[#FF5338] transition-colors">
+              {proj.emoji ? <span className="mr-1.5">{proj.emoji}</span> : null}
               {proj.name}
             </h3>
 
@@ -181,10 +182,6 @@ export function ProjectsHubView({
               {activeCount} Active Production{activeCount === 1 ? "" : "s"}
             </span>
           </div>
-          <p className="text-xs text-[#58524C] dark:text-[#A89F95] font-medium mt-1">
-            Browse and package all video productions, benchmark A/B thumbnails,
-            and manage creative research.
-          </p>
         </div>
 
         <button

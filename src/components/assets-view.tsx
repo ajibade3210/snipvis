@@ -144,15 +144,10 @@ export function AssetsView({
       {/* Spreadsheet Header Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FAF8F5] dark:bg-[#1E1A17] p-3.5 rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530]">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#059669] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-            📊
-          </div>
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
-                {projectName
-                  ? `${projectName} Assets Sheet`
-                  : "Project Assets Sheet"}
+                Assets Sheet
               </h2>
               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E3DCD3]/60 dark:bg-[#2A2521] text-[#58524C] dark:text-[#A89F95]">
                 {assets.length} Records

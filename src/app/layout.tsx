@@ -7,15 +7,6 @@ export const metadata: Metadata = {
   title: `${BRAND_ASSETS.APP_NAME} ${BRAND_ASSETS.APP_SUFFIX} — ${BRAND_ASSETS.TAGLINE}`,
   description:
     "A creator intelligence platform for video research, packaging, and production management.",
-  icons: {
-    icon: [
-      { url: BRAND_ASSETS.FAVICON, type: "image/x-icon" },
-      { url: BRAND_ASSETS.ICON, type: "image/png" },
-    ],
-    apple: [
-      { url: BRAND_ASSETS.APPLE_ICON, sizes: "180x180", type: "image/png" },
-    ],
-  },
 };
 
 const themeInitScript = `(function() {

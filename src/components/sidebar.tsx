@@ -11,6 +11,7 @@ interface SidebarProps {
     id: string;
     name: string;
     slug?: string;
+    emoji?: string | null;
     channel?: ChannelRecord | string | null;
     status?: "ACTIVE" | "DONE";
     updatedAt?: string | Date;
@@ -81,9 +82,6 @@ export function Sidebar({
     });
   };
 
-  // Pre-assigned emojis for projects to give that creator-lab energy
-  const projectEmojis = ["🔥", "⚡", "💰", "🎬", "🚀", "🎯", "🧬", "🧠"];
-
   return (
     <aside
       className={`border-r border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#1A1613] flex flex-col h-[calc(100vh-65px)] sticky top-[65px] select-none text-[#1E1A17] dark:text-[#FAF8F5] transition-all duration-200 shrink-0 ${
@@ -93,7 +91,7 @@ export function Sidebar({
       {/* Brand & Minimize / Expand Action Header */}
       {isCollapsed ? (
         <div className="p-3 border-b border-[#E3DCD3]/70 dark:border-[#3C3530]/70 flex flex-col items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-black border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center shrink-0 shadow-xs">
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-white border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center shrink-0 shadow-xs">
             <img
               src={BRAND_ASSETS.LOGO}
               alt={`${BRAND_ASSETS.APP_NAME} ${BRAND_ASSETS.APP_SUFFIX}`}
@@ -124,8 +122,8 @@ export function Sidebar({
         </div>
       ) : (
         <div className="p-4 border-b border-[#E3DCD3]/70 dark:border-[#3C3530]/70 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full overflow-hidden bg-black border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center shrink-0 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-full overflow-hidden bg-white border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center shrink-0 shadow-xs">
               <img
                 src={BRAND_ASSETS.LOGO}
                 alt={`${BRAND_ASSETS.APP_NAME} ${BRAND_ASSETS.APP_SUFFIX}`}
@@ -495,9 +493,8 @@ export function Sidebar({
               </div>
             ) : null
           ) : (
-            topActiveProjects.map((proj, idx) => {
+            topActiveProjects.map((proj) => {
               const isSelected = selectedProjectId === proj.id;
-              const emoji = projectEmojis[idx % projectEmojis.length];
 
               return (
                 <button
@@ -520,8 +517,30 @@ export function Sidebar({
                         }`
                   }
                 >
-                  <div className="flex items-center gap-2 truncate pr-2">
-                    <span className="text-sm shrink-0">{emoji}</span>
+                  <div
+                    className={
+                      isCollapsed
+                        ? "flex items-center justify-center"
+                        : "flex items-center gap-2 truncate pr-2"
+                    }
+                  >
+                    {proj.emoji ? (
+                      <span className="text-sm shrink-0">{proj.emoji}</span>
+                    ) : (
+                      <svg
+                        className="w-3.5 h-3.5 text-[#8C8379] shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                        />
+                      </svg>
+                    )}
                     {!isCollapsed && (
                       <span className="truncate">{proj.name}</span>
                     )}

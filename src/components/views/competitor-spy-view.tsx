@@ -111,10 +111,6 @@ export function CompetitorSpyView({ onImportOutlier }: CompetitorSpyViewProps) {
               {outliers.length} Viral Outliers
             </span>
           </div>
-          <p className="text-xs text-[#58524C] dark:text-[#A89F95] font-medium mt-1">
-            Track benchmark creator channels and isolate statistical outliers
-            that achieved &gt;5x to &gt;10x standard performance.
-          </p>
         </div>
       </div>
 

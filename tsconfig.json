@@ -19,7 +19,6 @@
         "./src/*"
       ]
     },
-    "baseUrl": ".",
     "allowImportingTsExtensions": true,
     "allowJs": true,
     "resolveJsonModule": true,
@@ -34,6 +33,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.d.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

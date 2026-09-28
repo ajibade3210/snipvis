@@ -121,6 +121,7 @@ export interface ProjectRecord {
   id: string;
   name: string;
   slug: string;
+  emoji?: string | null;
   description?: string | null;
   channelId?: string | null;
   channel?: ChannelRecord | string | null;

@@ -122,12 +122,9 @@ export function SettingsView({ inspirations, projects }: SettingsViewProps) {
       <div className="border-b border-[#E3DCD3] dark:border-[#3C3530] pb-5">
         <div className="flex items-center gap-3">
           <h2 className="text-2xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
-            ⚙️ Settings & Creator Profile
+            ⚙️ Settings
           </h2>
         </div>
-        <p className="text-xs text-[#58524C] dark:text-[#A89F95] font-medium mt-1">
-          Customize your channel profile, appearance, backups, and demo content.
-        </p>
       </div>
 
       <div className="space-y-6">

@@ -45,6 +45,7 @@ model Project {
   id           String               @id @default(cuid())
   name         String
   slug         String               @unique
+  emoji        String?
   description  String?
   channelId    String?
   channel      Channel?             @relation(fields: [channelId], references: [id], onDelete: SetNull)

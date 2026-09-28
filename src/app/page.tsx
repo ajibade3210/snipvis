@@ -155,10 +155,6 @@ function CreatorLabShell() {
         }}
         searchInputRef={searchInputRef}
         itemCount={formattedInspirations.length}
-        onOpenQuickCapture={() => {
-          setInitialYoutubeUrl("");
-          setIsAddInspirationOpen(true);
-        }}
         onOpenAddInspiration={() => setIsAddInspirationOpen(true)}
         onOpenSettings={() =>
           updateUrl({ view: "settings", project: null, tab: null })

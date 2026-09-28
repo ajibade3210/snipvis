@@ -97,7 +97,7 @@ export function GlobalVaultView({
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
-              Steal Like An Artist Inspo Vault
+              Inspo Vault
             </h1>
             <span className="px-3 py-1 rounded-full text-xs font-bold font-grotesk bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40 dark:text-red-300">
               {filtered.length} Inspirations

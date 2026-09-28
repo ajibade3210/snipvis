@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useChannels, useCreateChannel } from "@/hooks/use-channels";
 import { useCreateProject, useUpdateProject } from "@/hooks/use-projects";
+import { DEFAULT_PROJECT_EMOJIS } from "@/lib/constants";
 import { createProjectSchema, updateProjectSchema } from "@/lib/validations";
 import type { ChannelRecord } from "@/types/channel";
 import { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ interface ProjectModalProps {
   project?: {
     id: string;
     name: string;
+    emoji?: string | null;
     channelId?: string | null;
     channel?: ChannelRecord | string | null;
     description?: string | null;
@@ -29,6 +31,7 @@ export function ProjectModal({
   project,
 }: ProjectModalProps) {
   const [name, setName] = useState("");
+  const [emoji, setEmoji] = useState("");
   const [selectedChannelId, setSelectedChannelId] = useState("");
   const [isCreatingChannelInline, setIsCreatingChannelInline] = useState(false);
   const [inlineChannelName, setInlineChannelName] = useState("");
@@ -48,6 +51,7 @@ export function ProjectModal({
   useEffect(() => {
     if (project && isOpen) {
       setName(project.name ?? "");
+      setEmoji(project.emoji ?? "");
       setDescription(project.description ?? "");
       const initialChanId =
         project.channelId ??
@@ -57,6 +61,7 @@ export function ProjectModal({
       setSelectedChannelId(initialChanId ?? "");
     } else if (!project && isOpen) {
       setName("");
+      setEmoji("");
       setDescription("");
       setSelectedChannelId(defaultChannelId ?? "");
     }
@@ -99,6 +104,7 @@ export function ProjectModal({
 
     const payload = {
       name: name.trim(),
+      emoji: emoji.trim() || null,
       channelId: selectedChannelId || null,
       description: description.trim() || undefined,
     };
@@ -172,16 +178,58 @@ export function ProjectModal({
 
           <div>
             <label className="block text-xs font-medium mb-1.5 text-foreground">
-              Project Name <span className="text-red-500">*</span>
+              Project Emoji & Name <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              required
-              placeholder="e.g. How MrBeast Edits Retention Hooks"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                maxLength={10}
+                placeholder="✨"
+                value={emoji}
+                onChange={(e) => setEmoji(e.target.value)}
+                title="Project emoji icon"
+                className="w-12 h-9 text-center text-lg rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+              <input
+                type="text"
+                required
+                placeholder="e.g. How MrBeast Edits Retention Hooks"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="flex-1 h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
+
+            {/* Quick Emoji Presets & Clear */}
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="text-[11px] text-muted-foreground mr-1">
+                Presets:
+              </span>
+              {DEFAULT_PROJECT_EMOJIS.map((em) => (
+                <button
+                  key={em}
+                  type="button"
+                  onClick={() => setEmoji(em)}
+                  className={`w-7 h-7 rounded-md text-sm flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer ${
+                    emoji === em
+                      ? "bg-primary/15 border border-primary/40 ring-1 ring-primary/40"
+                      : "bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10"
+                  }`}
+                  title={`Select ${em}`}
+                >
+                  {em}
+                </button>
+              ))}
+              {emoji ? (
+                <button
+                  type="button"
+                  onClick={() => setEmoji("")}
+                  className="text-[11px] text-muted-foreground hover:text-destructive underline ml-1 cursor-pointer"
+                >
+                  Remove Emoji
+                </button>
+              ) : null}
+            </div>
           </div>
 
           <div>

@@ -10,7 +10,6 @@ interface TopHeaderProps {
   onSearchKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   searchInputRef: RefObject<HTMLInputElement>;
   itemCount: number;
-  onOpenQuickCapture: () => void;
   onOpenAddInspiration: () => void;
   onOpenSettings?: () => void;
 }
@@ -21,7 +20,6 @@ export function TopHeader({
   onSearchKeyDown,
   searchInputRef,
   itemCount,
-  onOpenQuickCapture,
   onOpenAddInspiration,
   onOpenSettings,
 }: TopHeaderProps) {
@@ -63,22 +61,9 @@ export function TopHeader({
       <div className="flex items-center gap-2.5">
         <button
           type="button"
-          onClick={onOpenQuickCapture}
-          className="h-10 px-4 rounded-full border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#221E1A] hover:bg-[#F7F4EF] dark:hover:bg-[#2A2521] text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1.5 shadow-xs transition-transform active:scale-[0.98]"
-        >
-          <span className="text-[#FF8A00] text-sm">⚡</span>
-          <span>Quick Capture</span>
-          <kbd className="ml-0.5 px-1.5 py-0.2 text-[10px] font-grotesk font-bold rounded bg-[#F1EDE6] dark:bg-[#2A2521] text-[#8C8379]">
-            N
-          </kbd>
-        </button>
-
-        <button
-          type="button"
           onClick={onOpenAddInspiration}
-          className="h-10 px-5 rounded-full bg-[#FF5338] text-white text-xs font-bold flex items-center gap-1.5 tactile-btn shadow-sm hover:bg-[#d93820]"
+          className="h-10 px-5 rounded-full bg-[#FF5338] text-white text-xs font-bold flex items-center gap-1.5 tactile-btn shadow-sm hover:bg-[#d93820] cursor-pointer"
         >
-          <span className="text-base font-black leading-none">+</span>
           <span>Add Inspiration</span>
         </button>
 
