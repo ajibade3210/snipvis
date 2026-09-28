@@ -25,4 +25,4 @@
 
 ## Deploy to Vercel
 
-- Push to GitHub, import to Vercel, set DATABASE_URL env, deploy. Done...
+- Push to GitHub, import to Vercel, set DATABASE_URL env, deploy. Done.
