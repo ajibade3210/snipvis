@@ -52,6 +52,7 @@ CREATE TABLE "Project" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
+    "emoji" TEXT,
     "description" TEXT,
     "channelId" TEXT,
     "hook" TEXT,

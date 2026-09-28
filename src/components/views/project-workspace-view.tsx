@@ -93,10 +93,19 @@ export function ProjectWorkspaceView({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E3DCD3] dark:border-[#3C3530] pb-5">
         <div className="flex flex-wrap items-center gap-3">
           {/* Project Emoji & Quick Picker */}
-          <div className="relative">
+          <div
+            className="relative"
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setIsEmojiPickerOpen(false);
+              }
+            }}
+          >
             <button
               type="button"
               onClick={() => setIsEmojiPickerOpen((prev) => !prev)}
+              aria-expanded={isEmojiPickerOpen}
+              aria-haspopup="dialog"
               title={
                 currentProject.emoji
                   ? "Change or remove emoji"
@@ -133,7 +142,7 @@ export function ProjectWorkspaceView({
                         onClick={() => handleUpdateEmoji(null)}
                         className="text-[11px] text-destructive hover:underline cursor-pointer"
                       >
-                        Delete
+                        Remove
                       </button>
                     ) : null}
                   </div>
@@ -142,6 +151,8 @@ export function ProjectWorkspaceView({
                       <button
                         key={em}
                         type="button"
+                        title={`Select ${em}`}
+                        aria-label={`Select ${em}`}
                         onClick={() => handleUpdateEmoji(em)}
                         className={`w-8 h-8 rounded-lg text-lg flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-transform active:scale-90 cursor-pointer ${
                           currentProject.emoji === em
