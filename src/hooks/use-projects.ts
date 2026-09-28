@@ -1,6 +1,6 @@
 import { QUERY_KEYS } from "@/lib/constants";
 import { projectService } from "@/services/api/project.service";
-import type { UpdateProjectInput } from "@/types";
+import type { CreateProjectThumbnailInput, UpdateProjectInput } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useProjects = () =>
@@ -34,6 +34,63 @@ export const useUpdateProject = () => {
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
       qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS, variables.id] });
+    },
+  });
+};
+
+export const useAddThumbnail = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      projectId,
+      data,
+    }: {
+      projectId: string;
+      data: CreateProjectThumbnailInput;
+    }) => projectService.addThumbnail(projectId, data),
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
+      qc.invalidateQueries({
+        queryKey: [QUERY_KEYS.PROJECTS, variables.projectId],
+      });
+    },
+  });
+};
+
+export const useSetMainThumbnail = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      projectId,
+      thumbId,
+    }: {
+      projectId: string;
+      thumbId: string;
+    }) => projectService.setMainThumbnail(projectId, thumbId),
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
+      qc.invalidateQueries({
+        queryKey: [QUERY_KEYS.PROJECTS, variables.projectId],
+      });
+    },
+  });
+};
+
+export const useDeleteThumbnail = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      projectId,
+      thumbId,
+    }: {
+      projectId: string;
+      thumbId: string;
+    }) => projectService.deleteThumbnail(projectId, thumbId),
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
+      qc.invalidateQueries({
+        queryKey: [QUERY_KEYS.PROJECTS, variables.projectId],
+      });
     },
   });
 };

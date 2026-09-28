@@ -4,6 +4,8 @@ import { z } from "zod";
 /* 1. DOMAIN ENUMS                                                           */
 /* ========================================================================= */
 
+export const projectStatusEnum = z.enum(["ACTIVE", "DONE"]);
+
 export const inspirationTypeEnum = z.enum(["THUMBNAIL", "TITLE", "HOOK"]);
 
 export const assetTypeEnum = z.enum([
@@ -37,6 +39,7 @@ export const createProjectSchema = z.object({
   hook: z.string().max(5000).optional().nullable(),
   scriptLink: z.string().url().optional().or(z.literal("")).nullable(),
   script: z.string().optional().nullable(),
+  status: projectStatusEnum.default("ACTIVE").optional(),
 });
 
 export const updateProjectSchema = createProjectSchema.partial();
@@ -81,6 +84,14 @@ export const createAssetSchema = z.object({
     .min(1),
 });
 
+export const updateAssetSchema = z.object({
+  url: z.string().url().optional(),
+  type: assetTypeEnum.optional(),
+  source: assetSourceEnum.optional(),
+  licenseText: z.string().nullable().optional(),
+  note: z.string().nullable().optional(),
+});
+
 export const fetchYoutubeSchema = z.object({
   url: z
     .string()
@@ -91,9 +102,40 @@ export const fetchYoutubeSchema = z.object({
     ),
 });
 
+export const createProjectThumbnailSchema = z.object({
+  url: z.string().url("Must be a valid URL"),
+  label: z.string().max(80).optional(),
+});
+
+export const updateProjectThumbnailSchema = z.object({
+  isMain: z.boolean().optional(),
+  label: z.string().max(80).optional(),
+});
+
+export const updateUserProfileSchema = z.object({
+  name: z.string().max(100).nullable().optional(),
+  avatarUrl: z.string().url().nullable().optional(),
+});
+
 /* ========================================================================= */
 /* 3. RESPONSE & ENTITY DTO SCHEMAS                                          */
 /* ========================================================================= */
+
+export const ProjectThumbnailSchema = z.object({
+  id: z.string(),
+  projectId: z.string(),
+  url: z.string(),
+  isMain: z.boolean(),
+  label: z.string().nullable().optional(),
+  createdAt: z.union([z.string(), z.date()]).optional(),
+});
+
+export const UserProfileSchema = z.object({
+  id: z.string(),
+  name: z.string().nullable().optional(),
+  avatarUrl: z.string().nullable().optional(),
+  updatedAt: z.union([z.string(), z.date()]).optional(),
+});
 
 export const ProjectSchema = z.object({
   id: z.string(),
@@ -104,8 +146,10 @@ export const ProjectSchema = z.object({
   hook: z.string().nullable().optional(),
   scriptLink: z.string().nullable().optional(),
   script: z.string().nullable().optional(),
+  status: projectStatusEnum.optional(),
   createdAt: z.union([z.string(), z.date()]).optional(),
   updatedAt: z.union([z.string(), z.date()]).optional(),
+  thumbnails: z.array(ProjectThumbnailSchema).optional(),
   _count: z.object({ inspirations: z.number(), assets: z.number() }).optional(),
 });
 
@@ -164,6 +208,8 @@ export const mediaFolderCategoryEnum = z.enum([
   "audios",
   "documents",
   "others",
+  "thumbnails",
+  "avatars",
 ]);
 
 export const presignedUrlRequestSchema = z.object({

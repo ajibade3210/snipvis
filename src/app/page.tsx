@@ -29,11 +29,17 @@ function CreatorLabShell() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const activeNav = (searchParams.get("view") as NavView) || "global";
+  const rawNav = searchParams.get("view");
+  const activeNav: NavView =
+    rawNav === "active-projects" ? "projects" : (rawNav as NavView) || "global";
+
   const selectedProjectId = searchParams.get("project") || null;
   const activeTab =
-    (searchParams.get("tab") as "inspirations" | "brief" | "assets") ||
-    "inspirations";
+    (searchParams.get("tab") as
+      | "inspirations"
+      | "brief"
+      | "assets"
+      | "thumbnails") || "brief";
 
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -160,6 +166,9 @@ function CreatorLabShell() {
           setIsAddInspirationOpen(true);
         }}
         onOpenAddInspiration={() => setIsAddInspirationOpen(true)}
+        onOpenSettings={() =>
+          updateUrl({ view: "settings", project: null, tab: null })
+        }
       />
 
       <div className="flex-1 flex flex-col md:flex-row">
@@ -224,7 +233,8 @@ function CreatorLabShell() {
                   onRemoveItem={() => {}}
                 />
               )}
-              {activeNav === "active-projects" && (
+              {(activeNav === "projects" ||
+                activeNav === "active-projects") && (
                 <ProjectsHubView
                   projects={dbProjects}
                   onSelectProject={(id) =>

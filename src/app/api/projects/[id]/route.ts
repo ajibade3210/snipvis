@@ -15,6 +15,7 @@ export async function GET(
       include: {
         inspirations: { include: { inspiration: true } },
         assets: { include: { asset: true } },
+        thumbnails: { orderBy: { createdAt: "asc" } },
       },
     });
     if (!project) {
@@ -48,6 +49,11 @@ export async function PATCH(
     const project = await prisma.project.update({
       where: { id: params.id },
       data,
+      include: {
+        inspirations: { include: { inspiration: true } },
+        assets: { include: { asset: true } },
+        thumbnails: { orderBy: { createdAt: "asc" } },
+      },
     });
     await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
     return NextResponse.json(project);

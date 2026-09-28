@@ -30,10 +30,12 @@ model Project {
   hook         String?              @db.Text
   scriptLink   String?
   script       String?              @db.Text
+  status       ProjectStatus        @default(ACTIVE)
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
   inspirations ProjectInspiration[]
   assets       ProjectAsset[]
+  thumbnails   ProjectThumbnail[]
 }
 
 model ProjectInspiration {
@@ -69,6 +71,30 @@ model ProjectAsset {
   asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
   @@id([projectId, assetId])
+}
+
+model ProjectThumbnail {
+  id        String   @id @default(cuid())
+  projectId String
+  url       String
+  isMain    Boolean  @default(false)
+  label     String?
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model UserProfile {
+  id        String   @id @default("default")
+  name      String?
+  avatarUrl String?
+  updatedAt DateTime @updatedAt
+}
+
+enum ProjectStatus {
+  ACTIVE
+  DONE
 }
 
 enum InspirationType {

@@ -15,7 +15,10 @@ export async function GET() {
       () =>
         prisma.project.findMany({
           orderBy: { updatedAt: "desc" },
-          include: { _count: { select: { inspirations: true, assets: true } } },
+          include: {
+            _count: { select: { inspirations: true, assets: true } },
+            thumbnails: { orderBy: { createdAt: "asc" } },
+          },
         }),
     );
     return NextResponse.json(projects);
@@ -39,10 +42,15 @@ export async function POST(req: NextRequest) {
       hook: data.hook,
       scriptLink: data.scriptLink || null,
       script: data.script,
+      status: data.status,
     };
 
     const project = await prisma.project.create({
       data: projectInput,
+      include: {
+        thumbnails: true,
+        _count: { select: { inspirations: true, assets: true } },
+      },
     });
     await cacheStore.del(CACHE_KEYS.PROJECTS_LIST);
     return NextResponse.json(project, { status: 201 });

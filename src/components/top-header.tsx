@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserProfile } from "@/hooks/use-settings";
 import { useTheme } from "@/lib/theme-provider";
 import type { RefObject } from "react";
 
@@ -11,6 +12,7 @@ interface TopHeaderProps {
   itemCount: number;
   onOpenQuickCapture: () => void;
   onOpenAddInspiration: () => void;
+  onOpenSettings?: () => void;
 }
 
 export function TopHeader({
@@ -21,8 +23,10 @@ export function TopHeader({
   itemCount,
   onOpenQuickCapture,
   onOpenAddInspiration,
+  onOpenSettings,
 }: TopHeaderProps) {
   const { theme, toggle } = useTheme();
+  const { data: userProfile } = useUserProfile();
 
   return (
     <header className="h-[65px] border-b border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5]/95 dark:bg-[#171412]/95 backdrop-blur-md sticky top-0 z-40 px-6 flex items-center justify-between gap-4">
@@ -110,13 +114,26 @@ export function TopHeader({
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
 
-        <div className="w-8 h-8 rounded-full overflow-hidden border border-[#E3DCD3] dark:border-[#3C3530] shadow-xs cursor-pointer">
-          <img
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <button
+          type="button"
+          onClick={onOpenSettings}
+          title="Creator Profile & Settings"
+          className="w-8 h-8 rounded-full overflow-hidden border border-[#E3DCD3] dark:border-[#3C3530] shadow-xs cursor-pointer flex items-center justify-center bg-[#F1EDE6] dark:bg-[#2A2521] transition-transform active:scale-95"
+        >
+          {userProfile?.avatarUrl ? (
+            <img
+              src={userProfile.avatarUrl}
+              alt={userProfile.name || "Profile"}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-[11px] font-black font-grotesk text-[#FF5338]">
+              {userProfile?.name
+                ? userProfile.name.slice(0, 2).toUpperCase()
+                : "SV"}
+            </span>
+          )}
+        </button>
       </div>
     </header>
   );

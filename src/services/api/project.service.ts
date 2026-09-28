@@ -1,6 +1,10 @@
 import { API_ROUTES } from "@/lib/constants";
-import { ProjectSchema } from "@/lib/validations";
-import type { CreateProjectInput, UpdateProjectInput } from "@/types";
+import { ProjectSchema, ProjectThumbnailSchema } from "@/lib/validations";
+import type {
+  CreateProjectInput,
+  CreateProjectThumbnailInput,
+  UpdateProjectInput,
+} from "@/types";
 import { z } from "zod";
 import { api } from "./client";
 
@@ -26,6 +30,23 @@ export const projectService = {
       method: "PATCH",
       body: JSON.stringify(data),
       schema: ProjectSchema,
+    }),
+  addThumbnail: (projectId: string, data: CreateProjectThumbnailInput) =>
+    api(`${API_ROUTES.PROJECTS}/${projectId}/thumbnails`, {
+      method: "POST",
+      body: JSON.stringify(data),
+      schema: ProjectThumbnailSchema,
+    }),
+  setMainThumbnail: (projectId: string, thumbId: string) =>
+    api(`${API_ROUTES.PROJECTS}/${projectId}/thumbnails/${thumbId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ isMain: true }),
+      schema: ProjectThumbnailSchema,
+    }),
+  deleteThumbnail: (projectId: string, thumbId: string) =>
+    api(`${API_ROUTES.PROJECTS}/${projectId}/thumbnails/${thumbId}`, {
+      method: "DELETE",
+      schema: z.object({ success: z.boolean(), id: z.string() }),
     }),
   seed: (opts?: { force?: boolean }) =>
     api(`${API_ROUTES.SEED}${opts?.force ? "?force=true" : ""}`, {

@@ -10,6 +10,7 @@ interface SidebarProps {
     name: string;
     slug?: string;
     channel?: string | null;
+    status?: "ACTIVE" | "DONE";
     _count?: { inspirations: number; assets: number };
   }>;
   totalInspirationsCount: number;
@@ -32,6 +33,11 @@ export function Sidebar({
   onAnalyzeUrl,
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const activeProjects = projects.filter((p) => p.status !== "DONE");
+  const doneProjects = projects.filter((p) => p.status === "DONE");
+  const sortedProjects = [...activeProjects, ...doneProjects];
+  const activeCount = activeProjects.length;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -210,21 +216,23 @@ export function Sidebar({
           )}
         </button>
 
-        {/* Active Projects */}
+        {/* Projects */}
         <button
           type="button"
-          onClick={() => onSelectNav("active-projects")}
-          title={`Active Projects (${projects.length})`}
-          aria-label="Active Projects"
+          onClick={() => onSelectNav("projects")}
+          title={`Projects (${activeCount} active)`}
+          aria-label="Projects"
           className={
             isCollapsed
               ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                  selectedProjectId === null && activeNav === "active-projects"
+                  selectedProjectId === null &&
+                  (activeNav === "projects" || activeNav === "active-projects")
                     ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5]"
                     : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/70 dark:hover:bg-[#2A2521]"
                 }`
               : `w-full text-left px-3.5 py-2 rounded-xl font-semibold text-xs tracking-tight flex items-center justify-between transition-colors cursor-pointer ${
-                  selectedProjectId === null && activeNav === "active-projects"
+                  selectedProjectId === null &&
+                  (activeNav === "projects" || activeNav === "active-projects")
                     ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5]"
                     : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/70 dark:hover:bg-[#2A2521]"
                 }`
@@ -250,11 +258,11 @@ export function Sidebar({
                 d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"
               />
             </svg>
-            {!isCollapsed && <span>Active Projects</span>}
+            {!isCollapsed && <span>Projects</span>}
           </div>
           {!isCollapsed && (
             <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold font-grotesk bg-[#EBE5DC] dark:bg-[#322C28] text-[#58524C] dark:text-[#A89F95]">
-              {projects.length}
+              {activeCount}
             </span>
           )}
         </button>
@@ -351,7 +359,7 @@ export function Sidebar({
         {!isCollapsed && (
           <div className="flex items-center justify-between px-3 mb-2">
             <span className="text-[11px] font-bold tracking-wider uppercase text-[#8C8379]">
-              PROJECTS ({projects.length})
+              PROJECTS ({activeCount})
             </span>
             <svg
               className="w-3.5 h-3.5 text-[#8C8379]"
@@ -376,7 +384,7 @@ export function Sidebar({
               : "space-y-0.5"
           }
         >
-          {projects.length === 0 ? (
+          {sortedProjects.length === 0 ? (
             !isCollapsed ? (
               <div className="p-3 text-center rounded-xl bg-white/50 dark:bg-[#221E1A]/50 border border-dashed border-[#E3DCD3] dark:border-[#3C3530]">
                 <p className="text-xs text-[#58524C] dark:text-[#A89F95]">
@@ -392,9 +400,12 @@ export function Sidebar({
               </div>
             ) : null
           ) : (
-            projects.map((proj, idx) => {
+            sortedProjects.map((proj, idx) => {
               const isSelected = selectedProjectId === proj.id;
-              const emoji = projectEmojis[idx % projectEmojis.length];
+              const isDone = proj.status === "DONE";
+              const emoji = isDone
+                ? "✓"
+                : projectEmojis[idx % projectEmojis.length];
               const count = proj._count?.inspirations ?? 0;
 
               return (
@@ -402,16 +413,20 @@ export function Sidebar({
                   key={proj.id}
                   type="button"
                   onClick={() => onSelectProject(proj.id)}
-                  title={`${proj.name} (${count} inspirations)`}
+                  title={`${proj.name} ${isDone ? "(Completed)" : ""} (${count} inspirations)`}
                   aria-label={proj.name}
                   className={
                     isCollapsed
                       ? `w-10 h-10 rounded-xl text-xs font-bold tracking-tight flex items-center justify-center transition-all cursor-pointer ${
+                          isDone ? "opacity-60 hover:opacity-100" : ""
+                        } ${
                           isSelected
                             ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5] ring-2 ring-[#FF5338]/40 shadow-xs"
                             : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/60 dark:hover:bg-[#2A2521]"
                         }`
                       : `w-full text-left px-3 py-2 rounded-xl text-xs font-bold tracking-tight flex items-center justify-between transition-all group cursor-pointer ${
+                          isDone ? "opacity-60 hover:opacity-100" : ""
+                        } ${
                           isSelected
                             ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs"
                             : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/60 dark:hover:bg-[#2A2521]"
@@ -419,7 +434,11 @@ export function Sidebar({
                   }
                 >
                   <div className="flex items-center gap-2 truncate pr-2">
-                    <span className="text-sm shrink-0">{emoji}</span>
+                    <span
+                      className={`text-sm shrink-0 ${isDone ? "text-emerald-500 font-bold" : ""}`}
+                    >
+                      {emoji}
+                    </span>
                     {!isCollapsed && (
                       <span className="truncate">{proj.name}</span>
                     )}

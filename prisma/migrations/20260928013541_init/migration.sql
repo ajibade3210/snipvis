@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "ProjectStatus" AS ENUM ('ACTIVE', 'DONE');
+
+-- CreateEnum
 CREATE TYPE "InspirationType" AS ENUM ('THUMBNAIL', 'TITLE', 'HOOK');
 
 -- CreateEnum
@@ -34,6 +37,7 @@ CREATE TABLE "Project" (
     "hook" TEXT,
     "scriptLink" TEXT,
     "script" TEXT,
+    "status" "ProjectStatus" NOT NULL DEFAULT 'ACTIVE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -74,11 +78,36 @@ CREATE TABLE "ProjectAsset" (
     CONSTRAINT "ProjectAsset_pkey" PRIMARY KEY ("projectId","assetId")
 );
 
+-- CreateTable
+CREATE TABLE "ProjectThumbnail" (
+    "id" TEXT NOT NULL,
+    "projectId" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "isMain" BOOLEAN NOT NULL DEFAULT false,
+    "label" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ProjectThumbnail_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "UserProfile" (
+    "id" TEXT NOT NULL DEFAULT 'default',
+    "name" TEXT,
+    "avatarUrl" TEXT,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "UserProfile_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Project_slug_key" ON "Project"("slug");
 
 -- CreateIndex
 CREATE INDEX "ProjectInspiration_projectId_idx" ON "ProjectInspiration"("projectId");
+
+-- CreateIndex
+CREATE INDEX "ProjectThumbnail_projectId_idx" ON "ProjectThumbnail"("projectId");
 
 -- AddForeignKey
 ALTER TABLE "ProjectInspiration" ADD CONSTRAINT "ProjectInspiration_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -91,3 +120,6 @@ ALTER TABLE "ProjectAsset" ADD CONSTRAINT "ProjectAsset_projectId_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "ProjectAsset" ADD CONSTRAINT "ProjectAsset_assetId_fkey" FOREIGN KEY ("assetId") REFERENCES "Asset"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProjectThumbnail" ADD CONSTRAINT "ProjectThumbnail_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;

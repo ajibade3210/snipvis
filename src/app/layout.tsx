@@ -1,5 +1,15 @@
 import "@/styles/globals.css";
 import { Providers } from "@/lib/providers";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Snipvis OS — Creator Research Lab",
+  description:
+    "A creator intelligence platform for video research, packaging, and production management.",
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
 
 export default function RootLayout({
   children,

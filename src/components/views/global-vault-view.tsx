@@ -91,16 +91,12 @@ export function GlobalVaultView({
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
-              Global Vault
+              Steal Like An Artist Inspo Vault
             </h1>
             <span className="px-3 py-1 rounded-full text-xs font-bold font-grotesk bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40 dark:text-red-300">
               {filtered.length} Inspirations
             </span>
           </div>
-          <p className="text-xs text-[#58524C] dark:text-[#A89F95] font-medium mt-1">
-            All saved thumbnails, hooks, and titles across your library and
-            creator channels.
-          </p>
         </div>
 
         {/* View Switcher & Sort */}
@@ -191,97 +187,190 @@ export function GlobalVaultView({
         </div>
       </div>
 
-      {/* 4-Column Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-24">
-        {filtered.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] overflow-hidden card-lift flex flex-col justify-between"
-          >
-            <div>
-              {/* Media Thumbnail Container */}
-              <div className="aspect-video bg-[#F1EDE6] dark:bg-[#2A2521] relative overflow-hidden group">
+      {/* Cards — layout driven by viewMode */}
+      {viewMode === "masonry" ? (
+        <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-0 pb-24">
+          {filtered.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] overflow-hidden card-lift flex flex-col justify-between break-inside-avoid mb-6"
+            >
+              <div>
+                <div className="bg-[#F1EDE6] dark:bg-[#2A2521] relative overflow-hidden group">
+                  <img
+                    src={item.thumbnailUrl}
+                    alt={item.title || "Inspiration thumbnail"}
+                    className="w-full h-auto object-cover group-hover:scale-103 transition-transform duration-300"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = "none";
+                    }}
+                  />
+                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-white text-[10px] font-grotesk font-bold">
+                    {item.duration || "14:20"}
+                  </div>
+                  <div
+                    className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-grotesk font-extrabold shadow-sm ${
+                      item.ctrColor || "bg-[#059669]"
+                    }`}
+                  >
+                    {item.ctrBadge || "📈 13.5% CTR"}
+                  </div>
+                </div>
+                <div className="p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
+                        item.categoryColor ||
+                        "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
+                      }`}
+                    >
+                      {item.categoryTag || "Viral Benchmark"}
+                    </span>
+                    <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[100px]">
+                      @{item.channelName || "Creator"}
+                    </span>
+                  </div>
+                  <h3 className="font-extrabold text-sm leading-snug text-[#1E1A17] dark:text-[#FAF8F5]">
+                    {item.title}
+                  </h3>
+                  <div className="bg-[#F7F4EF] dark:bg-[#25201C] rounded-xl p-3 border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-grotesk font-bold">
+                      <span className="text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1">
+                        <span className="text-[#FF5338]">TT</span>{" "}
+                        {item.insightLeft || "Pacing Test"}
+                      </span>
+                      <span
+                        className={item.insightRightColor || "text-[#059669]"}
+                      >
+                        {item.insightRight || "Variant A Win"}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
+                      💡 <span className="font-medium">Note:</span> "
+                      {item.note || "Curated in research vault."}"
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="p-4 pt-1 border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`w-2 h-2 rounded-full ${item.projectDot || "bg-[#FF5338]"}`}
+                  />
+                  <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[130px]">
+                    {item.projectName || "Global Vault"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => onEditNote(item)}
+                    className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
+                    title="Edit Note"
+                  >
+                    📝
+                  </button>
+                  {selectedProjectId ? (
+                    <button
+                      type="button"
+                      onClick={() => onRemoveItem(item)}
+                      className="p-1 rounded text-[#8C8379] hover:text-red-500"
+                      title="Detach from project"
+                    >
+                      ✕
+                    </button>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => onToggleFavorite(item)}
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                      item.projectContext?.favorite
+                        ? "text-[#FF5338]"
+                        : "text-[#8C8379] hover:text-[#FF5338]"
+                    }`}
+                    title="Bookmark & Save"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill={
+                        item.projectContext?.favorite ? "currentColor" : "none"
+                      }
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : viewMode === "compact" ? (
+        <div className="flex flex-col divide-y divide-[#E3DCD3] dark:divide-[#3C3530] border border-[#E3DCD3] dark:border-[#3C3530] rounded-2xl overflow-hidden bg-white dark:bg-[#1E1A17] pb-24">
+          {filtered.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center gap-4 px-4 py-3 hover:bg-[#F7F4EF] dark:hover:bg-[#25201C] transition-colors group"
+            >
+              {/* Small thumbnail */}
+              <div className="w-20 h-12 rounded-lg overflow-hidden bg-[#F1EDE6] dark:bg-[#2A2521] shrink-0 relative">
                 <img
                   src={item.thumbnailUrl}
-                  alt={item.title || "Inspiration thumbnail"}
-                  className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
+                  alt={item.title || ""}
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     (e.target as HTMLElement).style.display = "none";
                   }}
                 />
-
-                {/* Duration Badge */}
-                <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-white text-[10px] font-grotesk font-bold">
-                  {item.duration || "14:20"}
-                </div>
-
-                {/* CTR Badge */}
                 <div
-                  className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-grotesk font-extrabold shadow-sm ${
+                  className={`absolute top-1 right-1 px-1 py-px rounded text-white text-[9px] font-bold ${
                     item.ctrColor || "bg-[#059669]"
                   }`}
                 >
-                  {item.ctrBadge || "📈 13.5% CTR"}
+                  {(item.ctrBadge || "13.5%")
+                    .replace(" CTR", "")
+                    .replace(/[^0-9.%]/g, "")
+                    .trim() || "CTR"}
                 </div>
               </div>
 
-              {/* Card Body */}
-              <div className="p-4 space-y-3">
-                <div className="flex items-center justify-between gap-2">
+              {/* Details */}
+              <div className="flex-1 min-w-0">
+                <h3 className="text-xs font-extrabold text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-1 group-hover:text-[#FF5338] transition-colors">
+                  {item.title}
+                </h3>
+                <div className="flex items-center gap-2 mt-0.5">
                   <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
+                    className={`text-[9px] font-bold px-1.5 py-px rounded-full ${
                       item.categoryColor ||
                       "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
                     }`}
                   >
-                    {item.categoryTag || "Viral Benchmark"}
+                    {item.categoryTag || "Benchmark"}
                   </span>
-                  <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[100px]">
+                  <span className="text-[10px] text-[#8C8379] dark:text-[#A89F95] truncate">
                     @{item.channelName || "Creator"}
                   </span>
-                </div>
-
-                <h3 className="font-extrabold text-sm leading-snug text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-2">
-                  {item.title}
-                </h3>
-
-                {/* Embedded Insight Container */}
-                <div className="bg-[#F7F4EF] dark:bg-[#25201C] rounded-xl p-3 border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px] font-grotesk font-bold">
-                    <span className="text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1">
-                      <span className="text-[#FF5338]">TT</span>{" "}
-                      {item.insightLeft || "Pacing Test"}
+                  {item.note && (
+                    <span className="text-[10px] text-[#58524C] dark:text-[#A89F95] italic truncate hidden sm:block">
+                      “{item.note}”
                     </span>
-                    <span
-                      className={item.insightRightColor || "text-[#059669]"}
-                    >
-                      {item.insightRight || "Variant A Win"}
-                    </span>
-                  </div>
-                  <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
-                    💡 <span className="font-medium">Note:</span> "
-                    {item.note || "Curated in research vault."}"
-                  </div>
+                  )}
                 </div>
               </div>
-            </div>
 
-            {/* Bottom Row */}
-            <div className="p-4 pt-1 border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50 flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`w-2 h-2 rounded-full ${item.projectDot || "bg-[#FF5338]"}`}
-                />
-                <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[130px]">
-                  {item.projectName || "Global Vault"}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1.5">
+              {/* Actions */}
+              <div className="flex items-center gap-1 shrink-0">
                 <button
                   type="button"
                   onClick={() => onEditNote(item)}
-                  className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
+                  className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
                   title="Edit Note"
                 >
                   📝
@@ -290,8 +379,8 @@ export function GlobalVaultView({
                   <button
                     type="button"
                     onClick={() => onRemoveItem(item)}
-                    className="p-1 rounded text-[#8C8379] hover:text-red-500"
-                    title="Detach from project"
+                    className="p-1 rounded text-[#8C8379] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Detach"
                   >
                     ✕
                   </button>
@@ -299,15 +388,14 @@ export function GlobalVaultView({
                 <button
                   type="button"
                   onClick={() => onToggleFavorite(item)}
-                  className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                  className={`w-6 h-6 rounded flex items-center justify-center transition-colors ${
                     item.projectContext?.favorite
                       ? "text-[#FF5338]"
                       : "text-[#8C8379] hover:text-[#FF5338]"
                   }`}
-                  title="Bookmark & Save"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="w-3.5 h-3.5"
                     fill={
                       item.projectContext?.favorite ? "currentColor" : "none"
                     }
@@ -324,9 +412,146 @@ export function GlobalVaultView({
                 </button>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        /* Default: Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-24">
+          {filtered.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] overflow-hidden card-lift flex flex-col justify-between"
+            >
+              <div>
+                {/* Media Thumbnail Container */}
+                <div className="aspect-video bg-[#F1EDE6] dark:bg-[#2A2521] relative overflow-hidden group">
+                  <img
+                    src={item.thumbnailUrl}
+                    alt={item.title || "Inspiration thumbnail"}
+                    className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = "none";
+                    }}
+                  />
+
+                  {/* Duration Badge */}
+                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-white text-[10px] font-grotesk font-bold">
+                    {item.duration || "14:20"}
+                  </div>
+
+                  {/* CTR Badge */}
+                  <div
+                    className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-grotesk font-extrabold shadow-sm ${
+                      item.ctrColor || "bg-[#059669]"
+                    }`}
+                  >
+                    {item.ctrBadge || "📈 13.5% CTR"}
+                  </div>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
+                        item.categoryColor ||
+                        "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
+                      }`}
+                    >
+                      {item.categoryTag || "Viral Benchmark"}
+                    </span>
+                    <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[100px]">
+                      @{item.channelName || "Creator"}
+                    </span>
+                  </div>
+
+                  <h3 className="font-extrabold text-sm leading-snug text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-2">
+                    {item.title}
+                  </h3>
+
+                  {/* Embedded Insight Container */}
+                  <div className="bg-[#F7F4EF] dark:bg-[#25201C] rounded-xl p-3 border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-grotesk font-bold">
+                      <span className="text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1">
+                        <span className="text-[#FF5338]">TT</span>{" "}
+                        {item.insightLeft || "Pacing Test"}
+                      </span>
+                      <span
+                        className={item.insightRightColor || "text-[#059669]"}
+                      >
+                        {item.insightRight || "Variant A Win"}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
+                      💡 <span className="font-medium">Note:</span> "
+                      {item.note || "Curated in research vault."}"
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Row */}
+              <div className="p-4 pt-1 border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`w-2 h-2 rounded-full ${item.projectDot || "bg-[#FF5338]"}`}
+                  />
+                  <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[130px]">
+                    {item.projectName || "Global Vault"}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => onEditNote(item)}
+                    className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
+                    title="Edit Note"
+                  >
+                    📝
+                  </button>
+                  {selectedProjectId ? (
+                    <button
+                      type="button"
+                      onClick={() => onRemoveItem(item)}
+                      className="p-1 rounded text-[#8C8379] hover:text-red-500"
+                      title="Detach from project"
+                    >
+                      ✕
+                    </button>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => onToggleFavorite(item)}
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                      item.projectContext?.favorite
+                        ? "text-[#FF5338]"
+                        : "text-[#8C8379] hover:text-[#FF5338]"
+                    }`}
+                    title="Bookmark & Save"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill={
+                        item.projectContext?.favorite ? "currentColor" : "none"
+                      }
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Empty State */}
       {filtered.length === 0 && (

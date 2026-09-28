@@ -22,3 +22,30 @@ export const useCreateAsset = () => {
     },
   });
 };
+
+export const useUpdateAsset = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Parameters<typeof assetService.update>[1];
+    }) => assetService.update(id, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.ASSETS] });
+    },
+  });
+};
+
+export const useDeleteAsset = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => assetService.delete(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.ASSETS] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
+    },
+  });
+};

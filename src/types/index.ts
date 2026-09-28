@@ -7,6 +7,8 @@ import type {
   MediaUploadResultSchema,
   PresignedUrlResponseSchema,
   ProjectSchema,
+  ProjectThumbnailSchema,
+  UserProfileSchema,
   YoutubeInfoSchema,
   assetSourceEnum,
   assetTypeEnum,
@@ -14,18 +16,24 @@ import type {
   createAssetSchema,
   createInspirationSchema,
   createProjectSchema,
+  createProjectThumbnailSchema,
   deleteMediaRequestSchema,
   fetchYoutubeSchema,
   inspirationTypeEnum,
   mediaFolderCategoryEnum,
   presignedUrlRequestSchema,
+  projectStatusEnum,
   storageEnvSchema,
   tagInspirationSchema,
   unifiedPresignedRequestSchema,
+  updateAssetSchema,
   updateProjectSchema,
+  updateProjectThumbnailSchema,
+  updateUserProfileSchema,
 } from "@/lib/validations";
 import type { z } from "zod";
 
+export type ProjectStatus = z.infer<typeof projectStatusEnum>;
 export type InspirationType = z.infer<typeof inspirationTypeEnum>;
 export type AssetType = z.infer<typeof assetTypeEnum>;
 export type AssetSource = z.infer<typeof assetSourceEnum>;
@@ -33,9 +41,17 @@ export type MediaFolderCategory = z.infer<typeof mediaFolderCategoryEnum>;
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
+export type CreateProjectThumbnailInput = z.infer<
+  typeof createProjectThumbnailSchema
+>;
+export type UpdateProjectThumbnailInput = z.infer<
+  typeof updateProjectThumbnailSchema
+>;
+export type UpdateUserProfileInput = z.infer<typeof updateUserProfileSchema>;
 export type CreateInspirationInput = z.infer<typeof createInspirationSchema>;
 export type TagInspirationInput = z.infer<typeof tagInspirationSchema>;
 export type CreateAssetInput = z.infer<typeof createAssetSchema>;
+export type UpdateAssetInput = z.infer<typeof updateAssetSchema>;
 export type FetchYoutubeInput = z.infer<typeof fetchYoutubeSchema>;
 
 export type PresignedUrlRequest = z.infer<typeof presignedUrlRequestSchema>;
@@ -48,6 +64,8 @@ export type UnifiedPresignedRequest = z.infer<
 export type DeleteMediaRequest = z.infer<typeof deleteMediaRequestSchema>;
 
 export type ProjectResponse = z.infer<typeof ProjectSchema>;
+export type ProjectThumbnailResponse = z.infer<typeof ProjectThumbnailSchema>;
+export type UserProfileResponse = z.infer<typeof UserProfileSchema>;
 export type InspirationResponse = z.infer<typeof InspirationSchema>;
 export type AssetResponse = z.infer<typeof AssetSchema>;
 export type YoutubeInfoResponse = z.infer<typeof YoutubeInfoSchema>;
@@ -65,6 +83,7 @@ export type StorageEnvConfig = z.infer<typeof storageEnvSchema>;
 
 export type NavView =
   | "global"
+  | "projects"
   | "active-projects"
   | "competitor-spy"
   | "settings";
@@ -72,6 +91,22 @@ export type NavView =
 export type Theme = "light" | "dark";
 
 export type ButtonVariant = "default" | "ghost" | "outline";
+
+export interface ProjectThumbnailRecord {
+  id: string;
+  projectId: string;
+  url: string;
+  isMain: boolean;
+  label?: string | null;
+  createdAt?: string | Date;
+}
+
+export interface UserProfileRecord {
+  id: string;
+  name?: string | null;
+  avatarUrl?: string | null;
+  updatedAt?: string | Date;
+}
 
 export interface ProjectRecord {
   id: string;
@@ -82,8 +117,10 @@ export interface ProjectRecord {
   hook?: string | null;
   scriptLink?: string | null;
   script?: string | null;
+  status?: ProjectStatus;
   createdAt?: string | Date;
   updatedAt?: string | Date;
+  thumbnails?: ProjectThumbnailRecord[];
   _count?: {
     inspirations: number;
     assets: number;
