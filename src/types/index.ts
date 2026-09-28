@@ -47,10 +47,8 @@ export interface ProjectRecord {
   slug: string;
   description?: string | null;
   channel?: string | null;
-  angle?: string | null;
   hook?: string | null;
   scriptLink?: string | null;
-  notes?: string | null;
   script?: string | null;
   createdAt?: string | Date;
   updatedAt?: string | Date;

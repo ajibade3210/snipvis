@@ -13,7 +13,6 @@ interface ProjectWorkspaceViewProps {
     name: string;
     description?: string | null;
     channel?: string | null;
-    angle?: string | null;
     _count?: { inspirations: number; assets: number };
   };
   activeTab: "inspirations" | "brief" | "assets";
@@ -76,10 +75,6 @@ export function ProjectWorkspaceView({
               </svg>
             </button>
           </div>
-          <p className="text-xs text-[#58524C] dark:text-[#A89F95] font-medium mt-1">
-            {project.description ||
-              "Project research vault, creative brief, and media assets."}
-          </p>
         </div>
 
         {/* Sub-Tab Switcher */}

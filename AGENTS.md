@@ -37,7 +37,7 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
   - **UI Studio Views** $\rightarrow$ `src/components/views/{feature}-view.tsx` (High-density dashboard screens: Global Vault, Projects Hub, Project Workspace, Competitor Spy, Settings).
   - **Workspace Modals & Overlays** $\rightarrow$ `src/components/{feature}-modal.tsx` (Controlled forms and dialogs for creating/editing projects, inspirations, assets, notes).
   - **Reusable UI Primitives** $\rightarrow$ `src/components/ui/{component}.tsx` (Design system atoms: buttons, cards, badges, inputs).
-  - **Global Shell & Navigation** $\rightarrow$ `src/components/top-header.tsx`, `src/components/sidebar.tsx`, `src/components/bottom-pill.tsx`.
+  - **Global Shell & Navigation** $\rightarrow$ `src/components/top-header.tsx`, `src/components/sidebar.tsx`.
   - **Validation Schemas & Contracts** $\rightarrow$ `src/lib/validations.ts` (Zod schemas for all mutating endpoints, query params, and YouTube metadata extraction).
   - **Shared Types & Domain Interfaces** $\rightarrow$ `src/types/` (Exported TypeScript interfaces, type aliases, and contract definitions).
   - **Core Infrastructure & Singletons** $\rightarrow$ `src/lib/` (`prisma.ts` for database pooling, `cache/` for Cache-Aside store, `query-client.ts`, `providers.tsx`, `theme-provider.tsx`).
@@ -70,7 +70,7 @@ AFTER EVERY CODE CHANGE, WITHOUT EXCEPTION, YOU MUST:
 
 1. **Packaging & Inspiration Ingestion:** Captures high-CTR thumbnails, retention hooks, and title formulas via direct manual input or automated YouTube oEmbed metadata extraction.
 2. **Project-Centric Asset Tagging:** Links global inspirations to specific projects with project-specific contextual notes and favorite toggles via a `ProjectInspiration` join model.
-3. **Structured Creative Briefs:** Houses angles, target retention hooks, script document links (Google Docs, Notion, Figma), full video scripts, and production notes per project.
+3. **Structured Creative Briefs:** Houses target retention hooks, script document links (Google Docs, Notion, Figma), and full video scripts per project.
 4. **Production Asset Management:** Tracks b-roll URLs, licensed audio cues, imagery, and typography resources from third-party libraries (Pexels, Pixabay, Mixkit, YouTube) mapped directly to projects.
 5. **Competitor & Outlier Intelligence:** Benchmarks multiplier velocity (e.g., 12.4x channel average), estimated CTRs, visual contrast strategies, and retention hooks.
 6. **Analytics & Performance Auditing:** Provides real-time breakdowns of inspiration type ratios (Thumbnails vs. Titles vs. Hooks), top benchmarked channels, and brief completion scores.
@@ -129,7 +129,7 @@ flowchart TD
 | **App Entry & Layout**      | App initialization, font loading, global providers, and shell layout.     | `src/app/layout.tsx`, `src/app/page.tsx`, `src/lib/providers.tsx`                                                                                                                                                                               |
 | **UI Views**                | High-density dashboard screens representing studio tools.                 | `src/components/views/*` (`global-vault-view.tsx`, `competitor-spy-view.tsx`, `project-workspace-view.tsx`, `projects-hub-view.tsx`, `settings-view.tsx`)                                                                                      |
 | **Workspace Modals**        | Controlled creation and modification dialogues for records.               | `src/components/project-modal.tsx`, `src/components/inspiration-modal.tsx`, `src/components/asset-modal.tsx`, `src/components/note-modal.tsx`                                                                                                   |
-| **Shared Shell Components** | Global top navigation, filter bar, tactile controls, and quick-capture.   | `src/components/top-header.tsx`, `src/components/sidebar.tsx`, `src/components/bottom-pill.tsx`                                                                                                                                                 |
+| **Shared Shell Components** | Global top navigation, filter bar, tactile controls, and quick-capture.   | `src/components/top-header.tsx`, `src/components/sidebar.tsx`                                                                                                                                                   |
 | **Client Hooks**            | Reactive data fetching and mutation handling via React Query.             | `src/hooks/use-projects.ts`, `src/hooks/use-inspirations.ts`, `src/hooks/use-assets.ts`                                                                                                                                                         |
 | **Client API Services**     | Type-safe abstractions over HTTP endpoints using Zod schema verification. | `src/services/api/client.ts`, `src/services/api/project.service.ts`, `src/services/api/inspiration.service.ts`, `src/services/api/asset.service.ts`, `src/services/api/youtube.service.ts`                                                      |
 | **API Route Handlers**      | Next.js server endpoints implementing REST handlers.                      | `src/app/api/projects/route.ts`, `src/app/api/projects/[id]/route.ts`, `src/app/api/inspirations/route.ts`, `src/app/api/inspirations/tag/route.ts`, `src/app/api/assets/route.ts`, `src/app/api/youtube/route.ts`, `src/app/api/seed/route.ts` |
@@ -224,7 +224,6 @@ snipvis/
     ├── components/
     │   ├── asset-modal.tsx                  # New asset creation modal
     │   ├── assets-view.tsx                  # Project asset cards and filter grid
-    │   ├── bottom-pill.tsx                  # Fixed quick-action pill ("Analyze URL")
     │   ├── brief-view.tsx                   # Project creative brief editor & progress tracker
     │   ├── script-editor.tsx                # Full-featured rich WYSIWYG video script editor
     │   ├── inspiration-modal.tsx            # Manual & YouTube inspiration capture dialog
@@ -466,7 +465,7 @@ npm run db:studio
 - **CTR Formula:** A title or thumbnail layout designed specifically to maximize Click-Through Rate.
 - **Hook:** The opening 5–30 seconds of a video designed to capture attention and prevent viewer drop-off.
 - **Outlier:** A video that generates drastically higher views (e.g., 5x–15x) relative to the channel's historical baseline.
-- **Creative Brief:** A project document consolidating angles, hooks, target channels, and script links.
+- **Creative Brief:** A project document consolidating hooks, target channels, external document links, and full video scripts.
 - **Script Editor:** Embedded rich WYSIWYG video script editor with word count, character count, and speech timing.
 - **PrismaPg:** Driver adapter (`@prisma/adapter-pg`) bridging Prisma 7 to `node-postgres` (`pg.Pool`).
 - **Tactile Button:** Design system interactive button styling with hard drop shadows (`box-shadow: 0 3px 0 #D9381E`) that translate down on active press.

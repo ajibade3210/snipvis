@@ -27,10 +27,8 @@ model Project {
   slug         String               @unique
   description  String?
   channel      String?
-  angle        String?              @db.Text
   hook         String?              @db.Text
   scriptLink   String?
-  notes        String?              @db.Text
   script       String?              @db.Text
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt

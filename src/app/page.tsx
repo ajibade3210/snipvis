@@ -1,6 +1,5 @@
 "use client";
 
-import { BottomPill } from "@/components/bottom-pill";
 import { InspirationModal } from "@/components/inspiration-modal";
 import { NoteModal } from "@/components/note-modal";
 import { ProjectModal } from "@/components/project-modal";
@@ -180,6 +179,11 @@ function CreatorLabShell() {
             )
           }
           onOpenNewProject={() => setIsNewProjectOpen(true)}
+          onAnalyzeUrl={() => {
+            if (searchQuery.includes("youtu"))
+              setInitialYoutubeUrl(searchQuery.trim());
+            setIsAddInspirationOpen(true);
+          }}
         />
 
         <main className="flex-1 p-6 md:p-8 overflow-y-auto max-w-[1600px]">
@@ -247,13 +251,6 @@ function CreatorLabShell() {
         </main>
       </div>
 
-      <BottomPill
-        onAnalyze={() => {
-          if (searchQuery.includes("youtu"))
-            setInitialYoutubeUrl(searchQuery.trim());
-          setIsAddInspirationOpen(true);
-        }}
-      />
       <ProjectModal
         isOpen={isNewProjectOpen}
         onClose={() => setIsNewProjectOpen(false)}

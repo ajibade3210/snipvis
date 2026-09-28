@@ -1,6 +1,6 @@
 import { handleApiError } from "@/lib/api-error";
 import { cacheStore } from "@/lib/cache";
-import { CACHE_KEYS } from "@/lib/constants";
+import { CACHE_KEYS, DEFAULT_PROJECT_SCRIPTS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { updateProjectSchema } from "@/lib/validations";
 import { type NextRequest, NextResponse } from "next/server";
@@ -19,6 +19,18 @@ export async function GET(
     });
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+    if (
+      !project.script &&
+      project.slug &&
+      DEFAULT_PROJECT_SCRIPTS[project.slug]
+    ) {
+      const defaultScript = DEFAULT_PROJECT_SCRIPTS[project.slug];
+      await prisma.project.update({
+        where: { id: project.id },
+        data: { script: defaultScript },
+      });
+      project.script = defaultScript;
     }
     return NextResponse.json(project);
   } catch (err: unknown) {

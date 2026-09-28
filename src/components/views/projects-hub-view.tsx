@@ -8,10 +8,10 @@ interface ProjectsHubViewProps {
     name: string;
     slug?: string;
     channel?: string | null;
-    angle?: string | null;
+    description?: string | null;
     hook?: string | null;
     scriptLink?: string | null;
-    notes?: string | null;
+    script?: string | null;
     _count?: { inspirations: number; assets: number };
   }>;
   onSelectProject: (id: string) => void;
@@ -26,9 +26,9 @@ export function ProjectsHubView({
   const calculateBriefProgress = (proj: (typeof projects)[0]) => {
     let score = 0;
     if (proj.name) score += 25;
-    if (proj.angle) score += 25;
     if (proj.hook) score += 25;
-    if (proj.scriptLink || proj.notes) score += 25;
+    if (proj.scriptLink) score += 25;
+    if (proj.script) score += 25;
     return score;
   };
 
@@ -129,11 +129,11 @@ export function ProjectsHubView({
                   />
                 </div>
 
-                {/* Concept Premise / Angle */}
+                {/* Opening Hook / Description */}
                 <p className="text-xs text-[#58524C] dark:text-[#A89F95] line-clamp-2 leading-relaxed">
-                  {proj.angle ||
-                    proj.notes ||
-                    "No concept angle defined yet. Click to complete creative brief."}
+                  {proj.hook ||
+                    proj.description ||
+                    "No opening hook defined yet. Click to complete creative brief."}
                 </p>
 
                 {/* Inventory Counters */}

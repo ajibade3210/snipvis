@@ -27,8 +27,8 @@ export const projectService = {
       body: JSON.stringify(data),
       schema: ProjectSchema,
     }),
-  seed: () =>
-    api(API_ROUTES.SEED, {
+  seed: (opts?: { force?: boolean }) =>
+    api(`${API_ROUTES.SEED}${opts?.force ? "?force=true" : ""}`, {
       method: "POST",
     }),
 };

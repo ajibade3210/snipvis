@@ -34,10 +34,8 @@ export const createProjectSchema = z.object({
     .optional(),
   description: z.string().max(500).optional(),
   channel: z.string().max(100).optional(),
-  angle: z.string().max(5000).optional(),
   hook: z.string().max(5000).optional(),
   scriptLink: z.string().url().optional().or(z.literal("")),
-  notes: z.string().max(10000).optional(),
   script: z.string().optional(),
 });
 
@@ -103,10 +101,8 @@ export const ProjectSchema = z.object({
   slug: z.string(),
   description: z.string().nullable().optional(),
   channel: z.string().nullable().optional(),
-  angle: z.string().nullable().optional(),
   hook: z.string().nullable().optional(),
   scriptLink: z.string().nullable().optional(),
-  notes: z.string().nullable().optional(),
   script: z.string().nullable().optional(),
   createdAt: z.union([z.string(), z.date()]).optional(),
   updatedAt: z.union([z.string(), z.date()]).optional(),

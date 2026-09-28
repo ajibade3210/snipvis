@@ -31,10 +31,8 @@ CREATE TABLE "Project" (
     "slug" TEXT NOT NULL,
     "description" TEXT,
     "channel" TEXT,
-    "angle" TEXT,
     "hook" TEXT,
     "scriptLink" TEXT,
-    "notes" TEXT,
     "script" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -93,4 +91,3 @@ ALTER TABLE "ProjectAsset" ADD CONSTRAINT "ProjectAsset_projectId_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "ProjectAsset" ADD CONSTRAINT "ProjectAsset_assetId_fkey" FOREIGN KEY ("assetId") REFERENCES "Asset"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-

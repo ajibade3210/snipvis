@@ -13,7 +13,6 @@ interface ProjectModalProps {
     id: string;
     name: string;
     channel?: string | null;
-    angle?: string | null;
     description?: string | null;
   } | null;
 }
@@ -26,7 +25,6 @@ export function ProjectModal({
 }: ProjectModalProps) {
   const [name, setName] = useState("");
   const [channel, setChannel] = useState("");
-  const [angle, setAngle] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -38,12 +36,10 @@ export function ProjectModal({
     if (project && isOpen) {
       setName(project.name ?? "");
       setChannel(project.channel ?? "");
-      setAngle(project.angle ?? "");
       setDescription(project.description ?? "");
     } else if (!project && isOpen) {
       setName("");
       setChannel("");
-      setAngle("");
       setDescription("");
     }
     setError(null);
@@ -58,7 +54,6 @@ export function ProjectModal({
     const payload = {
       name: name.trim(),
       channel: channel.trim() ? channel.trim().replace(/^@/, "") : undefined,
-      angle: angle.trim() || undefined,
       description: description.trim() || undefined,
     };
 
@@ -89,7 +84,6 @@ export function ProjectModal({
         const created = await createProject.mutateAsync(result.data);
         setName("");
         setChannel("");
-        setAngle("");
         setDescription("");
         onClose();
         if (onCreated && created?.id) {
@@ -160,19 +154,6 @@ export function ProjectModal({
                 className="w-full h-9 pl-7 pr-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
-              Core Angle / Concept (Optional)
-            </label>
-            <textarea
-              rows={2}
-              placeholder="What makes this video unique? Thesis or hook angle."
-              value={angle}
-              onChange={(e) => setAngle(e.target.value)}
-              className="w-full p-2.5 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none"
-            />
           </div>
 
           <div>

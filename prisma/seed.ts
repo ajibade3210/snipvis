@@ -12,10 +12,8 @@ export const initialProjects = [
     name: "Storytelling Formats",
     slug: "storytelling-formats",
     channel: "DeepDiveDoc",
-    angle: "Documentary pacing secrets and FBI arrest open loops.",
     hook: "The moment the federal agents entered the penthouse, they discovered 12 empty hard drives...",
     scriptLink: "https://figma.com",
-    notes: "Start in media res directly at the climax before rewinding 18 months.",
     script: `<h2>Act 1: The Cold Open (0:00 - 1:15)</h2>
 <p><strong>[VISUAL: FAST CAMERA ZOOM-IN]</strong></p>
 <p>The moment the federal agents entered the penthouse, they discovered 12 empty hard drives humming on the kitchen counter.</p>
@@ -34,10 +32,8 @@ export const initialProjects = [
     name: "MrBeast Teardown",
     slug: "mrbeast-teardown",
     channel: "MrBeast",
-    angle: "Extreme isolation stunts and curiosity-gap escalation.",
     hook: "In the next 7 minutes, I will test if anyone can survive 100 hours in an impenetrable vault...",
     scriptLink: "https://docs.google.com",
-    notes: "Focus on rapid scene changes under 3 seconds and dynamic sound design.",
     script: `<h2>Introduction: The 5-Second Retention Crucible</h2>
 <p>In the next 7 minutes, I will test if anyone can survive 100 hours in an impenetrable vault...</p>
 <p>Notice how MrBeast introduces the stakes in under 3.2 seconds without any channel intro bumper.</p>
@@ -54,10 +50,8 @@ export const initialProjects = [
     name: "Tech Essay 2026",
     slug: "tech-essay-2026",
     channel: "TechCraft",
-    angle: "Why modern consumer hardware reached peak saturation.",
     hook: "Every major tech company is hiding the exact same secret about their 2026 releases...",
     scriptLink: "https://notion.so",
-    notes: "Aesthetic B-roll needed: macro lens shots of silicon wafers and retro tech.",
     script: `<h2>Section 1: The Silicon Plateau</h2>
 <p>Every major tech company is hiding the exact same secret about their 2026 releases: raw compute scaling has hit the thermal wall.</p>
 <p>Here is what happens when silicon manufacturers can no longer shrink transistors:</p>
@@ -71,10 +65,8 @@ export const initialProjects = [
     name: "Finance Hooks",
     slug: "finance-hooks",
     channel: "BrainWave",
-    angle: "Deconstructing wealth psychology and career transitions.",
     hook: "Why 84% of high earners are secretly planning to quit before the end of the quarter...",
     scriptLink: "https://docs.google.com",
-    notes: "Contrarian framing: don't give advice, present statistical anomalies.",
     script: `<h2>The Anomaly: Why High Earners Disappear</h2>
 <p>Why 84% of high earners are secretly planning to quit before the end of the quarter...</p>
 <blockquote>"Wealth isn't what you spend on display; it is the options you possess when nobody is watching."</blockquote>
@@ -96,10 +88,8 @@ export async function seedProjects() {
       update: {
         name: proj.name,
         channel: proj.channel,
-        angle: proj.angle,
         hook: proj.hook,
         scriptLink: proj.scriptLink,
-        notes: proj.notes,
         script: proj.script,
       },
       create: proj,
@@ -199,10 +189,16 @@ export async function seedInspirations() {
 async function main() {
   console.info("🌱 Seeding Snipvis database...\n");
 
-  // Ensure script column exists in Postgres
+  // Ensure script column exists and notes/angle columns are removed from Postgres
   try {
     await prisma.$executeRawUnsafe(
-      `ALTER TABLE "Project" ADD COLUMN IF NOT EXISTS "script" TEXT;`
+      `ALTER TABLE "Project" ADD COLUMN IF NOT EXISTS "script" TEXT;`,
+    );
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "Project" DROP COLUMN IF EXISTS "notes";`,
+    );
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "Project" DROP COLUMN IF EXISTS "angle";`,
     );
   } catch (err) {
     console.warn("Notice: Column check skipped or already applied:", err);

@@ -5,12 +5,16 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 interface ScriptEditorProps {
   value: string;
   onChange: (value: string) => void;
+  onSave?: () => void;
+  isSaving?: boolean;
   placeholder?: string;
 }
 
 export function ScriptEditor({
   value,
   onChange,
+  onSave,
+  isSaving,
   placeholder = "This is to inform you about ...",
 }: ScriptEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -446,11 +450,66 @@ export function ScriptEditor({
             ref={editorRef}
             contentEditable
             onInput={handleInput}
-            className="w-full min-h-[420px] text-sm text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none leading-relaxed space-y-3 prose dark:prose-invert max-w-none"
+            onKeyDown={(e) => {
+              if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+                e.preventDefault();
+                onSave?.();
+              }
+            }}
+            className="w-full min-h-[420px] text-sm text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none leading-relaxed space-y-3 prose dark:prose-invert max-w-none pb-12"
             style={{
               outline: "none",
             }}
           />
+
+          {/* Floating Save Icon at Bottom Right Corner */}
+          {onSave ? (
+            <button
+              type="button"
+              onClick={onSave}
+              disabled={isSaving}
+              title="Save Script (⌘S)"
+              aria-label="Save Script (⌘S)"
+              className="absolute bottom-4 right-4 z-10 w-8 h-8 rounded-lg bg-white dark:bg-[#25201C] hover:bg-[#FAF8F5] dark:hover:bg-[#2E2824] text-[#58524C] dark:text-[#A89F95] hover:text-[#FF5338] dark:hover:text-[#FF5338] border border-[#E3DCD3] dark:border-[#3C3530] shadow-xs flex items-center justify-center transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+            >
+              {isSaving ? (
+                <svg
+                  className="w-3.5 h-3.5 animate-spin"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-3.5 h-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+              )}
+            </button>
+          ) : null}
         </div>
 
         {/* Script Editor Footer Bar */}
@@ -459,6 +518,9 @@ export function ScriptEditor({
             <span className="w-2 h-2 rounded-full bg-[#059669]" />
             <span className="font-semibold text-[#58524C] dark:text-[#A89F95]">
               Real-time Script Editor
+            </span>
+            <span className="hidden sm:inline text-[11px] font-mono text-[#8C8379]/70 ml-2">
+              ⌘S to save • ⌘B for Bold
             </span>
           </div>
           <span className="text-[11px] font-mono">

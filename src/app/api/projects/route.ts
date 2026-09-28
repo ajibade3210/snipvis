@@ -36,10 +36,8 @@ export async function POST(req: NextRequest) {
       slug,
       description: data.description,
       channel: data.channel,
-      angle: data.angle,
       hook: data.hook,
       scriptLink: data.scriptLink || null,
-      notes: data.notes,
       script: data.script,
     };
 
