@@ -346,3 +346,35 @@ export {
   analyzeHookRequestSchema,
   analyzeHookResponseSchema,
 };
+
+/* ========================================================================= */
+/* 8. COMPETITOR SCHEMAS                                                      */
+/* ========================================================================= */
+
+export const createCompetitorSchema = z.object({
+  channelName: z.string().min(1, "Channel name is required"),
+  channelUrl: z.string().url("Must be a valid URL"),
+  avatarUrl: z.string().url().optional().or(z.literal("")).nullable(),
+  description: z.string().optional().nullable(),
+  subscriberCountAtAdd: z.string().optional().nullable(),
+  currentSubscriberCount: z.string().optional().nullable(),
+  lastUploadDate: z.string().optional().nullable(),
+  mostPopularVideoUrl: z.string().url().optional().or(z.literal("")).nullable(),
+  mostPopularVideoTitle: z.string().optional().nullable(),
+  mostPopularVideoThumb: z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .nullable(),
+  uploadFrequency: z.string().optional().nullable(),
+  personalNote: z.string().optional().nullable(),
+});
+
+export const updateCompetitorSchema = createCompetitorSchema
+  .omit({ channelUrl: true })
+  .partial();
+
+export const fetchYoutubeChannelSchema = z.object({
+  url: z.string().min(1, "YouTube URL or handle is required"),
+});

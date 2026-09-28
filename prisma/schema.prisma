@@ -55,6 +55,7 @@ model User {
   channels     Channel[]
   inspirations Inspiration[]
   assets       Asset[]
+  competitors  Competitor[]
 
   @@index([email])
 }
@@ -217,4 +218,32 @@ model ProjectThumbnail {
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
+}
+
+// ---------------------------------------------------------
+// 3. COMPETITOR TRACKING
+// ---------------------------------------------------------
+
+model Competitor {
+  id                     String    @id @default(cuid())
+  channelName            String
+  channelUrl             String
+  avatarUrl              String?
+  description            String?   @db.Text
+  subscriberCountAtAdd   String?   @map("subscriber_count_at_add")
+  currentSubscriberCount String?   @map("current_subscriber_count")
+  lastUploadDate         DateTime? @map("last_upload_date")
+  mostPopularVideoUrl    String?   @map("most_popular_video_url")
+  mostPopularVideoTitle  String?   @map("most_popular_video_title")
+  mostPopularVideoThumb  String?   @map("most_popular_video_thumb")
+  uploadFrequency        String?   @map("upload_frequency")
+  personalNote           String?   @map("personal_note") @db.Text
+
+  userId                 String
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  @@unique([userId, channelUrl])
+  @@index([userId])
 }

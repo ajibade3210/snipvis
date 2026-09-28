@@ -164,6 +164,28 @@ CREATE TABLE "ProjectThumbnail" (
     CONSTRAINT "ProjectThumbnail_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Competitor" (
+    "id" TEXT NOT NULL,
+    "channelName" TEXT NOT NULL,
+    "channelUrl" TEXT NOT NULL,
+    "avatarUrl" TEXT,
+    "description" TEXT,
+    "subscriber_count_at_add" TEXT,
+    "current_subscriber_count" TEXT,
+    "last_upload_date" TIMESTAMP(3),
+    "most_popular_video_url" TEXT,
+    "most_popular_video_title" TEXT,
+    "most_popular_video_thumb" TEXT,
+    "upload_frequency" TEXT,
+    "personal_note" TEXT,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Competitor_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -215,6 +237,12 @@ CREATE INDEX "Asset_userId_idx" ON "Asset"("userId");
 -- CreateIndex
 CREATE INDEX "ProjectThumbnail_projectId_idx" ON "ProjectThumbnail"("projectId");
 
+-- CreateIndex
+CREATE INDEX "Competitor_userId_idx" ON "Competitor"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Competitor_userId_channelUrl_key" ON "Competitor"("userId", "channelUrl");
+
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -250,3 +278,6 @@ ALTER TABLE "ProjectAsset" ADD CONSTRAINT "ProjectAsset_assetId_fkey" FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE "ProjectThumbnail" ADD CONSTRAINT "ProjectThumbnail_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Competitor" ADD CONSTRAINT "Competitor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -2,12 +2,14 @@ export const CACHE_KEYS = {
   PROJECTS_LIST: (userId: string) => `projects:list:${userId}`,
   USER_PROFILE: (userId: string) => `user:profile:${userId}`,
   CHANNELS_LIST: (userId: string) => `channels:list:${userId}`,
+  COMPETITORS_LIST: (userId: string) => `competitors:list:${userId}`,
 } as const;
 
 export const CACHE_TTL = {
   PROJECTS_LIST_SECONDS: 60,
   USER_PROFILE_SECONDS: 300,
   CHANNELS_LIST_SECONDS: 60,
+  COMPETITORS_LIST_SECONDS: 120,
 } as const;
 
 export const STORAGE_KEYS = {
@@ -22,6 +24,7 @@ export const QUERY_KEYS = {
   ASSETS: "assets",
   USER_PROFILE: "user-profile",
   CHANNELS: "channels",
+  COMPETITORS: "competitors",
 } as const;
 
 export const QUERY_SUBKEYS = {

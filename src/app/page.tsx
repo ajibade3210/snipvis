@@ -13,12 +13,12 @@ import { ProjectWorkspaceView } from "@/components/views/project-workspace-view"
 import { ProjectsHubView } from "@/components/views/projects-hub-view";
 import { SettingsView } from "@/components/views/settings-view";
 import {
-  useCreateInspiration,
   useDeleteTagInspiration,
   useInspirationsByProject,
   useInspirationsGlobal,
   useTagInspiration,
 } from "@/hooks/use-inspirations";
+
 import { useProjects } from "@/hooks/use-projects";
 import { formatInspirations } from "@/lib/format-inspirations";
 import type { FormattedInspiration, NavView } from "@/types";
@@ -94,7 +94,6 @@ function CreatorLabShell() {
 
   const tagMutation = useTagInspiration();
   const deleteTagMutation = useDeleteTagInspiration();
-  const createInspirationMutation = useCreateInspiration();
 
   const updateUrl = (params: {
     view?: string | null;
@@ -261,13 +260,7 @@ function CreatorLabShell() {
                   }}
                 />
               )}
-              {activeNav === "competitor-spy" && (
-                <CompetitorSpyView
-                  onImportOutlier={(data) =>
-                    createInspirationMutation.mutateAsync(data)
-                  }
-                />
-              )}
+              {activeNav === "competitor-spy" && <CompetitorSpyView />}
               {activeNav === "settings" && (
                 <SettingsView
                   inspirations={formattedInspirations}

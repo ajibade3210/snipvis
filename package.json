@@ -15,7 +15,8 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "node --experimental-strip-types prisma/seed.ts",
     "db:studio": "prisma studio",
-    "user:create": "node --experimental-strip-types scripts/create-user.ts"
+    "user:create": "node --experimental-strip-types scripts/create-user.ts",
+    "prepare": "husky"
   },
   "prisma": {
     "seed": "node --experimental-strip-types prisma/seed.ts"
@@ -27,6 +28,7 @@
     "@prisma/client": "^7.10.0",
     "@tanstack/react-query": "^5.51.1",
     "bcryptjs": "^3.0.3",
+    "husky": "^9.1.7",
     "next": "14.2.5",
     "next-auth": "^4.24.7",
     "pg": "^8.23.0",

@@ -280,15 +280,95 @@ export async function seedInspirations(demoUserId: string) {
   console.info("✓ Seeded inspirations");
 }
 
+async function seedCompetitors(demoUserId: string) {
+  console.info("🎯 Seeding competitor channels for demo user...");
+
+  const demoCompetitors = [
+    {
+      channelName: "MrBeast",
+      channelUrl: "https://youtube.com/@mrbeast",
+      description:
+        "Creator of large-scale challenge and philanthropy content. Benchmark for viral hook structures.",
+      subscriberCountAtAdd: "280M",
+      currentSubscriberCount: "280M",
+      uploadFrequency: "Weekly",
+      mostPopularVideoTitle: "I Spent 50 Hours Buried Alive",
+      mostPopularVideoUrl: "https://youtube.com/watch?v=example1",
+      personalNote:
+        "Study his thumbnail contrast ratios — always 3-color max with a shocked face.",
+    },
+    {
+      channelName: "Veritasium",
+      channelUrl: "https://youtube.com/@veritasium",
+      description:
+        "Science & engineering deep-dives. Benchmark for contrarian title framing.",
+      subscriberCountAtAdd: "17M",
+      currentSubscriberCount: "17M",
+      uploadFrequency: "Every 2 weeks",
+      mostPopularVideoTitle: "The Bizarre Physics of Why Bicycles Don't Fall Over",
+      mostPopularVideoUrl: "https://youtube.com/watch?v=example2",
+      personalNote:
+        "Retention hooks built around debunking assumptions — high watch time.",
+    },
+    {
+      channelName: "TechCraft",
+      channelUrl: "https://youtube.com/@techcraft",
+      description:
+        "Tech DIY builds and challenges. Strong on curiosity-gap titles with physical stakes.",
+      subscriberCountAtAdd: "450K",
+      currentSubscriberCount: "450K",
+      uploadFrequency: "Twice weekly",
+      mostPopularVideoTitle: "I Built a $100,000 Secret Gaming Bunker Under My Backyard",
+      mostPopularVideoUrl: "https://youtube.com/watch?v=example3",
+      personalNote: "12.4x outlier on this video. Rim lighting on thumbnail.",
+    },
+    {
+      channelName: "AlexVlogs",
+      channelUrl: "https://youtube.com/@alexvlogs",
+      description: "Lifestyle and zeitgeist content targeting economic anxiety trends.",
+      subscriberCountAtAdd: "2.1M",
+      currentSubscriberCount: "2.1M",
+      uploadFrequency: "3× weekly",
+      mostPopularVideoTitle: "Why Everyone Is Suddenly Quitting Their 9-to-5 In 2026",
+      mostPopularVideoUrl: "https://youtube.com/watch?v=example4",
+      personalNote: "Red focal anchor in thumbnail is intentional. Study the urgency formula.",
+    },
+  ];
+
+  for (const item of demoCompetitors) {
+    await prisma.competitor.upsert({
+      where: {
+        userId_channelUrl: {
+          userId: demoUserId,
+          channelUrl: item.channelUrl,
+        },
+      },
+      update: {
+        currentSubscriberCount: item.currentSubscriberCount,
+        uploadFrequency: item.uploadFrequency,
+      },
+      create: {
+        ...item,
+        userId: demoUserId,
+      },
+    });
+  }
+
+  console.info(`✓ Seeded ${demoCompetitors.length} competitor channels`);
+}
+
 async function main() {
   console.info("🌱 Seeding Snipvis database...\n");
 
   const demoUser = await seedUsers();
   await seedProjects(demoUser.id);
   await seedInspirations(demoUser.id);
+  await seedCompetitors(demoUser.id);
 
   console.info("\n✅ All seeders complete");
 }
+
+
 
 main()
   .catch((e) => {
