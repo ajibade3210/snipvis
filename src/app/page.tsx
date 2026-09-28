@@ -1,5 +1,6 @@
 "use client";
 
+import { AnalyzeHookModal } from "@/components/analyze-hook-modal";
 import { InspirationModal } from "@/components/inspiration-modal";
 import { NoteModal } from "@/components/note-modal";
 import { ProjectModal } from "@/components/project-modal";
@@ -47,6 +48,7 @@ function CreatorLabShell() {
 
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const [isAddInspirationOpen, setIsAddInspirationOpen] = useState(false);
+  const [isAnalyzeHookOpen, setIsAnalyzeHookOpen] = useState(false);
   const [noteModalData, setNoteModalData] = useState<{
     inspirationId: string;
     projectId: string;
@@ -72,6 +74,7 @@ function CreatorLabShell() {
       } else if (e.key === "Escape") {
         setIsAddInspirationOpen(false);
         setIsNewProjectOpen(false);
+        setIsAnalyzeHookOpen(false);
         setNoteModalData(null);
       }
     };
@@ -189,9 +192,7 @@ function CreatorLabShell() {
           }
           onOpenNewProject={() => setIsNewProjectOpen(true)}
           onAnalyzeUrl={() => {
-            if (searchQuery.includes("youtu"))
-              setInitialYoutubeUrl(searchQuery.trim());
-            setIsAddInspirationOpen(true);
+            setIsAnalyzeHookOpen(true);
           }}
         />
 
@@ -275,6 +276,13 @@ function CreatorLabShell() {
         projects={dbProjects}
         defaultProjectId={selectedProjectId}
         initialUrl={initialYoutubeUrl}
+      />
+      <AnalyzeHookModal
+        isOpen={isAnalyzeHookOpen}
+        onClose={() => setIsAnalyzeHookOpen(false)}
+        projects={dbProjects}
+        defaultProjectId={selectedProjectId}
+        initialUrl={searchQuery.trim()}
       />
       {noteModalData && (
         <NoteModal

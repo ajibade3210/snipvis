@@ -1,16 +1,20 @@
-import { QUERY_KEYS } from "@/lib/constants";
+import { FILTER_ALL, QUERY_KEYS, QUERY_SUBKEYS } from "@/lib/constants";
 import { inspirationService } from "@/services/api/inspiration.service";
 import type { InspirationType } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useInspirationsGlobal = (params?: {
-  type?: InspirationType | "ALL";
+  type?: InspirationType | typeof FILTER_ALL;
 }) =>
   useQuery({
-    queryKey: [QUERY_KEYS.INSPIRATIONS, "global", params?.type ?? "ALL"],
+    queryKey: [
+      QUERY_KEYS.INSPIRATIONS,
+      QUERY_SUBKEYS.GLOBAL,
+      params?.type ?? FILTER_ALL,
+    ],
     queryFn: () =>
       inspirationService.listGlobal(
-        params?.type && params.type !== "ALL"
+        params?.type && params.type !== FILTER_ALL
           ? { type: params.type }
           : undefined,
       ),
@@ -18,21 +22,21 @@ export const useInspirationsGlobal = (params?: {
 
 export const useInspirationsByProject = (
   projectId?: string | null,
-  opts?: { favorite?: boolean; type?: InspirationType | "ALL" },
+  opts?: { favorite?: boolean; type?: InspirationType | typeof FILTER_ALL },
 ) =>
   useQuery({
     queryKey: [
       QUERY_KEYS.INSPIRATIONS,
-      "project",
+      QUERY_SUBKEYS.PROJECT,
       projectId,
-      opts?.favorite ? "fav" : "all",
-      opts?.type ?? "ALL",
+      opts?.favorite ? QUERY_SUBKEYS.FAV : QUERY_SUBKEYS.ALL,
+      opts?.type ?? FILTER_ALL,
     ],
     queryFn: () => {
       if (!projectId) return [];
       return inspirationService.listByProject(projectId, {
         favorite: opts?.favorite,
-        type: opts?.type && opts.type !== "ALL" ? opts.type : undefined,
+        type: opts?.type && opts.type !== FILTER_ALL ? opts.type : undefined,
       });
     },
     enabled: Boolean(projectId),

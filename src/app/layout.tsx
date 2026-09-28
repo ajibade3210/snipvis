@@ -1,13 +1,20 @@
 import "@/styles/globals.css";
+import { BRAND_ASSETS } from "@/lib/constants";
 import { Providers } from "@/lib/providers";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Snipvis OS — Creator Research Lab",
+  title: `${BRAND_ASSETS.APP_NAME} ${BRAND_ASSETS.APP_SUFFIX} — ${BRAND_ASSETS.TAGLINE}`,
   description:
     "A creator intelligence platform for video research, packaging, and production management.",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: BRAND_ASSETS.FAVICON, type: "image/x-icon" },
+      { url: BRAND_ASSETS.ICON, type: "image/png" },
+    ],
+    apple: [
+      { url: BRAND_ASSETS.APPLE_ICON, sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 

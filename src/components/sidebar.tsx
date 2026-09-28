@@ -1,6 +1,6 @@
 "use client";
 
-import { STORAGE_KEYS } from "@/lib/constants";
+import { BRAND_ASSETS, STORAGE_KEYS } from "@/lib/constants";
 import type { NavView } from "@/types";
 import { useEffect, useState } from "react";
 
@@ -68,8 +68,12 @@ export function Sidebar({
       {/* Brand & Minimize / Expand Action Header */}
       {isCollapsed ? (
         <div className="p-3 border-b border-[#E3DCD3]/70 dark:border-[#3C3530]/70 flex flex-col items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-[#FF5338] text-white flex items-center justify-center font-black text-xl shadow-xs">
-            S
+          <div className="w-9 h-9 rounded-full overflow-hidden bg-black border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center shrink-0 shadow-xs">
+            <img
+              src={BRAND_ASSETS.LOGO}
+              alt={`${BRAND_ASSETS.APP_NAME} ${BRAND_ASSETS.APP_SUFFIX}`}
+              className="w-full h-full object-contain"
+            />
           </div>
           <button
             type="button"
@@ -96,16 +100,22 @@ export function Sidebar({
       ) : (
         <div className="p-4 border-b border-[#E3DCD3]/70 dark:border-[#3C3530]/70 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#FF5338] text-white flex items-center justify-center font-black text-xl shadow-xs">
-              S
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-black border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center shrink-0 shadow-xs">
+              <img
+                src={BRAND_ASSETS.LOGO}
+                alt={`${BRAND_ASSETS.APP_NAME} ${BRAND_ASSETS.APP_SUFFIX}`}
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <div className="flex items-center gap-1 font-extrabold text-base tracking-tight leading-none">
-                <span>Snipvis</span>
-                <span className="text-[#FF5338]">OS</span>
+                <span>{BRAND_ASSETS.APP_NAME}</span>
+                <span className="text-[#FF5338]">
+                  {BRAND_ASSETS.APP_SUFFIX}
+                </span>
               </div>
               <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] font-medium tracking-tight mt-0.5">
-                Creator Research Lab
+                {BRAND_ASSETS.TAGLINE}
               </div>
             </div>
           </div>

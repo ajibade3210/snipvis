@@ -10,6 +10,9 @@ import type {
   ProjectThumbnailSchema,
   UserProfileSchema,
   YoutubeInfoSchema,
+  aiHookBreakdownSchema,
+  analyzeHookRequestSchema,
+  analyzeHookResponseSchema,
   assetSourceEnum,
   assetTypeEnum,
   batchPresignedUrlsRequestSchema,
@@ -32,6 +35,10 @@ import type {
   updateUserProfileSchema,
 } from "@/lib/validations";
 import type { z } from "zod";
+
+export type AnalyzeHookInput = z.infer<typeof analyzeHookRequestSchema>;
+export type AiHookBreakdown = z.infer<typeof aiHookBreakdownSchema>;
+export type AnalyzeHookResponse = z.infer<typeof analyzeHookResponseSchema>;
 
 export type ProjectStatus = z.infer<typeof projectStatusEnum>;
 export type InspirationType = z.infer<typeof inspirationTypeEnum>;
@@ -89,6 +96,8 @@ export type NavView =
   | "settings";
 
 export type Theme = "light" | "dark";
+
+export type ApiProvider = "deepseek" | "openrouter";
 
 export type ButtonVariant = "default" | "ghost" | "outline";
 

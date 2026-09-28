@@ -281,3 +281,30 @@ export const storageEnvSchema = z.object({
     .string()
     .url("CLOUDFLARE_R2_PUBLIC_URL must be a valid URL"),
 });
+
+/* ========================================================================= */
+/* 7. AI HOOK BREAKDOWN SCHEMAS                                              */
+/* ========================================================================= */
+
+export const analyzeHookRequestSchema = z.object({
+  inputType: z.enum(["url", "image", "text"]),
+  url: z.string().optional().or(z.literal("")),
+  manualText: z.string().max(4000).optional().or(z.literal("")),
+  imageBase64: z.string().optional().or(z.literal("")),
+  imageUrl: z.string().url().optional().or(z.literal("")),
+});
+
+export const aiHookBreakdownSchema = z.object({
+  perceived_copy: z.string(),
+  why_it_works: z.string(),
+  triggered_emotion: z.string(),
+  recreation_ideas: z.array(z.string()).min(1).max(5),
+});
+
+export const analyzeHookResponseSchema = aiHookBreakdownSchema.extend({
+  thumbnailUrl: z.string().optional(),
+  sourceUrl: z.string().optional(),
+  channelName: z.string().optional(),
+  needsManualFallback: z.boolean().optional(),
+  extractedTitle: z.string().optional(),
+});

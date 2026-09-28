@@ -1,10 +1,11 @@
-import { QUERY_KEYS } from "@/lib/constants";
+import { QUERY_KEYS, QUERY_SUBKEYS } from "@/lib/constants";
 import { assetService } from "@/services/api/asset.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useAssetsByProject = (projectId?: string | null) =>
   useQuery({
-    queryKey: [QUERY_KEYS.ASSETS, "project", projectId],
+    queryKey: [QUERY_KEYS.ASSETS, QUERY_SUBKEYS.PROJECT, projectId],
+
     queryFn: () => {
       if (!projectId) return [];
       return assetService.listByProject(projectId);
