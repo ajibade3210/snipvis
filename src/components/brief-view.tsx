@@ -65,10 +65,10 @@ export function BriefView({ projectId }: BriefViewProps) {
     setFeedback(null);
 
     const payload = {
-      description: description.trim() || undefined,
-      hook: hook.trim() || undefined,
-      scriptLink: scriptLink.trim() || undefined,
-      script: scriptContent.trim() || undefined,
+      description: description.trim() || null,
+      hook: hook.trim() || null,
+      scriptLink: scriptLink.trim() || null,
+      script: scriptContent.trim() || null,
     };
 
     const result = updateProjectSchema.safeParse(payload);
@@ -87,7 +87,7 @@ export function BriefView({ projectId }: BriefViewProps) {
       });
       setFeedback({
         type: "success",
-        text: "Project details, creative brief, and script saved!",
+        text: "Creative brief saved!",
       });
       setTimeout(() => setFeedback(null), 3000);
     } catch (err: unknown) {

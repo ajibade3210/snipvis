@@ -6,8 +6,9 @@ import {
   createInspirationSchema,
   type inspirationTypeEnum,
 } from "@/lib/validations";
+import { mediaService } from "@/services/api/media.service";
 import { youtubeService } from "@/services/api/youtube.service";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface InspirationModalProps {
   isOpen: boolean;
@@ -29,6 +30,9 @@ export function InspirationModal({
   const [ytError, setYtError] = useState<string | null>(null);
 
   const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [isUploadingThumb, setIsUploadingThumb] = useState(false);
+  const thumbInputRef = useRef<HTMLInputElement>(null);
+
   const [title, setTitle] = useState("");
   const [type, setType] = useState<"THUMBNAIL" | "TITLE" | "HOOK">("THUMBNAIL");
   const [hook, setHook] = useState("");
@@ -96,6 +100,33 @@ export function InspirationModal({
       );
     } finally {
       setIsFetchingYt(false);
+    }
+  };
+
+  const handleThumbnailUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingThumb(true);
+    setFormError(null);
+
+    try {
+      const result = await mediaService.uploadMediaFile(file, {
+        projectId: targetProjectId || undefined,
+        category: "images",
+      });
+      setThumbnailUrl(result.publicUrl);
+    } catch (err: unknown) {
+      setFormError(
+        err instanceof Error ? err.message : "Failed to upload thumbnail",
+      );
+    } finally {
+      setIsUploadingThumb(false);
+      if (thumbInputRef.current) {
+        thumbInputRef.current.value = "";
+      }
     }
   };
 
@@ -239,13 +270,34 @@ export function InspirationModal({
 
           {/* Thumbnail URL */}
           <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
-              Thumbnail / Image URL <span className="text-red-500">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-medium text-foreground">
+                Thumbnail / Image URL <span className="text-red-500">*</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => thumbInputRef.current?.click()}
+                disabled={isUploadingThumb}
+                className="text-xs text-primary hover:underline flex items-center gap-1 font-medium disabled:opacity-50"
+              >
+                {isUploadingThumb ? (
+                  <span>Uploading to R2...</span>
+                ) : (
+                  <span>Upload local image to R2</span>
+                )}
+              </button>
+            </div>
+            <input
+              type="file"
+              ref={thumbInputRef}
+              accept="image/*"
+              onChange={handleThumbnailUpload}
+              className="hidden"
+            />
             <input
               type="url"
               required
-              placeholder="https://... (image url or YouTube thumbnail)"
+              placeholder="https://... (or click 'Upload local image to R2')"
               value={thumbnailUrl}
               onChange={(e) => setThumbnailUrl(e.target.value)}
               className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"

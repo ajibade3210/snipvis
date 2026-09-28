@@ -13,6 +13,21 @@ export const API_ROUTES = {
   ASSETS: "/api/assets",
   YOUTUBE: "/api/youtube",
   SEED: "/api/seed",
+  MEDIA: "/api/media",
+  MEDIA_UPLOAD: "/api/media/upload",
+} as const;
+
+export const MEDIA_CONFIG = {
+  PRESIGNED_EXPIRY_SECONDS: 900,
+  MAX_IMAGE_SIZE_BYTES: 10 * 1024 * 1024,
+  MAX_DOCUMENT_SIZE_BYTES: 10 * 1024 * 1024,
+  MAX_VIDEO_SIZE_BYTES: 50 * 1024 * 1024,
+  MAX_AUDIO_SIZE_BYTES: 25 * 1024 * 1024,
+  DEFAULT_MAX_SIZE_BYTES: 50 * 1024 * 1024,
+  DEFAULT_PROJECT_ID: "general",
+  DEFAULT_USER_ID: "creator",
+  DEFAULT_CATEGORY: "others",
+  MAX_BATCH_FILES: 20,
 } as const;
 
 export const STORAGE_KEYS = {

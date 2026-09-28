@@ -1,16 +1,27 @@
 import type {
   AssetSchema,
+  BatchMediaUploadResultSchema,
+  BatchPresignedUrlsResponseSchema,
+  DeleteMediaResponseSchema,
   InspirationSchema,
+  MediaUploadResultSchema,
+  PresignedUrlResponseSchema,
   ProjectSchema,
   YoutubeInfoSchema,
   assetSourceEnum,
   assetTypeEnum,
+  batchPresignedUrlsRequestSchema,
   createAssetSchema,
   createInspirationSchema,
   createProjectSchema,
+  deleteMediaRequestSchema,
   fetchYoutubeSchema,
   inspirationTypeEnum,
+  mediaFolderCategoryEnum,
+  presignedUrlRequestSchema,
+  storageEnvSchema,
   tagInspirationSchema,
+  unifiedPresignedRequestSchema,
   updateProjectSchema,
 } from "@/lib/validations";
 import type { z } from "zod";
@@ -18,6 +29,7 @@ import type { z } from "zod";
 export type InspirationType = z.infer<typeof inspirationTypeEnum>;
 export type AssetType = z.infer<typeof assetTypeEnum>;
 export type AssetSource = z.infer<typeof assetSourceEnum>;
+export type MediaFolderCategory = z.infer<typeof mediaFolderCategoryEnum>;
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
@@ -26,10 +38,30 @@ export type TagInspirationInput = z.infer<typeof tagInspirationSchema>;
 export type CreateAssetInput = z.infer<typeof createAssetSchema>;
 export type FetchYoutubeInput = z.infer<typeof fetchYoutubeSchema>;
 
+export type PresignedUrlRequest = z.infer<typeof presignedUrlRequestSchema>;
+export type BatchPresignedUrlsRequest = z.infer<
+  typeof batchPresignedUrlsRequestSchema
+>;
+export type UnifiedPresignedRequest = z.infer<
+  typeof unifiedPresignedRequestSchema
+>;
+export type DeleteMediaRequest = z.infer<typeof deleteMediaRequestSchema>;
+
 export type ProjectResponse = z.infer<typeof ProjectSchema>;
 export type InspirationResponse = z.infer<typeof InspirationSchema>;
 export type AssetResponse = z.infer<typeof AssetSchema>;
 export type YoutubeInfoResponse = z.infer<typeof YoutubeInfoSchema>;
+
+export type PresignedUrlResponse = z.infer<typeof PresignedUrlResponseSchema>;
+export type BatchPresignedUrlsResponse = z.infer<
+  typeof BatchPresignedUrlsResponseSchema
+>;
+export type MediaUploadResult = z.infer<typeof MediaUploadResultSchema>;
+export type BatchMediaUploadResult = z.infer<
+  typeof BatchMediaUploadResultSchema
+>;
+export type DeleteMediaResponse = z.infer<typeof DeleteMediaResponseSchema>;
+export type StorageEnvConfig = z.infer<typeof storageEnvSchema>;
 
 export type NavView =
   | "global"
@@ -135,4 +167,37 @@ export interface RedisLikeClient {
   get(key: string): Promise<string | null>;
   set(key: string, value: string, mode: "EX", ttl: number): Promise<unknown>;
   del(key: string): Promise<number | unknown>;
+}
+
+export interface StorageClientConfig {
+  accountId: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucketName: string;
+  publicUrl: string;
+}
+
+export interface GeneratePresignedUploadOptions {
+  filename: string;
+  contentType: string;
+  size: number;
+  projectId?: string;
+  userId?: string;
+  category?: MediaFolderCategory;
+}
+
+export interface UploadBufferOptions {
+  buffer: Buffer;
+  filename: string;
+  contentType: string;
+  size: number;
+  projectId?: string;
+  userId?: string;
+  category?: MediaFolderCategory;
+}
+
+export interface UploadMediaOptions {
+  projectId?: string;
+  userId?: string;
+  category?: MediaFolderCategory;
 }

@@ -7,8 +7,9 @@ import {
   assetTypeEnum,
   createAssetSchema,
 } from "@/lib/validations";
+import { mediaService } from "@/services/api/media.service";
 import type { AssetSource, AssetType } from "@/types";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface AssetModalProps {
   isOpen: boolean;
@@ -32,6 +33,8 @@ export function AssetModal({
     defaultProjectId ? [defaultProjectId] : projects[0] ? [projects[0].id] : [],
   );
   const [error, setError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const createAsset = useCreateAsset();
 
@@ -41,6 +44,43 @@ export function AssetModal({
     setSelectedProjectIds((prev) =>
       prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id],
     );
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const result = await mediaService.uploadMediaFile(file, {
+        projectId: selectedProjectIds[0],
+      });
+      setUrl(result.publicUrl);
+
+      if (file.type.startsWith("video/")) {
+        setType("VIDEO");
+      } else if (file.type.startsWith("audio/")) {
+        setType("AUDIO");
+      } else if (file.type.startsWith("image/")) {
+        setType("IMAGE");
+      } else if (
+        file.type.includes("font") ||
+        /\.(otf|ttf|woff|woff2)$/i.test(file.name)
+      ) {
+        setType("FONT");
+      } else {
+        setType("OTHER");
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to upload file");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -103,13 +143,33 @@ export function AssetModal({
           ) : null}
 
           <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
-              Asset Media URL <span className="text-red-500">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-medium text-foreground">
+                Asset Media URL <span className="text-red-500">*</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="text-xs text-primary hover:underline flex items-center gap-1 font-medium disabled:opacity-50"
+              >
+                {isUploading ? (
+                  <span>Uploading to R2...</span>
+                ) : (
+                  <span>Upload local file to R2</span>
+                )}
+              </button>
+            </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              className="hidden"
+            />
             <input
               type="url"
               required
-              placeholder="https://... (video, audio, image, font URL)"
+              placeholder="https://... (or click 'Upload local file to R2')"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
