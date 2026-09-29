@@ -1,6 +1,7 @@
 "use client";
 
 import { useUserProfile } from "@/hooks/use-settings";
+import { AUTH_ROUTES } from "@/lib/constants";
 import { useTheme } from "@/lib/theme-provider";
 import { useQueryClient } from "@tanstack/react-query";
 import { signOut } from "next-auth/react";
@@ -34,7 +35,7 @@ export function TopHeader({
   const handleSignOut = async () => {
     queryClient.clear();
     await signOut({ redirect: false });
-    window.location.href = "/login";
+    window.location.href = AUTH_ROUTES.SIGN_IN;
   };
 
   useEffect(() => {

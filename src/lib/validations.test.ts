@@ -23,6 +23,16 @@ describe("Auth Validation Schemas", () => {
       expect(result.success).toBe(false);
     });
 
+    it("reports a required message for an empty email", () => {
+      const result = loginSchema.safeParse({ email: "   ", password: "x" });
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.flatten().fieldErrors.email?.[0]).toBe(
+          "Enter your email address",
+        );
+      }
+    });
+
     it("rejects empty password", () => {
       const result = loginSchema.safeParse({
         email: "demo@choicegrid.app",

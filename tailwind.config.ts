@@ -65,9 +65,39 @@ const config: Config = {
         vermilion: {
           DEFAULT: '#FF5338',
           dark: '#D9381E',
+          light: '#FF6249',
         },
         tangerine: '#FF8A00',
         viridian: '#059669',
+        studio: {
+          deep: '#110E0C',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+      },
+      transitionTimingFunction: {
+        studio: 'cubic-bezier(0.2, 0, 0, 1)',
+      },
+      keyframes: {
+        'specimen-settle': {
+          from: { opacity: '0', transform: 'translateY(8px) scale(0.985)' },
+          to: { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        'annotation-in': {
+          from: { opacity: '0', transform: 'translateY(6px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'meter-fill': {
+          from: { transform: 'scaleX(0)' },
+          to: { transform: 'scaleX(1)' },
+        },
+      },
+      animation: {
+        'specimen-settle': 'specimen-settle 600ms cubic-bezier(0.2, 0, 0, 1) both',
+        'annotation-in': 'annotation-in 400ms cubic-bezier(0.2, 0, 0, 1) both',
+        'meter-fill': 'meter-fill 700ms cubic-bezier(0.2, 0, 0, 1) both',
       },
       borderRadius: {
         '2xl': '1rem',

@@ -145,8 +145,11 @@ export const loginSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
-    .pipe(z.string().email("Invalid email address")),
-  password: z.string().min(1, "Password is required"),
+    .min(1, "Enter your email address")
+    .pipe(
+      z.string().email("Enter a valid email address, like name@studio.com"),
+    ),
+  password: z.string().min(1, "Enter your password"),
 });
 
 export const createUserCliSchema = z.object({

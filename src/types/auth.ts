@@ -1,3 +1,6 @@
+import type { loginSchema } from "@/lib/validations";
+import type { z } from "zod";
+
 export interface AuthSessionUser {
   id: string;
   email?: string | null;
@@ -12,10 +15,13 @@ export interface AuthTokenPayload {
   image?: string | null;
 }
 
-export interface LoginInput {
-  email: string;
-  password: string;
-}
+export type LoginInput = z.infer<typeof loginSchema>;
+
+export type LoginField = keyof LoginInput;
+
+export type LoginFieldErrors = Partial<Record<LoginField, string>>;
+
+export type LoginFormStatus = "idle" | "submitting" | "redirecting";
 
 export interface CreateUserCliInput {
   email: string;

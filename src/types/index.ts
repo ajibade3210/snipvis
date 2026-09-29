@@ -99,7 +99,9 @@ export type Theme = "light" | "dark";
 
 export type ApiProvider = "deepseek" | "openrouter";
 
-export type ButtonVariant = "default" | "ghost" | "outline";
+export type ButtonVariant = "default" | "ghost" | "outline" | "tactile";
+
+export type ButtonSize = "default" | "lg";
 
 export interface ProjectThumbnailRecord {
   id: string;

@@ -19,6 +19,8 @@
     --border: 32 20% 86%; /* #E3DCD3 Outline variant */
     --input: 32 20% 86%;
     --ring: 9 100% 61%;
+    --destructive: 4 74% 49%;
+    --destructive-foreground: 0 0% 100%;
     --radius: 0.75rem;
   }
 
@@ -38,6 +40,8 @@
     --border: 24 10% 22%;
     --input: 24 10% 22%;
     --ring: 9 100% 61%;
+    --destructive: 4 86% 66%;
+    --destructive-foreground: 0 0% 100%;
   }
 }
 
@@ -53,12 +57,22 @@
 
 .tactile-btn {
   box-shadow: 0 3px 0 #d9381e;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s
+    ease;
 }
 
-.tactile-btn:active {
+.tactile-btn:active:not(:disabled) {
   transform: translateY(2px);
   box-shadow: 0 1px 0 #d9381e;
+}
+
+.tactile-btn:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+
+.tactile-btn:disabled {
+  cursor: not-allowed;
 }
 
 .card-lift {

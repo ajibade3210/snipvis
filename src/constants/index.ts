@@ -3,6 +3,7 @@ export * from "./auth";
 export * from "./brand";
 export * from "./cache";
 export * from "./competitors";
+export * from "./login-showcase";
 export * from "./media";
 export * from "./projects";
 export * from "./routes";
