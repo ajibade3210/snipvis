@@ -1,7 +1,7 @@
 import type { LoginShowcaseData } from "@/types/login-showcase";
 
 export const LOGIN_SHOWCASE = {
-  headlineLead: "Find the packaging",
+  headlineLead: "Find the content",
   headlineTail: "worth shipping.",
   summary:
     "Save the thumbnails, hooks and title formulas behind outlier videos, then tag them to the projects you're producing next.",
