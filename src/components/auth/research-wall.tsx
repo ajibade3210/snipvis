@@ -64,10 +64,6 @@ export function ResearchWall({ className = "" }: ResearchWallProps) {
           />
         </div>
       </div>
-
-      <p className="text-[13px] text-muted-foreground/80">
-        {LOGIN_SHOWCASE.disclaimer}
-      </p>
     </aside>
   );
 }
