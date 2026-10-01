@@ -241,8 +241,14 @@ function CreatorLabShell() {
                     setNewProjectDefaultChannelId(channelId);
                     setIsNewProjectOpen(true);
                   }}
+                  onChannelDeleted={(deletedId) => {
+                    if (searchParams.get("channel") === deletedId) {
+                      updateUrl({ channel: null });
+                    }
+                  }}
                 />
               )}
+
               {(activeNav === "projects" ||
                 activeNav === "active-projects") && (
                 <ProjectsHubView

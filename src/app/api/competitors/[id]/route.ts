@@ -50,6 +50,25 @@ export async function PATCH(
             : undefined,
         reproducible:
           data.reproducible !== undefined ? data.reproducible : undefined,
+        totalViewCount:
+          data.totalViewCount !== undefined
+            ? data.totalViewCount || null
+            : undefined,
+        videoCount: data.videoCount !== undefined ? data.videoCount : undefined,
+        country: data.country !== undefined ? data.country || null : undefined,
+        customUrl:
+          data.customUrl !== undefined ? data.customUrl || null : undefined,
+        hiddenSubscriberCount:
+          data.hiddenSubscriberCount !== undefined
+            ? data.hiddenSubscriberCount
+            : undefined,
+        keywords: data.keywords !== undefined ? data.keywords : undefined,
+        metadata:
+          data.metadata !== undefined
+            ? data.metadata
+              ? JSON.parse(JSON.stringify(data.metadata))
+              : null
+            : undefined,
       },
     });
 

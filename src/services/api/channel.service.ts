@@ -16,4 +16,9 @@ export const channelService = {
       body: JSON.stringify(data),
       schema: channelSchema,
     }),
+  delete: (id: string): Promise<{ success: boolean; id: string }> =>
+    api(API_ROUTES.CHANNELS_DETAIL(id), {
+      method: "DELETE",
+      schema: z.object({ success: z.boolean(), id: z.string() }),
+    }),
 };

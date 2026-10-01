@@ -1,27 +1,38 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useChannels, useCreateChannel } from "@/hooks/use-channels";
+import {
+  useChannels,
+  useCreateChannel,
+  useDeleteChannel,
+} from "@/hooks/use-channels";
 import type { ChannelRecord } from "@/types/channel";
 import { useMemo, useState } from "react";
 
 interface ChannelsViewProps {
   onSelectChannel: (channelId: string) => void;
   onOpenNewProjectForChannel: (channelId: string) => void;
+  onChannelDeleted?: (channelId: string) => void;
 }
 
 export function ChannelsView({
   onSelectChannel,
   onOpenNewProjectForChannel,
+  onChannelDeleted,
 }: ChannelsViewProps) {
   const { data: channels = [], isLoading } = useChannels();
   const createChannelMutation = useCreateChannel();
+  const deleteChannelMutation = useDeleteChannel();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddingChannel, setIsAddingChannel] = useState(false);
   const [newChannelName, setNewChannelName] = useState("");
   const [newChannelLink, setNewChannelLink] = useState("");
   const [createError, setCreateError] = useState<string | null>(null);
+  const [channelToDelete, setChannelToDelete] = useState<ChannelRecord | null>(
+    null,
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filteredChannels = useMemo(() => {
     if (!searchQuery.trim()) return channels;
@@ -54,6 +65,22 @@ export function ChannelsView({
       setCreateError(
         err instanceof Error ? err.message : "Failed to create channel",
       );
+    }
+  };
+
+  const handleDeleteChannel = async () => {
+    if (!channelToDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteChannelMutation.mutateAsync(channelToDelete.id);
+      if (onChannelDeleted) {
+        onChannelDeleted(channelToDelete.id);
+      }
+      setChannelToDelete(null);
+    } catch (err: unknown) {
+      console.error("Failed to delete channel:", err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -368,30 +395,56 @@ export function ChannelsView({
 
                       {/* Actions */}
                       <td className="py-3 px-4 text-right">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onOpenNewProjectForChannel(channel.id);
-                          }}
-                          title={`Add project for ${channel.name}`}
-                          aria-label={`Add project for ${channel.name}`}
-                          className="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-[#221E1A] hover:bg-[#F1EDE6] dark:hover:bg-[#2C2723] text-muted-foreground hover:text-[#FF5338] dark:hover:text-[#FF5338] transition-colors shadow-xs cursor-pointer"
-                        >
-                          <svg
-                            className="w-3.5 h-3.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onOpenNewProjectForChannel(channel.id);
+                            }}
+                            title={`Add project for ${channel.name}`}
+                            aria-label={`Add project for ${channel.name}`}
+                            className="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-[#221E1A] hover:bg-[#F1EDE6] dark:hover:bg-[#2C2723] text-muted-foreground hover:text-[#FF5338] dark:hover:text-[#FF5338] transition-colors shadow-xs cursor-pointer"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 4.5v15m7.5-7.5h-15"
-                            />
-                          </svg>
-                        </button>
+                            <svg
+                              className="w-3.5 h-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 4.5v15m7.5-7.5h-15"
+                              />
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setChannelToDelete(channel);
+                            }}
+                            title={`Delete channel ${channel.name}`}
+                            aria-label={`Delete channel ${channel.name}`}
+                            className="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-black/10 dark:border-white/10 bg-white dark:bg-[#221E1A] hover:bg-red-50 dark:hover:bg-red-950/40 text-muted-foreground hover:text-red-600 dark:hover:text-red-400 transition-colors shadow-xs cursor-pointer"
+                          >
+                            <svg
+                              className="w-3.5 h-3.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -401,6 +454,76 @@ export function ChannelsView({
           </table>
         </div>
       </div>
+
+      {/* Apple-style Confirmation Modal */}
+      {channelToDelete && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white dark:bg-[#1E1A17] border border-[#E3DCD3] dark:border-[#3C3530] rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
+                  Delete Channel
+                </h3>
+                <p className="text-xs text-[#58524C] dark:text-[#A89F95] leading-relaxed">
+                  Are you sure you want to delete{" "}
+                  <strong className="text-[#1E1A17] dark:text-[#FAF8F5]">
+                    {channelToDelete.name}
+                  </strong>
+                  ?
+                </p>
+              </div>
+            </div>
+
+            {(channelToDelete._count?.projects ?? 0) > 0 && (
+              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-800 dark:text-amber-300 space-y-0.5">
+                <p className="font-bold">Active Projects Linked</p>
+                <p>
+                  This channel is linked to {channelToDelete._count?.projects}{" "}
+                  {channelToDelete._count?.projects === 1
+                    ? "project"
+                    : "projects"}
+                  . Deleting it will unassign those projects without deleting
+                  them.
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setChannelToDelete(null)}
+                disabled={isDeleting}
+                className="h-8 px-3.5 rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] text-xs font-semibold text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteChannel}
+                disabled={isDeleting}
+                className="h-8 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1.5 shadow-xs"
+              >
+                {isDeleting ? "Deleting…" : "Delete Channel"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

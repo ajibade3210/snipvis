@@ -242,6 +242,14 @@ model Competitor {
   reproducible           Boolean   @default(false)
   personalNote           String?   @map("personal_note") @db.Text
 
+  totalViewCount         String?   @map("total_view_count")
+  videoCount             Int?      @map("video_count")
+  country                String?
+  customUrl              String?   @map("custom_url")
+  hiddenSubscriberCount  Boolean   @default(false) @map("hidden_subscriber_count")
+  keywords               String[]  @default([])
+  metadata               Json?
+
   userId                 String
   user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt              DateTime  @default(now())
@@ -250,3 +258,4 @@ model Competitor {
   @@unique([userId, channelUrl])
   @@index([userId])
 }
+

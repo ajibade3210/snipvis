@@ -1,5 +1,7 @@
 "use client";
 
+import { CompetitorInspectorModal } from "@/components/competitor-inspector-modal";
+
 import {
   useCompetitors,
   useCreateCompetitor,
@@ -92,6 +94,12 @@ function AddCompetitorForm({
   const [personalNote, setPersonalNote] = useState("");
   const [startedDate, setStartedDate] = useState("");
   const [avgViewCount, setAvgViewCount] = useState("");
+  const [totalViewCount, setTotalViewCount] = useState("");
+  const [videoCount, setVideoCount] = useState<number | undefined>(undefined);
+  const [country, setCountry] = useState("");
+  const [customUrl, setCustomUrl] = useState("");
+  const [hiddenSubscriberCount, setHiddenSubscriberCount] = useState(false);
+  const [keywords, setKeywords] = useState<string[]>([]);
   const [reproducible, setReproducible] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
@@ -118,6 +126,22 @@ function AddCompetitorForm({
       if (data.description) setDescription(data.description);
       if (data.subscriberCount) setCurrentSubscriberCount(data.subscriberCount);
       if (data.uploadFrequency) setUploadFrequency(data.uploadFrequency);
+
+      if (data.totalViewCount) setTotalViewCount(data.totalViewCount);
+      if (data.videoCount !== undefined && data.videoCount !== null) {
+        setVideoCount(data.videoCount);
+      }
+      if (data.country) setCountry(data.country);
+      if (data.customUrl) setCustomUrl(data.customUrl);
+      if (
+        data.hiddenSubscriberCount !== undefined &&
+        data.hiddenSubscriberCount !== null
+      ) {
+        setHiddenSubscriberCount(data.hiddenSubscriberCount);
+      }
+      if (data.keywords && data.keywords.length > 0) {
+        setKeywords(data.keywords);
+      }
 
       if (data.avgViewCount) {
         setAvgViewCount(data.avgViewCount);
@@ -158,8 +182,12 @@ function AddCompetitorForm({
       setAutoFilledBadge(
         `✨ Auto-filled: ${data.channelName}${
           data.subscriberCount ? ` • ${data.subscriberCount} subs` : ""
-        }${data.avgViewCount ? ` • ~${data.avgViewCount} avg views` : ""}${
-          data.uploadFrequency ? ` • ${data.uploadFrequency}` : ""
+        }${data.totalViewCount ? ` • ${data.totalViewCount} views` : ""}${
+          data.videoCount !== undefined && data.videoCount !== null
+            ? ` • ${data.videoCount} videos`
+            : ""
+        }${data.uploadFrequency ? ` • ${data.uploadFrequency}` : ""}${
+          data.keywords?.length ? ` • ${data.keywords.length} tags` : ""
         }`,
       );
       setShowAdvanced(true);
@@ -196,6 +224,12 @@ function AddCompetitorForm({
       mostPopularVideoThumb: mostPopularVideoThumb.trim() || undefined,
       description: description.trim() || undefined,
       personalNote: personalNote.trim() || undefined,
+      totalViewCount: totalViewCount.trim() || undefined,
+      videoCount: videoCount,
+      country: country.trim() || undefined,
+      customUrl: customUrl.trim() || undefined,
+      hiddenSubscriberCount,
+      keywords: keywords.length > 0 ? keywords : undefined,
     });
   };
 
@@ -504,161 +538,31 @@ function AddCompetitorForm({
   );
 }
 
-function NoteEditor({
-  competitor,
-  onSave,
-  onCancel,
-}: {
-  competitor: CompetitorRecord;
-  onSave: (note: string) => void;
-  onCancel: () => void;
-}) {
-  const [note, setNote] = useState(competitor.personalNote ?? "");
-  return (
-    <div className="space-y-2">
-      <textarea
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-        rows={3}
-        placeholder="Your personal observations about this competitor..."
-        className="w-full p-2.5 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338] resize-none"
-      />
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => onSave(note)}
-          className="h-7 px-4 rounded-full bg-[#FF5338] text-white text-[11px] font-bold tactile-btn"
-        >
-          Save
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="h-7 px-3 rounded-full text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function CadenceEditor({
-  currentCadence,
-  onSave,
-  onCancel,
-}: {
-  currentCadence?: string | null;
-  onSave: (cadence: string) => void;
-  onCancel: () => void;
-}) {
-  const [cadence, setCadence] = useState(currentCadence ?? "");
-  const [showCalc, setShowCalc] = useState(false);
-
-  return (
-    <div className="space-y-2 p-3 rounded-xl bg-[#F7F4EF] dark:bg-[#221E1A] border border-[#E3DCD3] dark:border-[#3C3530]">
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
-          Edit Cadence
-        </span>
-        <button
-          type="button"
-          onClick={() => setShowCalc((v) => !v)}
-          className="text-[10px] text-[#FF5338] hover:underline"
-        >
-          {showCalc ? "Hide" : "⚡ Calculate"}
-        </button>
-      </div>
-
-      <div className="flex flex-wrap gap-1">
-        {UPLOAD_FREQUENCY_PRESETS.map((p) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => setCadence(p)}
-            className={`px-2 py-0.5 text-[10px] rounded-full border transition-colors capitalize ${
-              cadence === p
-                ? "bg-[#FF5338] text-white border-[#FF5338] font-bold"
-                : "border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#1E1A17] text-[#58524C] dark:text-[#A89F95]"
-            }`}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
-
-      <input
-        type="text"
-        value={cadence}
-        onChange={(e) => setCadence(e.target.value)}
-        placeholder="e.g. twice weekly, once daily, 5 times daily"
-        className="w-full h-8 px-2.5 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
-      />
-
-      {showCalc && (
-        <CadenceCalculator
-          onCalculated={(res) => {
-            setCadence(res);
-            setShowCalc(false);
-          }}
-        />
-      )}
-
-      <div className="flex items-center gap-2 pt-1">
-        <button
-          type="button"
-          onClick={() => onSave(cadence.trim())}
-          className="h-6 px-3 rounded-full bg-[#FF5338] text-white text-[10px] font-bold tactile-btn"
-        >
-          Save
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="h-6 px-2.5 rounded-full text-[10px] font-bold text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function CompetitorCard({
   competitor,
   onDelete,
   onUpdate,
+  onInspect,
 }: {
   competitor: CompetitorRecord;
   onDelete: () => void;
   onUpdate: (data: UpdateCompetitorInput) => void;
+  onInspect: () => void;
 }) {
-  const [editingNote, setEditingNote] = useState(false);
-  const [editingCadence, setEditingCadence] = useState(false);
-
-  const lastUpload = competitor.lastUploadDate
-    ? new Date(competitor.lastUploadDate).toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      })
-    : null;
-
-  const startedFormatted = competitor.startedDate
-    ? new Date(competitor.startedDate).toLocaleDateString("en-GB", {
-        month: "short",
-        year: "numeric",
-      })
-    : null;
-
-  const hasSubGrowth =
-    competitor.subscriberCountAtAdd && competitor.currentSubscriberCount;
-
   return (
-    <div className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] overflow-hidden card-lift flex flex-col">
+    <div
+      onClick={onInspect}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onInspect();
+        }
+      }}
+      className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] hover:border-[#FF5338]/60 overflow-hidden card-lift flex flex-col transition-all duration-200 group/card text-left cursor-pointer"
+    >
       {/* Channel Header */}
-      <div className="p-5 pb-4 flex items-start gap-4">
-        <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#F1EDE6] dark:bg-[#2A2521] shrink-0 flex items-center justify-center border border-[#E3DCD3]/60 dark:border-[#3C3530]/60">
+      <div className="p-5 pb-3 flex items-start gap-3.5">
+        <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#F1EDE6] dark:bg-[#2A2521] shrink-0 flex items-center justify-center border border-[#E3DCD3]/60 dark:border-[#3C3530]/60 shadow-xs">
           {competitor.avatarUrl ? (
             <img
               src={competitor.avatarUrl}
@@ -666,7 +570,7 @@ function CompetitorCard({
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="text-lg font-black text-[#FF5338]">
+            <span className="text-base font-black text-[#FF5338]">
               {competitor.channelName.slice(0, 2).toUpperCase()}
             </span>
           )}
@@ -674,44 +578,32 @@ function CompetitorCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="font-extrabold text-sm text-[#1E1A17] dark:text-[#FAF8F5] truncate">
+              <h3 className="font-extrabold text-sm text-[#1E1A17] dark:text-[#FAF8F5] truncate group-hover/card:text-[#FF5338] transition-colors">
                 {competitor.channelName}
               </h3>
               <a
                 href={competitor.channelUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[11px] text-[#FF5338] hover:underline font-grotesk"
+                onClick={(e) => e.stopPropagation()}
+                className="text-[11px] text-[#8C8379] hover:text-[#FF5338] hover:underline font-grotesk truncate block"
               >
-                {competitor.channelUrl.replace("https://", "")} ↗
+                {competitor.customUrl ||
+                  competitor.channelUrl.replace(
+                    /^https?:\/\/(www\.)?/,
+                    "",
+                  )}{" "}
+                ↗
               </a>
-              <div className="mt-1.5 flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() =>
-                    onUpdate({ reproducible: !competitor.reproducible })
-                  }
-                  title="Click to toggle reproducible niche status"
-                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all border ${
-                    competitor.reproducible
-                      ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100"
-                      : "bg-[#FAF8F5] dark:bg-[#221E1A] text-[#8C8379] border-[#E3DCD3] dark:border-[#3C3530] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
-                  }`}
-                >
-                  <span>{competitor.reproducible ? "✓" : "○"}</span>
-                  <span>
-                    {competitor.reproducible
-                      ? "Reproducible Niche"
-                      : "Mark Reproducible"}
-                  </span>
-                </button>
-              </div>
             </div>
             <button
               type="button"
-              onClick={onDelete}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
               title="Stop tracking"
-              className="text-[#8C8379] hover:text-[#FF5338] transition-colors shrink-0 mt-0.5"
+              className="text-[#8C8379] hover:text-[#FF5338] transition-colors p-1 -mt-1 -mr-1 rounded-md"
             >
               <svg
                 className="w-3.5 h-3.5"
@@ -728,179 +620,76 @@ function CompetitorCard({
               </svg>
             </button>
           </div>
-          {competitor.description && (
-            <p className="text-[11px] text-[#58524C] dark:text-[#A89F95] mt-1.5 line-clamp-2 leading-relaxed">
-              {competitor.description}
-            </p>
-          )}
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="px-5 pb-4 grid grid-cols-2 gap-2">
-        {competitor.currentSubscriberCount && (
-          <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-3 space-y-0.5">
-            <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
-              Subscribers
-            </p>
-            <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
-              {competitor.currentSubscriberCount}
-            </p>
-            {hasSubGrowth && (
-              <p className="text-[10px] text-[#8C8379]">
-                was {competitor.subscriberCountAtAdd}
-              </p>
-            )}
-          </div>
-        )}
+      {/* Cadence & Reproducible Status Strip */}
+      <div className="px-5 pb-3 flex items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onUpdate({ reproducible: !competitor.reproducible });
+          }}
+          title="Click to toggle reproducible niche status"
+          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all border ${
+            competitor.reproducible
+              ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100"
+              : "bg-[#FAF8F5] dark:bg-[#221E1A] text-[#8C8379] border-[#E3DCD3] dark:border-[#3C3530] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
+          }`}
+        >
+          <span>{competitor.reproducible ? "✓" : "○"}</span>
+          <span>
+            {competitor.reproducible
+              ? "Reproducible Niche"
+              : "Mark Reproducible"}
+          </span>
+        </button>
 
-        {competitor.avgViewCount && (
-          <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-3 space-y-0.5">
-            <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
-              Avg Views / Video
-            </p>
-            <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
-              {competitor.avgViewCount}
-            </p>
-          </div>
-        )}
-
-        {startedFormatted && (
-          <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-3 space-y-0.5">
-            <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
-              Channel Started
-            </p>
-            <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
-              {startedFormatted}
-            </p>
-          </div>
-        )}
-
-        {lastUpload && (
-          <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-3 space-y-0.5">
-            <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
-              Last Upload
-            </p>
-            <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
-              {lastUpload}
-            </p>
-          </div>
-        )}
-
-        {/* Upload Cadence Pill / Editor */}
-        <div className="bg-[#FFF0D6] dark:bg-amber-950/30 rounded-xl p-3 space-y-0.5">
-          <div className="flex items-center justify-between">
-            <p className="text-[10px] font-bold text-[#914c00] dark:text-amber-400 uppercase tracking-wide">
-              Upload Cadence
-            </p>
-            <button
-              type="button"
-              onClick={() => setEditingCadence((v) => !v)}
-              className="text-[10px] text-[#914c00] dark:text-amber-300 hover:underline"
-            >
-              {editingCadence ? "Close" : "Edit"}
-            </button>
-          </div>
-          {competitor.uploadFrequency ? (
-            <p className="text-sm font-extrabold text-[#914c00] dark:text-amber-300 capitalize">
-              {competitor.uploadFrequency}
-            </p>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setEditingCadence(true)}
-              className="text-xs text-[#914c00] dark:text-amber-300 font-semibold hover:underline"
-            >
-              + Add cadence
-            </button>
-          )}
-        </div>
-
-        {competitor.mostPopularVideoTitle && (
-          <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-3 space-y-1.5 col-span-2">
-            <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
-              Top Video
-            </p>
-            <div className="flex items-start gap-2.5">
-              {competitor.mostPopularVideoThumb && (
-                <div className="w-16 h-10 rounded-lg overflow-hidden bg-black/10 shrink-0 border border-[#E3DCD3]/50 dark:border-[#3C3530]/50">
-                  <img
-                    src={competitor.mostPopularVideoThumb}
-                    alt={competitor.mostPopularVideoTitle}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                {competitor.mostPopularVideoUrl ? (
-                  <a
-                    href={competitor.mostPopularVideoUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs font-bold text-[#FF5338] hover:underline line-clamp-2 leading-snug"
-                  >
-                    {competitor.mostPopularVideoTitle}
-                  </a>
-                ) : (
-                  <p className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-2 leading-snug">
-                    {competitor.mostPopularVideoTitle}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
+        {competitor.uploadFrequency && (
+          <span className="text-[10px] font-bold text-[#914c00] dark:text-amber-300 bg-[#FFF0D6] dark:bg-amber-950/30 px-2.5 py-0.5 rounded-full capitalize shrink-0">
+            {competitor.uploadFrequency}
+          </span>
         )}
       </div>
 
-      {editingCadence && (
+      {/* Key Metrics Essentials Grid */}
+      <div className="px-5 pb-3 grid grid-cols-2 gap-2">
+        <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-2.5 space-y-0.5">
+          <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+            Subscribers
+          </p>
+          <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
+            {competitor.currentSubscriberCount || "—"}
+          </p>
+        </div>
+
+        <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-2.5 space-y-0.5">
+          <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+            Avg Views / Video
+          </p>
+          <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
+            {competitor.avgViewCount || "—"}
+          </p>
+        </div>
+      </div>
+
+      {/* Top Video 1-line Signal */}
+      {competitor.mostPopularVideoTitle && (
         <div className="px-5 pb-3">
-          <CadenceEditor
-            currentCadence={competitor.uploadFrequency}
-            onSave={(cadence) => {
-              onUpdate({ uploadFrequency: cadence });
-              setEditingCadence(false);
-            }}
-            onCancel={() => setEditingCadence(false)}
-          />
+          <div className="bg-[#FAF8F5] dark:bg-[#221E1A] border border-[#E3DCD3]/60 dark:border-[#3C3530]/60 rounded-xl px-3 py-2 flex items-center gap-2">
+            <span className="text-xs shrink-0 text-[#FF5338]">⚡</span>
+            <p className="text-xs font-semibold text-[#1E1A17] dark:text-[#FAF8F5] truncate min-w-0">
+              {competitor.mostPopularVideoTitle}
+            </p>
+          </div>
         </div>
       )}
 
-      {/* Personal Note */}
-      <div className="px-5 pb-5 mt-auto border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50 pt-4">
-        {editingNote ? (
-          <NoteEditor
-            competitor={competitor}
-            onSave={(note) => {
-              onUpdate({ personalNote: note });
-              setEditingNote(false);
-            }}
-            onCancel={() => setEditingNote(false)}
-          />
-        ) : (
-          <button
-            type="button"
-            onClick={() => setEditingNote(true)}
-            className="group cursor-pointer w-full text-left"
-          >
-            {competitor.personalNote ? (
-              <div className="space-y-1">
-                <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide flex items-center gap-1">
-                  Personal Note
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#FF5338]">
-                    · Edit
-                  </span>
-                </p>
-                <p className="text-xs text-[#58524C] dark:text-[#A89F95] leading-relaxed">
-                  {competitor.personalNote}
-                </p>
-              </div>
-            ) : (
-              <p className="text-xs text-[#8C8379] group-hover:text-[#FF5338] transition-colors">
-                + Add personal note…
-              </p>
-            )}
-          </button>
-        )}
+      {/* Apple-grade Footer Affordance */}
+      <div className="px-5 py-3 mt-auto border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50 flex items-center justify-between text-[11px] text-[#8C8379] group-hover/card:text-[#FF5338] transition-colors">
+        <span className="font-semibold">Inspect channel intel</span>
+        <span className="font-bold">→</span>
       </div>
     </div>
   );
@@ -909,6 +698,9 @@ function CompetitorCard({
 export function CompetitorSpyView() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [filter, setFilter] = useState<"all" | "reproducible">("all");
+  const [inspectingCompetitorId, setInspectingCompetitorId] = useState<
+    string | null
+  >(null);
 
   const { data: competitors = [], isLoading } = useCompetitors();
   const createMutation = useCreateCompetitor();
@@ -933,6 +725,10 @@ export function CompetitorSpyView() {
     filter === "reproducible"
       ? competitors.filter((c) => c.reproducible)
       : competitors;
+
+  const currentInspectingCompetitor = inspectingCompetitorId
+    ? (competitors.find((c) => c.id === inspectingCompetitorId) ?? null)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -1034,10 +830,17 @@ export function CompetitorSpyView() {
               competitor={c}
               onDelete={() => handleDelete(c.id)}
               onUpdate={(data) => handleUpdate(c.id, data)}
+              onInspect={() => setInspectingCompetitorId(c.id)}
             />
           ))}
         </div>
       )}
+
+      {/* Competitor Inspector Modal */}
+      <CompetitorInspectorModal
+        competitor={currentInspectingCompetitor}
+        onClose={() => setInspectingCompetitorId(null)}
+      />
     </div>
   );
 }

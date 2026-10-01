@@ -10,5 +10,7 @@ export const API_ROUTES = {
   SETTINGS: "/api/settings",
   ANALYZE_HOOK: "/api/analyze-hook",
   CHANNELS: "/api/channels",
+  CHANNELS_DETAIL: (id: string) => `/api/channels/${id}`,
   COMPETITORS: "/api/competitors",
+  COMPETITORS_DETAIL: (id: string) => `/api/competitors/${id}`,
 } as const;

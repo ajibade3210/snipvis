@@ -76,6 +76,15 @@ export async function POST(req: NextRequest) {
             : null,
         reproducible: data.reproducible ?? false,
         personalNote: data.personalNote || null,
+        totalViewCount: data.totalViewCount || null,
+        videoCount: data.videoCount ?? null,
+        country: data.country || null,
+        customUrl: data.customUrl || null,
+        hiddenSubscriberCount: data.hiddenSubscriberCount ?? false,
+        keywords: data.keywords || [],
+        metadata: data.metadata
+          ? JSON.parse(JSON.stringify(data.metadata))
+          : undefined,
         userId: user.id,
       },
     });

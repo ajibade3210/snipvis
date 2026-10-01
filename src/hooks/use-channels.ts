@@ -19,3 +19,14 @@ export const useCreateChannel = () => {
     },
   });
 };
+
+export const useDeleteChannel = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => channelService.delete(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.CHANNELS] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.PROJECTS] });
+    },
+  });
+};

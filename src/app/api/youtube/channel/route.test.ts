@@ -10,12 +10,20 @@ vi.mock("@/lib/session", () => ({
 import { POST as channelRoute } from "./route";
 
 describe("YouTube Channel Metadata API Route", () => {
+  const originalApiKey = process.env.YOUTUBE_API_KEY;
+
   beforeEach(() => {
     vi.restoreAllMocks();
+    process.env.YOUTUBE_API_KEY = undefined;
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    if (originalApiKey) {
+      process.env.YOUTUBE_API_KEY = originalApiKey;
+    } else {
+      process.env.YOUTUBE_API_KEY = undefined;
+    }
   });
 
   it("rejects missing url payload with 400", async () => {
@@ -132,5 +140,136 @@ describe("YouTube Channel Metadata API Route", () => {
     expect(data.subscriberCount).toBe("17.2M");
     expect(data.uploadFrequency).toBeDefined();
     expect(data.lastUploadDate).toBe("2026-09-28T10:00:00+00:00");
+  });
+
+  it("extracts deep metadata via official YouTube Data API v3", async () => {
+    process.env.YOUTUBE_API_KEY = "mock-api-key";
+    const mockChannelResponse = {
+      items: [
+        {
+          id: "UC_x5XG1OV2P6uZZ5FSM9Ttw",
+          snippet: {
+            title: "Google Developers",
+            description: "The official Google Developers channel.",
+            customUrl: "@googledevelopers",
+            publishedAt: "2007-08-23T00:34:43Z",
+            country: "US",
+            thumbnails: {
+              high: { url: "https://yt3.ggpht.com/google_devs.jpg" },
+            },
+          },
+          statistics: {
+            viewCount: "215000000",
+            subscriberCount: "2300000",
+            hiddenSubscriberCount: false,
+            videoCount: "5420",
+          },
+          contentDetails: {
+            relatedPlaylists: {
+              uploads: "UU_x5XG1OV2P6uZZ5FSM9Ttw",
+            },
+          },
+          brandingSettings: {
+            channel: {
+              keywords:
+                '"google developer" "android" web chrome "cloud computing"',
+            },
+          },
+        },
+      ],
+    };
+
+    const mockPlaylistResponse = {
+      items: [
+        {
+          snippet: {
+            publishedAt: "2026-09-30T12:00:00Z",
+            resourceId: { videoId: "vid1" },
+          },
+        },
+        {
+          snippet: {
+            publishedAt: "2026-09-26T12:00:00Z",
+            resourceId: { videoId: "vid2" },
+          },
+        },
+      ],
+    };
+
+    const mockVideosResponse = {
+      items: [
+        {
+          id: "vid1",
+          snippet: {
+            title: "What is New in AI",
+            thumbnails: { high: { url: "https://img.youtube.com/thumb1.jpg" } },
+          },
+          statistics: { viewCount: "85000" },
+        },
+        {
+          id: "vid2",
+          snippet: {
+            title: "Building with Next.js & Google Cloud",
+            thumbnails: { high: { url: "https://img.youtube.com/thumb2.jpg" } },
+          },
+          statistics: { viewCount: "250000" },
+        },
+      ],
+    };
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockImplementation((url: string) => {
+        if (url.includes("/channels?")) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(mockChannelResponse),
+          });
+        }
+        if (url.includes("/playlistItems?")) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(mockPlaylistResponse),
+          });
+        }
+        if (url.includes("/videos?")) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(mockVideosResponse),
+          });
+        }
+        return Promise.resolve({ ok: false });
+      }),
+    );
+
+    const fakeReq = new Request("http://localhost:3000/api/youtube/channel", {
+      method: "POST",
+      body: JSON.stringify({
+        url: "https://www.youtube.com/@googledevelopers",
+      }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const res = await channelRoute(fakeReq as unknown as NextRequest);
+    expect(res.status).toBe(200);
+    const data = await res.json();
+
+    expect(data.channelName).toBe("Google Developers");
+    expect(data.customUrl).toBe("@googledevelopers");
+    expect(data.subscriberCount).toBe("2.3M");
+    expect(data.totalViewCount).toBe("215M");
+    expect(data.videoCount).toBe(5420);
+    expect(data.country).toBe("US");
+    expect(data.keywords).toEqual([
+      "google developer",
+      "android",
+      "web",
+      "chrome",
+      "cloud computing",
+    ]);
+    expect(data.mostPopularVideoTitle).toBe(
+      "Building with Next.js & Google Cloud",
+    );
+    expect(data.mostPopularVideoViews).toBe("250K");
   });
 });

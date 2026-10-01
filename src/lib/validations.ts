@@ -375,6 +375,13 @@ export const createCompetitorSchema = z.object({
   startedDate: z.string().optional().nullable(),
   reproducible: z.boolean().default(false).optional(),
   personalNote: z.string().optional().nullable(),
+  totalViewCount: z.string().optional().nullable(),
+  videoCount: z.number().int().optional().nullable(),
+  country: z.string().optional().nullable(),
+  customUrl: z.string().optional().nullable(),
+  hiddenSubscriberCount: z.boolean().optional(),
+  keywords: z.array(z.string()).optional(),
+  metadata: z.record(z.unknown()).optional().nullable(),
 });
 
 export const updateCompetitorSchema = createCompetitorSchema

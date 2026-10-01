@@ -55,4 +55,15 @@ describe("Channel Service", () => {
     expect(result.id).toBe("c2");
     expect(result.name).toBe("TechCraft");
   });
+
+  it("deletes channel via DELETE /api/channels/:id", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ success: true, id: "c1" }),
+    } as Response);
+
+    const result = await channelService.delete("c1");
+    expect(result.success).toBe(true);
+    expect(result.id).toBe("c1");
+  });
 });
