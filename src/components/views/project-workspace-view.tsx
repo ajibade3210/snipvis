@@ -358,7 +358,24 @@ export function ProjectWorkspaceView({
         <ThumbnailGallery
           projectId={currentProject.id}
           projectName={currentProject.name}
+          hook={currentProject.hook}
+          channelName={
+            typeof currentProject.channel === "object" &&
+            currentProject.channel !== null
+              ? currentProject.channel.name
+              : typeof currentProject.channel === "string"
+                ? currentProject.channel
+                : null
+          }
           thumbnails={currentProject.thumbnails}
+          referenceInspirations={inspirations.map((i) => ({
+            id: i.id,
+            title: i.title || "Untitled Reference",
+            thumbnailUrl: i.thumbnailUrl,
+            channelName: i.channelName,
+            views: i.views,
+            duration: i.duration,
+          }))}
         />
       )}
 

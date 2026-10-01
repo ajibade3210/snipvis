@@ -391,3 +391,18 @@ export const updateCompetitorSchema = createCompetitorSchema
 export const fetchYoutubeChannelSchema = z.object({
   url: z.string().min(1, "YouTube URL or handle is required"),
 });
+
+export const generateThumbnailPromptSchema = z.object({
+  topic: z.string().min(2, "Topic must be at least 2 characters").max(200),
+  hook: z.string().max(2000).optional(),
+  channelName: z.string().max(100).optional(),
+  style: z
+    .enum([
+      "cinematic",
+      "hyper_realistic",
+      "illustrative_3d",
+      "minimalist_bold",
+    ])
+    .default("cinematic")
+    .optional(),
+});

@@ -167,15 +167,58 @@ export function BriefView({ projectId }: BriefViewProps) {
       {/* Retention Hook */}
       <Card>
         <CardContent className="pt-5 space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-              <span>🎣</span> Opening Hook (0:00 - 0:30)
-            </label>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Word-for-word script of the first 30 seconds designed to stop the
-            scroll and set stakes.
-          </p>
+          {(() => {
+            const words = hook.trim() ? hook.trim().split(/\s+/).length : 0;
+            const spokenSeconds = Math.round((words / 145) * 60);
+            const isOptimal = words > 0 && spokenSeconds <= 8;
+            const isCaution = spokenSeconds > 8 && spokenSeconds <= 12;
+            const isWarning = spokenSeconds > 12;
+
+            return (
+              <>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <label className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                    <span>🎣</span> Opening Hook (0:00 - 0:10)
+                  </label>
+                  {words > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-xs font-mono font-bold border flex items-center gap-1.5 ${
+                          isOptimal
+                            ? "bg-emerald-950/40 text-emerald-400 border-emerald-500/30"
+                            : isCaution
+                              ? "bg-amber-950/40 text-amber-300 border-amber-500/30"
+                              : "bg-red-950/40 text-red-300 border-red-500/30"
+                        }`}
+                      >
+                        <span>⏱️ ~{spokenSeconds}s</span>
+                        <span className="text-[10px] opacity-75">
+                          ({words} words @ 145 WPM)
+                        </span>
+                        <span>•</span>
+                        <span>
+                          {isOptimal
+                            ? "Optimal Retention"
+                            : isCaution
+                              ? "Borderline Pacing"
+                              : "Drop-Off Risk (>12s)"}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <p>
+                    Word-for-word script of the opening delivery designed to
+                    stop the scroll and validate the thumbnail promise.
+                  </p>
+                  <span className="hidden sm:inline-block text-[11px] text-[#FF5338] font-medium">
+                    ⚡ 60% of drop-off happens in the first 10s
+                  </span>
+                </div>
+              </>
+            );
+          })()}
           <textarea
             rows={3}
             placeholder="e.g. In the next 7 minutes, I'm going to prove that 99% of creators are using thumbnails that secretly destroy their click-through rate..."

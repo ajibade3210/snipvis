@@ -13,4 +13,5 @@ export const API_ROUTES = {
   CHANNELS_DETAIL: (id: string) => `/api/channels/${id}`,
   COMPETITORS: "/api/competitors",
   COMPETITORS_DETAIL: (id: string) => `/api/competitors/${id}`,
+  THUMBNAIL_PROMPT: "/api/thumbnail-prompt",
 } as const;

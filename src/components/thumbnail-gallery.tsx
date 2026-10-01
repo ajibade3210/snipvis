@@ -1,5 +1,7 @@
 "use client";
 
+import { PackagingSimulatorModal } from "@/components/packaging-simulator-modal";
+import { ThumbnailPromptModal } from "@/components/thumbnail-prompt-modal";
 import {
   useAddThumbnail,
   useDeleteThumbnail,
@@ -7,21 +9,32 @@ import {
 } from "@/hooks/use-projects";
 import { mediaService } from "@/services/api/media.service";
 import type { ProjectThumbnailRecord } from "@/types";
+import type { SimulatorReferenceItem } from "@/types/packaging-simulator";
 import { useRef, useState } from "react";
 
 interface ThumbnailGalleryProps {
   projectId: string;
   projectName: string;
+  hook?: string | null;
+  channelName?: string | null;
+  channelAvatarUrl?: string | null;
   thumbnails?: ProjectThumbnailRecord[];
+  referenceInspirations?: SimulatorReferenceItem[];
 }
 
 export function ThumbnailGallery({
   projectId,
   projectName,
+  hook,
+  channelName,
+  channelAvatarUrl,
   thumbnails = [],
+  referenceInspirations = [],
 }: ThumbnailGalleryProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
   const [uploadFeedback, setUploadFeedback] = useState<{
     type: "success" | "error";
     text: string;
@@ -145,42 +158,62 @@ export function ThumbnailGallery({
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isUploading}
-          className="h-10 px-5 rounded-full bg-[#FF5338] text-white text-xs font-bold flex items-center gap-1.5 tactile-btn shadow-sm hover:bg-[#d93820] disabled:opacity-50 cursor-pointer shrink-0"
-        >
-          {isUploading ? (
-            <>
-              <svg
-                className="animate-spin h-3.5 w-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8H4z"
-                />
-              </svg>
-              <span>Uploading...</span>
-            </>
-          ) : (
-            <>
-              <span className="text-sm leading-none font-black">+</span>
-              <span>Upload Thumbnails</span>
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsPromptModalOpen(true)}
+            className="h-10 px-3.5 rounded-full bg-[#FFD700]/10 hover:bg-[#FFD700]/20 text-[#B45309] dark:text-[#FFD700] text-xs font-bold flex items-center gap-1.5 border border-[#FFD700]/30 tactile-btn shadow-xs cursor-pointer"
+          >
+            <span>✨</span>
+            <span>AI Prompt</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsSimulatorOpen(true)}
+            className="h-10 px-4 rounded-full bg-white dark:bg-[#25201C] hover:bg-[#F1EDE6] dark:hover:bg-[#322C28] text-[#1E1A17] dark:text-[#FAF8F5] text-xs font-bold flex items-center gap-1.5 border border-[#E3DCD3] dark:border-[#3C3530] tactile-btn shadow-xs cursor-pointer"
+          >
+            <span>⚡</span>
+            <span>Simulate Feed</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+            className="h-10 px-5 rounded-full bg-[#FF5338] text-white text-xs font-bold flex items-center gap-1.5 tactile-btn shadow-sm hover:bg-[#d93820] disabled:opacity-50 cursor-pointer"
+          >
+            {isUploading ? (
+              <>
+                <svg
+                  className="animate-spin h-3.5 w-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  />
+                </svg>
+                <span>Uploading...</span>
+              </>
+            ) : (
+              <>
+                <span className="text-sm leading-none font-black">+</span>
+                <span>Upload Thumbnails</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Status feedback */}
@@ -207,10 +240,20 @@ export function ThumbnailGallery({
                 Primary Active Thumbnail
               </span>
             </div>
-            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#FFD700]/20 text-[#B45309] dark:text-[#FCD34D] border border-[#F59E0B]/30 flex items-center gap-1.5">
-              <span>★</span>
-              <span>Currently Featured on Video Card</span>
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsSimulatorOpen(true)}
+                className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#FF5338]/10 text-[#FF5338] hover:bg-[#FF5338] hover:text-white border border-[#FF5338]/30 flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <span>⚡</span>
+                <span>Test in Feed</span>
+              </button>
+              <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#FFD700]/20 text-[#B45309] dark:text-[#FCD34D] border border-[#F59E0B]/30 flex items-center gap-1.5">
+                <span>★</span>
+                <span>Currently Featured on Video Card</span>
+              </span>
+            </div>
           </div>
 
           <div className="relative aspect-video max-w-3xl mx-auto rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 shadow-lg group">
@@ -332,6 +375,26 @@ export function ThumbnailGallery({
           </div>
         </div>
       )}
+      {/* Packaging Simulator Modal */}
+      <PackagingSimulatorModal
+        isOpen={isSimulatorOpen}
+        onClose={() => setIsSimulatorOpen(false)}
+        projectId={projectId}
+        projectName={projectName}
+        channelName={channelName}
+        channelAvatarUrl={channelAvatarUrl}
+        thumbnails={thumbnails}
+        referenceInspirations={referenceInspirations}
+      />
+
+      {/* Thumbnail AI Prompt Modal */}
+      <ThumbnailPromptModal
+        isOpen={isPromptModalOpen}
+        onClose={() => setIsPromptModalOpen(false)}
+        initialTopic={projectName}
+        hook={hook}
+        channelName={channelName}
+      />
     </div>
   );
 }
