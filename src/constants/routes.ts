@@ -14,4 +14,6 @@ export const API_ROUTES = {
   COMPETITORS: "/api/competitors",
   COMPETITORS_DETAIL: (id: string) => `/api/competitors/${id}`,
   THUMBNAIL_PROMPT: "/api/thumbnail-prompt",
+  FORGOT_PASSWORD: "/api/auth/forgot-password",
+  RESET_PASSWORD: "/api/auth/reset-password",
 } as const;

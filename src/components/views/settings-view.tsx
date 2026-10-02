@@ -20,10 +20,37 @@ export function SettingsView({ inspirations, projects }: SettingsViewProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState("");
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [isDeletingAvatar, setIsDeletingAvatar] = useState(false);
   const [profileFeedback, setProfileFeedback] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  const handleDeleteAvatar = async () => {
+    setIsDeletingAvatar(true);
+    setProfileFeedback(null);
+    try {
+      await updateProfileMutation.mutateAsync({
+        avatarUrl: null,
+        image: null,
+      });
+      setProfileFeedback({
+        type: "success",
+        text: "Profile picture removed successfully",
+      });
+      setTimeout(() => setProfileFeedback(null), 3000);
+    } catch (err: unknown) {
+      setProfileFeedback({
+        type: "error",
+        text:
+          err instanceof Error
+            ? err.message
+            : "Failed to remove profile picture",
+      });
+    } finally {
+      setIsDeletingAvatar(false);
+    }
+  };
 
   useEffect(() => {
     if (userProfile?.name) {
@@ -158,10 +185,11 @@ export function SettingsView({ inspirations, projects }: SettingsViewProps) {
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-6 pt-1">
             {/* Clickable Avatar Circle */}
-            <div className="relative group shrink-0 self-start sm:self-auto">
+            <div className="relative group shrink-0 self-start sm:self-auto flex flex-col items-center">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingAvatar || isDeletingAvatar}
                 className="w-20 h-20 rounded-full overflow-hidden border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] shadow-sm cursor-pointer relative block p-0 transition-transform active:scale-95"
               >
                 {userProfile?.avatarUrl ? (
@@ -183,14 +211,31 @@ export function SettingsView({ inspirations, projects }: SettingsViewProps) {
                 </div>
               </button>
 
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploadingAvatar}
-                className="mt-2 text-[11px] font-medium text-[#FF5338] hover:underline block sm:hidden cursor-pointer"
-              >
-                Change Photo
-              </button>
+              <div className="flex items-center gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingAvatar || isDeletingAvatar}
+                  className="text-[11px] font-medium text-[#FF5338] hover:underline cursor-pointer"
+                >
+                  Change
+                </button>
+                {userProfile?.avatarUrl && (
+                  <>
+                    <span className="text-black/20 dark:text-white/20 text-xs">
+                      •
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleDeleteAvatar}
+                      disabled={isUploadingAvatar || isDeletingAvatar}
+                      className="text-[11px] font-medium text-red-500 hover:text-red-600 dark:text-red-400 hover:underline cursor-pointer"
+                    >
+                      {isDeletingAvatar ? "Removing..." : "Delete"}
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Profile Name Form */}

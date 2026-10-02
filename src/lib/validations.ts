@@ -179,6 +179,30 @@ export const updateUserProfileSchema = z.object({
   image: z.string().url().nullable().optional(),
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(1, "Enter your email address")
+    .pipe(z.string().email("Enter a valid email address")),
+});
+
+export const resetPasswordSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(1, "Email is required")
+    .pipe(z.string().email("Invalid email")),
+  otp: z
+    .string()
+    .trim()
+    .length(6, "OTP must be 6 digits")
+    .regex(/^\d{6}$/, "OTP must be 6 digits"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+});
+
 /* ========================================================================= */
 /* 3. RESPONSE & ENTITY DTO SCHEMAS                                          */
 /* ========================================================================= */

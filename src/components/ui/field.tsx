@@ -8,6 +8,7 @@ export function getFieldErrorId(id: string): string {
 interface FieldProps {
   id: string;
   label: string;
+  action?: React.ReactNode;
   error?: string;
   children: React.ReactNode;
   className?: string;
@@ -16,6 +17,7 @@ interface FieldProps {
 export function Field({
   id,
   label,
+  action,
   error,
   children,
   className = "",
@@ -24,12 +26,15 @@ export function Field({
 
   return (
     <div className={`group ${className}`}>
-      <label
-        htmlFor={id}
-        className="mb-2 block text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-studio group-focus-within:text-foreground"
-      >
-        {label}
-      </label>
+      <div className="mb-2 flex items-center justify-between">
+        <label
+          htmlFor={id}
+          className="block text-sm font-semibold text-muted-foreground transition-colors duration-150 ease-studio group-focus-within:text-foreground"
+        >
+          {label}
+        </label>
+        {action}
+      </div>
       {children}
       <div
         className={`grid transition-[grid-template-rows,opacity] duration-200 ease-studio ${

@@ -60,3 +60,19 @@ export const SEED_USERS = {
 export const PASSWORD_CONFIG = {
   SALT_ROUNDS: 12,
 } as const;
+
+export const OTP_CONFIG = {
+  LENGTH: 6,
+  EXPIRY_MINUTES: 15,
+} as const;
+
+export const RESET_PASSWORD_COPY = {
+  FORGOT_LINK: "Forgot password?",
+  BACK_TO_LOGIN: "Back to sign in",
+  SEND_OTP_SUBMIT: "Send Reset Code",
+  SENDING: "Sending…",
+  VERIFY_SUBMIT: "Reset Password",
+  VERIFYING: "Resetting…",
+  OTP_SENT: "Check your terminal for the 6-digit code.",
+  SUCCESS: "Password updated. You can now sign in.",
+} as const;

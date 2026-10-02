@@ -1,10 +1,12 @@
 "use client";
 
 import { AuthErrorBanner } from "@/components/auth/auth-error-banner";
+import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 import { PasswordField } from "@/components/auth/password-field";
 import { Button } from "@/components/ui/button";
 import { Field, getFieldErrorId } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { RESET_PASSWORD_COPY } from "@/constants/auth";
 import { useLoginForm } from "@/hooks/use-login-form";
 import {
   AUTH_QUERY_PARAMS,
@@ -15,6 +17,7 @@ import {
 } from "@/lib/constants";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 const SESSION_DAYS = Math.round(
   SESSION_CONFIG.MAX_AGE_SECONDS / SECONDS_PER_DAY,
@@ -25,6 +28,7 @@ const ICON_SIZE = { width: 18, height: 18 } as const;
 const SKELETON_FIELDS = [LOGIN_FIELDS.EMAIL.id, LOGIN_FIELDS.PASSWORD.id];
 
 export function LoginForm() {
+  const [mode, setMode] = useState<"login" | "forgot_password">("login");
   const searchParams = useSearchParams();
   const {
     values,
@@ -38,6 +42,19 @@ export function LoginForm() {
 
   const isBusy = status !== "idle";
   const { EMAIL, PASSWORD } = LOGIN_FIELDS;
+
+  if (mode === "forgot_password") {
+    return (
+      <ForgotPasswordForm
+        initialEmail={values.email}
+        onBackToLogin={() => setMode("login")}
+        onSuccess={(updatedEmail) => {
+          setValue(EMAIL.name, updatedEmail);
+          setMode("login");
+        }}
+      />
+    );
+  }
 
   return (
     <form
@@ -77,6 +94,15 @@ export function LoginForm() {
       <Field
         id={PASSWORD.id}
         label={LOGIN_COPY.PASSWORD_LABEL}
+        action={
+          <button
+            type="button"
+            onClick={() => setMode("forgot_password")}
+            className="text-xs font-medium text-primary hover:underline cursor-pointer"
+          >
+            {RESET_PASSWORD_COPY.FORGOT_LINK}
+          </button>
+        }
         error={fieldErrors.password}
       >
         <PasswordField

@@ -28,3 +28,17 @@ export interface CreateUserCliInput {
   password: string;
   name?: string;
 }
+
+export interface ForgotPasswordInput {
+  email: string;
+}
+
+export interface ResetPasswordInput {
+  email: string;
+  otp: string;
+  newPassword: string;
+}
+
+export interface AuthSuccessResponse {
+  ok: boolean;
+}

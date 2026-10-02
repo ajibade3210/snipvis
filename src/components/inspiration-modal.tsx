@@ -488,7 +488,7 @@ export function InspirationModal({
                     : "bg-white dark:bg-[#201C18] border-black/[0.08] dark:border-white/[0.08] text-[#58524C] dark:text-[#A89F95] hover:border-[#FF5338]/40"
                 }`}
               >
-                {isOutlier ? "⚡ Outlier" : "Not Outlier"}
+                {isOutlier ? "Outlier" : "Not Outlier"}
               </button>
             </div>
           </div>
