@@ -15,6 +15,7 @@ interface TopHeaderProps {
   itemCount: number;
   onOpenAddInspiration: () => void;
   onOpenSettings?: () => void;
+  onToggleMobileMenu?: () => void;
 }
 
 export function TopHeader({
@@ -25,6 +26,7 @@ export function TopHeader({
   itemCount,
   onOpenAddInspiration,
   onOpenSettings,
+  onToggleMobileMenu,
 }: TopHeaderProps) {
   const { theme, toggle } = useTheme();
   const { data: userProfile } = useUserProfile();
@@ -49,11 +51,35 @@ export function TopHeader({
   }, []);
 
   return (
-    <header className="h-[65px] border-b border-black/[0.05] dark:border-white/[0.06] bg-[#FAF8F5] dark:bg-[#171412] sticky top-0 z-40 px-6 flex items-center justify-between gap-4">
+    <header className="h-[65px] border-b border-black/[0.05] dark:border-white/[0.06] bg-[#FAF8F5] dark:bg-[#171412] sticky top-0 z-40 px-3 sm:px-6 flex items-center justify-between gap-2.5 sm:gap-4">
+      {/* Mobile Hamburger Button */}
+      {onToggleMobileMenu && (
+        <button
+          type="button"
+          onClick={onToggleMobileMenu}
+          className="md:hidden w-9 h-9 rounded-full flex items-center justify-center text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors cursor-pointer shrink-0"
+          aria-label="Open navigation menu"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
+      )}
+
       {/* Search Capsule */}
-      <div className="flex-1 max-w-2xl relative flex items-center">
+      <div className="flex-1 max-w-2xl relative flex items-center min-w-0">
         <svg
-          className="w-4 h-4 text-[#8C8379] absolute left-4 pointer-events-none"
+          className="w-4 h-4 text-[#8C8379] absolute left-3.5 pointer-events-none"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -68,29 +94,29 @@ export function TopHeader({
         <input
           ref={searchInputRef}
           type="text"
-          placeholder={`Paste YouTube video URL or search across ${itemCount} items...`}
+          placeholder={`Search ${itemCount} items...`}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           onKeyDown={onSearchKeyDown}
-          className="w-full h-10 pl-10 pr-14 text-xs font-medium rounded-full border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.025] dark:bg-white/[0.03] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:bg-white dark:focus:bg-[#201C18] focus:border-[#FF5338]/40 focus:ring-2 focus:ring-[#FF5338]/15 transition-all shadow-xs"
+          className="w-full h-10 pl-9 pr-10 sm:pr-14 text-xs font-medium rounded-full border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.025] dark:bg-white/[0.03] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:bg-white dark:focus:bg-[#201C18] focus:border-[#FF5338]/40 focus:ring-2 focus:ring-[#FF5338]/15 transition-all shadow-xs"
         />
-        <kbd className="absolute right-3.5 px-1.5 py-0.5 text-[10px] font-mono font-medium rounded-md bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] border border-black/[0.04] dark:border-white/[0.06] pointer-events-none">
+        <kbd className="hidden sm:inline-block absolute right-3.5 px-1.5 py-0.5 text-[10px] font-mono font-medium rounded-md bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] border border-black/[0.04] dark:border-white/[0.06] pointer-events-none">
           ⌘K
         </kbd>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <button
           type="button"
           onClick={onOpenAddInspiration}
-          className="h-9 px-4 rounded-full bg-[#FF5338] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm hover:bg-[#d93820] active:scale-95 transition-all cursor-pointer"
+          className="hidden sm:flex h-9 px-4 rounded-full bg-[#FF5338] text-white text-xs font-bold items-center gap-1.5 shadow-sm hover:bg-[#d93820] active:scale-95 transition-all cursor-pointer"
         >
-          <span className="text-sm leading-none">+</span>
+          <span className="text-sm leading-none font-bold">+</span>
           <span>Add Inspiration</span>
         </button>
 
-        <div className="h-5 w-px bg-black/[0.06] dark:bg-white/[0.08] mx-1" />
+        <div className="hidden sm:block h-5 w-px bg-black/[0.06] dark:bg-white/[0.08] mx-1" />
 
         <button
           type="button"
@@ -117,9 +143,41 @@ export function TopHeader({
           type="button"
           onClick={toggle}
           className="w-9 h-9 rounded-full flex items-center justify-center text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors cursor-pointer"
-          title="Toggle Theme"
+          title={
+            theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
+          }
+          aria-label="Toggle Theme"
         >
-          {theme === "dark" ? "☀️" : "🌙"}
+          {theme === "dark" ? (
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+              />
+            </svg>
+          ) : (
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
+              />
+            </svg>
+          )}
         </button>
 
         {/* Profile Avatar + Dropdown */}

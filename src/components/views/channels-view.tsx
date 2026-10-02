@@ -87,16 +87,14 @@ export function ChannelsView({
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
-              Channels
-            </h1>
-            <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]">
-              {channels.length}
-            </span>
-          </div>
+      <div className="flex items-center justify-between gap-3 border-b border-black/[0.05] dark:border-white/[0.06] pb-4 sm:pb-5">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
+            Channels
+          </h1>
+          <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]">
+            {channels.length}
+          </span>
         </div>
 
         <button
@@ -105,10 +103,12 @@ export function ChannelsView({
             setIsAddingChannel(true);
             setCreateError(null);
           }}
-          className="h-9 px-4 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all self-start sm:self-auto cursor-pointer"
+          className="h-8 sm:h-9 px-3 sm:px-4 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+          title="New Channel"
+          aria-label="New Channel"
         >
-          <span className="text-sm leading-none">+</span>
-          <span>New Channel</span>
+          <span className="text-base sm:text-xs leading-none font-bold">+</span>
+          <span className="hidden sm:inline">New Channel</span>
         </button>
       </div>
 
@@ -194,7 +194,7 @@ export function ChannelsView({
 
       {/* Search Bar */}
       <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
+        <div className="relative flex-1 sm:max-w-sm">
           <svg
             className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8C8379]"
             fill="none"
@@ -218,8 +218,139 @@ export function ChannelsView({
         </div>
       </div>
 
-      {/* Channels Table */}
-      <div className="border border-black/[0.06] dark:border-white/[0.08] rounded-2xl overflow-hidden bg-white dark:bg-[#1E1A17] shadow-xs">
+      {/* Mobile Channel Cards (sm:hidden) */}
+      <div className="space-y-3 sm:hidden">
+        {isLoading ? (
+          <div className="py-12 text-center text-xs text-muted-foreground">
+            Loading channels...
+          </div>
+        ) : filteredChannels.length === 0 ? (
+          <div className="p-8 text-center rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#1E1A17] space-y-2">
+            <p className="text-sm font-semibold text-foreground">
+              {searchQuery
+                ? "No channels match your search"
+                : "No channels created yet"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {searchQuery
+                ? "Try searching for a different keyword"
+                : "Add a channel to categorize your production projects"}
+            </p>
+          </div>
+        ) : (
+          filteredChannels.map((channel: ChannelRecord) => {
+            const projectCount = channel._count?.projects ?? 0;
+            return (
+              <div
+                key={channel.id}
+                onClick={() => onSelectChannel(channel.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSelectChannel(channel.id);
+                  }
+                }}
+                className="p-4 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#1E1A17] shadow-xs active:scale-[0.99] transition-all space-y-3 cursor-pointer group"
+              >
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/10 flex items-center justify-center font-bold text-sm text-foreground shrink-0 border border-black/5 dark:border-white/5">
+                      {channel.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-sm text-foreground truncate group-hover:text-primary transition-colors">
+                        {channel.name}
+                      </h3>
+                      {channel.link ? (
+                        <a
+                          href={channel.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors truncate max-w-[200px]"
+                        >
+                          <svg
+                            className="w-3 h-3 shrink-0 opacity-70"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="2" y1="12" x2="22" y2="12" />
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                          </svg>
+                          <span className="truncate underline underline-offset-2">
+                            {channel.link.replace(/^https?:\/\/(www\.)?/, "")}
+                          </span>
+                        </a>
+                      ) : (
+                        <span className="text-[11px] text-muted-foreground/40 font-mono">
+                          No link attached
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/5 dark:bg-white/10 text-muted-foreground shrink-0 border border-black/5 dark:border-white/5">
+                    {projectCount} {projectCount === 1 ? "project" : "projects"}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between pt-2.5 border-t border-black/[0.04] dark:border-white/[0.05] text-xs">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenNewProjectForChannel(channel.id);
+                    }}
+                    className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-lg border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.03] text-xs font-medium text-foreground hover:text-[#FF5338] transition-colors cursor-pointer"
+                  >
+                    <span className="text-sm leading-none text-[#FF5338] font-bold">
+                      +
+                    </span>
+                    <span>New Project</span>
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setChannelToDelete(channel);
+                      }}
+                      title={`Delete channel ${channel.name}`}
+                      aria-label={`Delete channel ${channel.name}`}
+                      className="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-black/10 dark:border-white/10 text-muted-foreground hover:text-red-600 transition-colors cursor-pointer"
+                    >
+                      <svg
+                        className="w-3.5 h-3.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+
+                    <span className="text-[11px] text-[#8C8379] font-medium flex items-center gap-0.5">
+                      Open <span>→</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop Channels Table (hidden sm:block) */}
+      <div className="hidden sm:block border border-black/[0.06] dark:border-white/[0.08] rounded-2xl overflow-hidden bg-white dark:bg-[#1E1A17] shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>

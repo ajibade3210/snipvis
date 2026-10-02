@@ -93,10 +93,10 @@ export function GlobalVaultView({
   return (
     <div className="space-y-6">
       {/* View Header & Toolbar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-4 sm:pb-5">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
               Inspo Vault
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]">
@@ -106,55 +106,55 @@ export function GlobalVaultView({
         </div>
 
         {/* View Switcher & Sort */}
-        <div className="flex items-center gap-2.5">
-          <div className="flex items-center p-0.5 bg-black/[0.03] dark:bg-white/[0.04] rounded-full border border-black/[0.04] dark:border-white/[0.06]">
+        <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+          <div className="flex items-center p-0.5 bg-black/[0.03] dark:bg-white/[0.04] rounded-full border border-black/[0.04] dark:border-white/[0.06] shrink-0">
             <button
               type="button"
               onClick={() => setViewMode("grid")}
-              className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
+              className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-medium transition-all cursor-pointer ${
                 viewMode === "grid"
                   ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
                   : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
-              <span>Grid</span>
+              Grid
             </button>
             <button
               type="button"
               onClick={() => setViewMode("masonry")}
-              className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
+              className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-medium transition-all cursor-pointer ${
                 viewMode === "masonry"
                   ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
                   : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
-              <span>Masonry</span>
+              Masonry
             </button>
             <button
               type="button"
               onClick={() => setViewMode("compact")}
-              className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
+              className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-medium transition-all cursor-pointer ${
                 viewMode === "compact"
                   ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
                   : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
-              <span>Compact</span>
+              Compact
             </button>
           </div>
 
-          <div className="relative">
+          <div className="relative shrink-0">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="h-8 px-3 rounded-full border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.025] dark:bg-white/[0.03] text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-1 focus:ring-[#FF5338] shadow-xs cursor-pointer appearance-none pr-7"
+              className="h-8 pl-2.5 sm:pl-3 pr-6 sm:pr-7 rounded-full border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.025] dark:bg-white/[0.03] text-[11px] sm:text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-1 focus:ring-[#FF5338] shadow-xs cursor-pointer appearance-none"
             >
-              <option value="score">Sort: Highest AI Score</option>
               <option value="ctr">Sort: Highest CTR</option>
+              <option value="score">Sort: AI Score</option>
               <option value="views">Sort: Most Views</option>
               <option value="recent">Sort: Most Recent</option>
             </select>
-            <span className="absolute right-2.5 top-2 pointer-events-none text-xs text-[#8C8379]">
+            <span className="absolute right-2 top-2 pointer-events-none text-xs text-[#8C8379]">
               ⌵
             </span>
           </div>
@@ -162,8 +162,8 @@ export function GlobalVaultView({
       </div>
 
       {/* Filter Ribbon Strip */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-1.5">
+      <div className="w-full overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
+        <div className="inline-flex items-center gap-1.5 min-w-full sm:min-w-0">
           {(
             [
               { id: "ALL", label: "All Items", count: inspirations.length },
@@ -177,7 +177,7 @@ export function GlobalVaultView({
               key={f.id}
               type="button"
               onClick={() => setFilterChip(f.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 whitespace-nowrap shrink-0 transition-all cursor-pointer ${
                 filterChip === f.id
                   ? "bg-[#1E1A17] dark:bg-[#FAF8F5] text-white dark:text-[#1E1A17] shadow-xs font-semibold"
                   : "bg-black/[0.03] dark:bg-white/[0.04] text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.05] dark:hover:bg-white/[0.06]"

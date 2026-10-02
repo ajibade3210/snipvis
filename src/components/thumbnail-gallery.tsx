@@ -157,11 +157,11 @@ export function ThumbnailGallery({
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setIsPromptModalOpen(true)}
-            className="h-9 px-3.5 rounded-full bg-amber-500/10 hover:bg-amber-500/15 text-amber-700 dark:text-amber-300 text-xs font-semibold flex items-center gap-1.5 border border-amber-500/20 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
+            className="h-9 px-3.5 rounded-full bg-amber-500/10 hover:bg-amber-500/15 text-amber-700 dark:text-amber-300 text-xs font-semibold flex items-center justify-center gap-1.5 border border-amber-500/20 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
           >
             <span>✨</span>
             <span>AI Prompt</span>
@@ -170,7 +170,7 @@ export function ThumbnailGallery({
           <button
             type="button"
             onClick={() => setIsSimulatorOpen(true)}
-            className="h-9 px-4 rounded-full bg-black/[0.03] dark:bg-white/[0.04] hover:bg-black/[0.06] dark:hover:bg-white/[0.07] text-[#1C1815] dark:text-[#FBF9F5] text-xs font-semibold flex items-center gap-1.5 border border-black/[0.08] dark:border-white/[0.1] shadow-xs transition-all active:scale-[0.98] cursor-pointer"
+            className="h-9 px-3.5 sm:px-4 rounded-full bg-black/[0.03] dark:bg-white/[0.04] hover:bg-black/[0.06] dark:hover:bg-white/[0.07] text-[#1C1815] dark:text-[#FBF9F5] text-xs font-semibold flex items-center justify-center gap-1.5 border border-black/[0.08] dark:border-white/[0.1] shadow-xs transition-all active:scale-[0.98] cursor-pointer"
           >
             <span>⚡</span>
             <span>Simulate Feed</span>
@@ -180,7 +180,7 @@ export function ThumbnailGallery({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className="h-9 px-5 rounded-full bg-[#FF5338] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm hover:bg-[#E0452C] transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+            className="col-span-2 sm:col-auto h-9 px-4 sm:px-5 rounded-full bg-[#FF5338] text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm hover:bg-[#E0452C] transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
           >
             {isUploading ? (
               <>

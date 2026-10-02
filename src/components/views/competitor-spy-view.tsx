@@ -733,13 +733,13 @@ export function CompetitorSpyView() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
-        <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
-            🎯 Competitor Benchmark Radar
+      <div className="flex items-center justify-between gap-3 border-b border-black/[0.05] dark:border-white/[0.06] pb-4 sm:pb-5">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <h2 className="text-lg sm:text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5] truncate">
+            Competitors
           </h2>
           {competitors.length > 0 && (
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]">
+            <span className="px-2 sm:px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] shrink-0">
               {competitors.length} Tracked
             </span>
           )}
@@ -747,9 +747,16 @@ export function CompetitorSpyView() {
         <button
           type="button"
           onClick={() => setShowAddForm((v) => !v)}
-          className="h-9 px-4 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+          className="h-8 sm:h-9 px-3 sm:px-4 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+          title={showAddForm ? "Cancel" : "Track Channel"}
+          aria-label={showAddForm ? "Cancel" : "Track Channel"}
         >
-          <span>{showAddForm ? "✕ Cancel" : "+ Track Channel"}</span>
+          <span className="text-base sm:text-xs leading-none font-bold">
+            {showAddForm ? "✕" : "+"}
+          </span>
+          <span className="hidden sm:inline">
+            {showAddForm ? "Cancel" : "Track Channel"}
+          </span>
         </button>
       </div>
 
@@ -764,11 +771,11 @@ export function CompetitorSpyView() {
 
       {/* Filter Tabs */}
       {!isLoading && competitors.length > 0 && (
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
           <button
             type="button"
             onClick={() => setFilter("all")}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer shrink-0 ${
               filter === "all"
                 ? "bg-[#1E1A17] text-white dark:bg-[#FAF8F5] dark:text-[#1E1A17] shadow-xs font-semibold"
                 : "bg-black/[0.03] dark:bg-white/[0.04] text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.05] dark:hover:bg-white/[0.06]"
@@ -779,7 +786,7 @@ export function CompetitorSpyView() {
           <button
             type="button"
             onClick={() => setFilter("reproducible")}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
               filter === "reproducible"
                 ? "bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white shadow-xs font-semibold"
                 : "bg-black/[0.03] dark:bg-white/[0.04] text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.05] dark:hover:bg-white/[0.06]"

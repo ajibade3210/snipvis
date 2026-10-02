@@ -90,8 +90,8 @@ export function ProjectWorkspaceView({
   return (
     <div className="space-y-6">
       {/* Project Stage Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
-        <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-4 sm:pb-5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Project Emoji & Quick Picker */}
           <div
             className="relative"
@@ -169,7 +169,7 @@ export function ProjectWorkspaceView({
             )}
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
             {currentProject.name}
           </h1>
 
@@ -292,52 +292,54 @@ export function ProjectWorkspaceView({
           </button>
         </div>
 
-        {/* Sub-Tab Switcher (4 Tabs) */}
-        <div className="flex items-center flex-wrap p-0.5 bg-black/[0.03] dark:bg-white/[0.04] rounded-full border border-black/[0.04] dark:border-white/[0.06] text-xs font-medium gap-0.5">
-          <button
-            type="button"
-            onClick={() => onTabChange("inspirations")}
-            className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
-              activeTab === "inspirations"
-                ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
-                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
-            }`}
-          >
-            💡 Inspirations ({inspirations.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => onTabChange("thumbnails")}
-            className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
-              activeTab === "thumbnails"
-                ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
-                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
-            }`}
-          >
-            🖼️ Thumbnails ({thumbnailCount})
-          </button>
-          <button
-            type="button"
-            onClick={() => onTabChange("brief")}
-            className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
-              activeTab === "brief"
-                ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
-                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
-            }`}
-          >
-            📋 Creative Brief
-          </button>
-          <button
-            type="button"
-            onClick={() => onTabChange("assets")}
-            className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
-              activeTab === "assets"
-                ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
-                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
-            }`}
-          >
-            📎 Assets ({currentProject._count?.assets ?? 0})
-          </button>
+        {/* Sub-Tab Switcher (4 Tabs with horizontal mobile scroll) */}
+        <div className="w-full sm:w-auto overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
+          <div className="inline-flex items-center p-1 bg-black/[0.03] dark:bg-white/[0.04] rounded-full border border-black/[0.04] dark:border-white/[0.06] text-xs font-medium gap-1 min-w-full sm:min-w-0">
+            <button
+              type="button"
+              onClick={() => onTabChange("inspirations")}
+              className={`px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap shrink-0 cursor-pointer ${
+                activeTab === "inspirations"
+                  ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                  : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
+              }`}
+            >
+              💡 Inspirations ({inspirations.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => onTabChange("thumbnails")}
+              className={`px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap shrink-0 cursor-pointer ${
+                activeTab === "thumbnails"
+                  ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                  : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
+              }`}
+            >
+              🖼️ Thumbnails ({thumbnailCount})
+            </button>
+            <button
+              type="button"
+              onClick={() => onTabChange("brief")}
+              className={`px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap shrink-0 cursor-pointer ${
+                activeTab === "brief"
+                  ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                  : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
+              }`}
+            >
+              📋 Creative Brief
+            </button>
+            <button
+              type="button"
+              onClick={() => onTabChange("assets")}
+              className={`px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap shrink-0 cursor-pointer ${
+                activeTab === "assets"
+                  ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                  : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
+              }`}
+            >
+              📎 Assets ({currentProject._count?.assets ?? 0})
+            </button>
+          </div>
         </div>
       </div>
 
@@ -380,38 +382,10 @@ export function ProjectWorkspaceView({
       )}
 
       {activeTab === "brief" && (
-        <div className="relative">
-          {/* Preview Button — floated top-right of the brief section */}
-          <div className="absolute top-0 right-0 z-10">
-            <button
-              type="button"
-              onClick={() => setIsPreviewOpen(true)}
-              title="Preview script as a standalone clean view"
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-black/[0.03] dark:bg-white/[0.04] text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white transition-all cursor-pointer border border-black/[0.06] dark:border-white/[0.08]"
-            >
-              <svg
-                className="w-3.5 h-3.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.641 0-8.58-3.007-9.964-7.178z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-              Preview
-            </button>
-          </div>
-          <BriefView projectId={project.id} />
-        </div>
+        <BriefView
+          projectId={project.id}
+          onPreview={() => setIsPreviewOpen(true)}
+        />
       )}
 
       {activeTab === "assets" && (

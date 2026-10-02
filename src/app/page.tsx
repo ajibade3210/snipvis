@@ -52,6 +52,7 @@ function CreatorLabShell() {
   >(null);
   const [isAddInspirationOpen, setIsAddInspirationOpen] = useState(false);
   const [isAnalyzeHookOpen, setIsAnalyzeHookOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [noteModalData, setNoteModalData] = useState<{
     inspirationId: string;
     projectId: string;
@@ -78,6 +79,7 @@ function CreatorLabShell() {
         setIsAddInspirationOpen(false);
         setIsNewProjectOpen(false);
         setIsAnalyzeHookOpen(false);
+        setIsMobileMenuOpen(false);
         setNoteModalData(null);
       }
     };
@@ -101,6 +103,7 @@ function CreatorLabShell() {
     tab?: string | null;
     channel?: string | null;
   }) => {
+    setIsMobileMenuOpen(false);
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     for (const [key, value] of Object.entries(params)) {
       if (value === null) current.delete(key);
@@ -158,6 +161,7 @@ function CreatorLabShell() {
         onOpenSettings={() =>
           updateUrl({ view: "settings", project: null, tab: null })
         }
+        onToggleMobileMenu={() => setIsMobileMenuOpen((prev) => !prev)}
       />
 
       <div className="flex-1 flex flex-col md:flex-row">
@@ -166,6 +170,8 @@ function CreatorLabShell() {
           totalInspirationsCount={formattedInspirations.length}
           activeNav={activeNav}
           selectedProjectId={selectedProjectId}
+          isMobileOpen={isMobileMenuOpen}
+          onCloseMobile={() => setIsMobileMenuOpen(false)}
           onSelectNav={(nav) =>
             updateUrl({ view: nav, project: null, tab: null, channel: null })
           }
@@ -185,7 +191,7 @@ function CreatorLabShell() {
           }}
         />
 
-        <main className="flex-1 p-6 md:p-8 overflow-y-auto max-w-[1600px]">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto max-w-[1600px]">
           {selectedProjectId && currentProject ? (
             <ProjectWorkspaceView
               project={currentProject}

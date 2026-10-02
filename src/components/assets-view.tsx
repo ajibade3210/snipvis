@@ -142,26 +142,22 @@ export function AssetsView({
   return (
     <div className="space-y-4">
       {/* Spreadsheet Header Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FAF8F5] dark:bg-[#1E1A17] p-3.5 rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530]">
-        <div className="flex items-center gap-2.5">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
-                Assets Sheet
-              </h2>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E3DCD3]/60 dark:bg-[#2A2521] text-[#58524C] dark:text-[#A89F95]">
-                {assets.length} Records
-              </span>
-            </div>
-          </div>
+      <div className="flex items-center justify-between gap-3 bg-[#FAF8F5] dark:bg-[#1E1A17] p-3 sm:p-3.5 rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530]">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
+            Assets Sheet
+          </h2>
+          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E3DCD3]/60 dark:bg-[#2A2521] text-[#58524C] dark:text-[#A89F95]">
+            {assets.length}
+          </span>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={handleStartAddRow}
             disabled={isAddingRow}
-            className="h-8 px-3.5 rounded-lg bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+            className="h-8 px-3 rounded-lg bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
           >
             <span className="text-sm leading-none font-black">+</span>
             <span>Add Row</span>

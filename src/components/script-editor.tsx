@@ -118,11 +118,11 @@ export function ScriptEditor({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
         <label className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5] tracking-tight">
           Content
         </label>
-        <div className="flex items-center gap-3 text-[11px] font-medium text-[#58524C] dark:text-[#A89F95]">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[11px] font-medium text-[#58524C] dark:text-[#A89F95]">
           <span>{wordCount} words</span>
           <span>•</span>
           <span>{charCount} characters</span>
@@ -135,7 +135,7 @@ export function ScriptEditor({
 
       <div className="rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#1E1A17] shadow-xs overflow-hidden focus-within:ring-2 focus-within:ring-[#FF5338]/30 transition-all">
         {/* Toolbar Header matching attached image */}
-        <div className="px-4 py-3 bg-[#FAF8F5] dark:bg-[#221E1A] border-b border-[#E3DCD3] dark:border-[#3C3530] flex flex-wrap items-center gap-x-2.5 gap-y-2 select-none">
+        <div className="px-3 py-2.5 sm:px-4 sm:py-3 bg-[#FAF8F5] dark:bg-[#221E1A] border-b border-[#E3DCD3] dark:border-[#3C3530] flex flex-wrap items-center gap-x-2 sm:gap-x-2.5 gap-y-2 select-none">
           {/* Row 1 Basic Styling: B, I, U, S */}
           <div className="flex items-center gap-1">
             <button

@@ -172,25 +172,25 @@ export function ProjectsHubView({
   return (
     <div className="space-y-8">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
-              🎬 Projects
-            </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]">
-              {activeCount} Active Production{activeCount === 1 ? "" : "s"}
-            </span>
-          </div>
+      <div className="flex items-center justify-between gap-3 border-b border-black/[0.05] dark:border-white/[0.06] pb-4 sm:pb-5">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5] truncate">
+            Projects
+          </h1>
+          <span className="px-2 sm:px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] shrink-0">
+            {activeCount} Active
+          </span>
         </div>
 
         <button
           type="button"
           onClick={onOpenNewProject}
-          className="h-9 px-4 rounded-full bg-[#FF5338] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:bg-[#d93820] active:scale-95 transition-all self-start md:self-auto cursor-pointer"
+          className="h-8 sm:h-9 px-3 sm:px-4 rounded-full bg-[#FF5338] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:bg-[#d93820] active:scale-95 transition-all cursor-pointer shrink-0"
+          title="Create New Project"
+          aria-label="Create New Project"
         >
-          <span className="text-sm leading-none">+</span>
-          <span>Create New Project</span>
+          <span className="text-base sm:text-xs leading-none font-bold">+</span>
+          <span className="hidden sm:inline">Create New Project</span>
         </button>
       </div>
 
