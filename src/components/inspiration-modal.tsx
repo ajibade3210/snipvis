@@ -4,7 +4,7 @@ import { useCreateInspiration } from "@/hooks/use-inspirations";
 import { createInspirationSchema } from "@/lib/validations";
 import { mediaService } from "@/services/api/media.service";
 import { youtubeService } from "@/services/api/youtube.service";
-import type { InspirationType } from "@/types";
+import type { InspirationType } from "@/types/inspiration";
 import { useEffect, useRef, useState } from "react";
 
 interface InspirationModalProps {
@@ -35,6 +35,10 @@ export function InspirationModal({
   const [hook, setHook] = useState("");
   const [channelName, setChannelName] = useState("");
   const [views, setViews] = useState("");
+  const [duration, setDuration] = useState("");
+  const [estimatedCtr, setEstimatedCtr] = useState("");
+  const [isOutlier, setIsOutlier] = useState(false);
+  const [multiplier, setMultiplier] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
   const [note, setNote] = useState("");
 
@@ -154,6 +158,10 @@ export function InspirationModal({
       hook: hook.trim() || undefined,
       channelName: channelName.trim() || undefined,
       views: views.trim() || undefined,
+      duration: duration.trim() || undefined,
+      estimated_ctr: estimatedCtr.trim() || undefined,
+      is_outlier: isOutlier,
+      multiplier: multiplier.trim() || undefined,
       sourceUrl: sourceUrl.trim() || undefined,
       note: note.trim() || undefined,
       projects: projectPayload,
@@ -172,6 +180,10 @@ export function InspirationModal({
       setHook("");
       setChannelName("");
       setViews("");
+      setDuration("");
+      setEstimatedCtr("");
+      setIsOutlier(false);
+      setMultiplier("");
       setSourceUrl("");
       setNote("");
       setProjectNote("");
@@ -406,6 +418,78 @@ export function InspirationModal({
                 onChange={(e) => setViews(e.target.value)}
                 className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="inspiration-duration-input"
+                className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              >
+                Duration
+              </label>
+              <input
+                id="inspiration-duration-input"
+                type="text"
+                placeholder="e.g. 14:20"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label
+                htmlFor="inspiration-ctr-input"
+                className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              >
+                Estimated CTR
+              </label>
+              <input
+                id="inspiration-ctr-input"
+                type="text"
+                placeholder="e.g. 13.5%"
+                value={estimatedCtr}
+                onChange={(e) => setEstimatedCtr(e.target.value)}
+                className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Outlier & Multiplier */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="inspiration-multiplier-input"
+                className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              >
+                Multiplier
+              </label>
+              <input
+                id="inspiration-multiplier-input"
+                type="text"
+                placeholder="e.g. 12.4x channel avg"
+                value={multiplier}
+                onChange={(e) => setMultiplier(e.target.value)}
+                className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <span className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]">
+                Mark as Outlier
+              </span>
+              <button
+                id="inspiration-outlier-toggle"
+                type="button"
+                onClick={() => setIsOutlier((v) => !v)}
+                className={`h-10 px-4 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
+                  isOutlier
+                    ? "bg-[#FF5338] text-white border-[#FF5338]"
+                    : "bg-white dark:bg-[#201C18] border-black/[0.08] dark:border-white/[0.08] text-[#58524C] dark:text-[#A89F95] hover:border-[#FF5338]/40"
+                }`}
+              >
+                {isOutlier ? "⚡ Outlier" : "Not Outlier"}
+              </button>
             </div>
           </div>
 

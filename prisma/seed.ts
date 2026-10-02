@@ -204,7 +204,13 @@ export async function seedInspirations(demoUserId: string) {
       channelName: "TechCraft",
       views: "5.8M views",
       sourceUrl: "https://youtube.com/watch?v=mock1",
+      duration: "18:42",
+      estimatedCtr: "14.2% CTR",
+      insightLeft: "Subterranean Neon Contrast",
+      insightRight: "Curiosity Trigger",
       note: "Extreme contrasting neon lighting against subterranean concrete.",
+      isOutlier: true,
+      multiplier: "12.4x channel avg",
       projectSlug: "mrbeast-teardown",
     },
     {
@@ -215,7 +221,13 @@ export async function seedInspirations(demoUserId: string) {
       channelName: "DeepDiveDoc",
       views: "2.1M views",
       sourceUrl: "https://youtube.com/watch?v=mock2",
+      duration: "10:14",
+      estimatedCtr: "11.6% CTR",
+      insightLeft: "Low-Friction Promise",
+      insightRight: "Dopamine Anchor",
       note: "High intrigue, low friction promise format.",
+      isOutlier: false,
+      multiplier: null,
       projectSlug: "storytelling-formats",
     },
     {
@@ -226,7 +238,13 @@ export async function seedInspirations(demoUserId: string) {
       channelName: "BrainWave",
       views: "1.4M views",
       sourceUrl: "https://youtube.com/watch?v=mock3",
+      duration: "24:05",
+      estimatedCtr: "13.8% CTR",
+      insightLeft: "Negative Curiosity",
+      insightRight: "Controversy Driver",
       note: "Negative curiosity angle drives unprecedented comment debate.",
+      isOutlier: false,
+      multiplier: null,
       projectSlug: "tech-essay-2026",
     },
     {
@@ -237,7 +255,13 @@ export async function seedInspirations(demoUserId: string) {
       channelName: "BrainWave",
       views: "890K views",
       sourceUrl: "https://youtube.com/watch?v=mock4",
+      duration: "12:50",
+      estimatedCtr: "15.1% CTR",
+      insightLeft: "Statistical Urgency",
+      insightRight: "FOMO Anchor",
       note: "Statistically framed urgency opening.",
+      isOutlier: true,
+      multiplier: "8.7x channel avg",
       projectSlug: "finance-hooks",
     },
   ];
@@ -261,7 +285,13 @@ export async function seedInspirations(demoUserId: string) {
           channelName: item.channelName,
           views: item.views,
           sourceUrl: item.sourceUrl,
+          duration: item.duration,
+          estimatedCtr: item.estimatedCtr,
+          insightLeft: item.insightLeft,
+          insightRight: item.insightRight,
           note: item.note,
+          isOutlier: item.isOutlier ?? false,
+          multiplier: item.multiplier ?? null,
           userId: demoUserId,
           projects: projectId
             ? {
@@ -272,6 +302,18 @@ export async function seedInspirations(demoUserId: string) {
                 },
               }
             : undefined,
+        },
+      });
+    } else {
+      await prisma.inspiration.update({
+        where: { id: existing.id },
+        data: {
+          duration: item.duration,
+          estimatedCtr: item.estimatedCtr,
+          insightLeft: item.insightLeft,
+          insightRight: item.insightRight,
+          isOutlier: item.isOutlier ?? false,
+          multiplier: item.multiplier ?? null,
         },
       });
     }

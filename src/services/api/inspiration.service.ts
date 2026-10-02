@@ -4,7 +4,7 @@ import type {
   CreateInspirationInput,
   InspirationType,
   TagInspirationInput,
-} from "@/types";
+} from "@/types/inspiration";
 import { z } from "zod";
 import { api } from "./client";
 

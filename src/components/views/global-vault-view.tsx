@@ -1,7 +1,7 @@
 "use client";
 
-import type { FormattedInspiration } from "@/types";
 import { getStrengthScoreBadgeStyle } from "@/types/hook-analysis";
+import type { FormattedInspiration } from "@/types/inspiration";
 import { useMemo, useState } from "react";
 
 interface GlobalVaultViewProps {
@@ -36,17 +36,16 @@ export function GlobalVaultView({
   ).length;
   const titleCount = inspirations.filter((i) => i.type === "TITLE").length;
   const hookCount = inspirations.filter((i) => i.type === "HOOK").length;
+  const outlierCount = inspirations.filter(
+    (i) => i.isOutlier || i.is_outlier,
+  ).length;
 
   const filtered = useMemo(() => {
     const list = inspirations.filter((item) => {
       if (filterChip === "THUMBNAIL" && item.type !== "THUMBNAIL") return false;
       if (filterChip === "TITLE" && item.type !== "TITLE") return false;
       if (filterChip === "HOOK" && item.type !== "HOOK") return false;
-      if (
-        filterChip === "OUTLIER" &&
-        !item.ctrBadge?.includes("14") &&
-        !item.views?.includes("M")
-      ) {
+      if (filterChip === "OUTLIER" && !item.isOutlier && !item.is_outlier) {
         return false;
       }
 
@@ -183,7 +182,11 @@ export function GlobalVaultView({
               { id: "THUMBNAIL", label: "Thumbnails", count: thumbnailCount },
               { id: "TITLE", label: "Titles", count: titleCount },
               { id: "HOOK", label: "Hooks", count: hookCount },
-              { id: "OUTLIER", label: "Outliers (>10x Avg)" },
+              {
+                id: "OUTLIER",
+                label: "Outliers (>10x Avg)",
+                count: outlierCount,
+              },
             ] as const
           ).map((f) => (
             <button
@@ -225,16 +228,20 @@ export function GlobalVaultView({
                       (e.target as HTMLElement).style.display = "none";
                     }}
                   />
-                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 text-white text-[10px] font-mono font-medium">
-                    {item.duration || "14:20"}
-                  </div>
-                  <div
-                    className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-mono font-bold shadow-xs ${
-                      item.ctrColor || "bg-[#059669]"
-                    }`}
-                  >
-                    {item.ctrBadge || "📈 13.5% CTR"}
-                  </div>
+                  {item.duration && (
+                    <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 text-white text-[10px] font-mono font-medium">
+                      {item.duration}
+                    </div>
+                  )}
+                  {item.ctrBadge && (
+                    <div
+                      className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-mono font-bold shadow-xs ${
+                        item.ctrColor || "bg-[#059669]"
+                      }`}
+                    >
+                      {item.ctrBadge}
+                    </div>
+                  )}
                 </div>
                 <div className="p-4 space-y-3">
                   <div className="flex items-center justify-between gap-2">
@@ -264,23 +271,39 @@ export function GlobalVaultView({
                   <h3 className="font-bold text-sm leading-snug text-[#1E1A17] dark:text-[#FAF8F5]">
                     {item.title}
                   </h3>
-                  <div className="bg-black/[0.025] dark:bg-white/[0.03] rounded-xl p-3 border border-black/[0.04] dark:border-white/[0.05] space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-medium">
-                      <span className="text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1">
-                        <span className="text-[#FF5338] font-bold">TT</span>{" "}
-                        {item.insightLeft || "Pacing Test"}
-                      </span>
-                      <span
-                        className={item.insightRightColor || "text-[#059669]"}
-                      >
-                        {item.insightRight || "Variant A Win"}
-                      </span>
+                  {(item.insightLeft || item.insightRight || item.note) && (
+                    <div className="bg-black/[0.025] dark:bg-white/[0.03] rounded-xl p-3 border border-black/[0.04] dark:border-white/[0.05] space-y-1.5">
+                      {(item.insightLeft || item.insightRight) && (
+                        <div className="flex items-center justify-between text-[11px] font-medium">
+                          {item.insightLeft ? (
+                            <span className="text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1">
+                              <span className="text-[#FF5338] font-bold">
+                                TT
+                              </span>{" "}
+                              {item.insightLeft}
+                            </span>
+                          ) : (
+                            <span />
+                          )}
+                          {item.insightRight && (
+                            <span
+                              className={
+                                item.insightRightColor || "text-[#059669]"
+                              }
+                            >
+                              {item.insightRight}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {item.note && (
+                        <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
+                          <span className="font-medium not-italic">Note:</span>{" "}
+                          "{item.note}"
+                        </div>
+                      )}
                     </div>
-                    <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
-                      <span className="font-medium not-italic">Note:</span> "
-                      {item.note || "Curated in research vault."}"
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
               <div className="p-3.5 border-t border-black/[0.04] dark:border-white/[0.05] flex items-center justify-between text-xs">
@@ -359,16 +382,18 @@ export function GlobalVaultView({
                     (e.target as HTMLElement).style.display = "none";
                   }}
                 />
-                <div
-                  className={`absolute top-1 right-1 px-1 py-px rounded text-white text-[9px] font-bold ${
-                    item.ctrColor || "bg-[#059669]"
-                  }`}
-                >
-                  {(item.ctrBadge || "13.5%")
-                    .replace(" CTR", "")
-                    .replace(/[^0-9.%]/g, "")
-                    .trim() || "CTR"}
-                </div>
+                {item.ctrBadge && (
+                  <div
+                    className={`absolute top-1 right-1 px-1 py-px rounded text-white text-[9px] font-bold ${
+                      item.ctrColor || "bg-[#059669]"
+                    }`}
+                  >
+                    {item.ctrBadge
+                      .replace(" CTR", "")
+                      .replace(/[^0-9.%]/g, "")
+                      .trim() || "CTR"}
+                  </div>
+                )}
               </div>
 
               {/* Details */}
@@ -474,19 +499,21 @@ export function GlobalVaultView({
                     }}
                   />
 
-                  {/* Duration Badge */}
-                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 text-white text-[10px] font-mono font-medium">
-                    {item.duration || "14:20"}
-                  </div>
+                  {item.duration && (
+                    <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 text-white text-[10px] font-mono font-medium">
+                      {item.duration}
+                    </div>
+                  )}
 
-                  {/* CTR Badge */}
-                  <div
-                    className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-mono font-bold shadow-xs ${
-                      item.ctrColor || "bg-[#059669]"
-                    }`}
-                  >
-                    {item.ctrBadge || "📈 13.5% CTR"}
-                  </div>
+                  {item.ctrBadge && (
+                    <div
+                      className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-mono font-bold shadow-xs ${
+                        item.ctrColor || "bg-[#059669]"
+                      }`}
+                    >
+                      {item.ctrBadge}
+                    </div>
+                  )}
                 </div>
 
                 {/* Card Body */}
@@ -520,24 +547,39 @@ export function GlobalVaultView({
                     {item.title}
                   </h3>
 
-                  {/* Embedded Insight Container */}
-                  <div className="bg-black/[0.025] dark:bg-white/[0.03] rounded-xl p-3 border border-black/[0.04] dark:border-white/[0.05] space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-medium">
-                      <span className="text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1">
-                        <span className="text-[#FF5338] font-bold">TT</span>{" "}
-                        {item.insightLeft || "Pacing Test"}
-                      </span>
-                      <span
-                        className={item.insightRightColor || "text-[#059669]"}
-                      >
-                        {item.insightRight || "Variant A Win"}
-                      </span>
+                  {(item.insightLeft || item.insightRight || item.note) && (
+                    <div className="bg-black/[0.025] dark:bg-white/[0.03] rounded-xl p-3 border border-black/[0.04] dark:border-white/[0.05] space-y-1.5">
+                      {(item.insightLeft || item.insightRight) && (
+                        <div className="flex items-center justify-between text-[11px] font-medium">
+                          {item.insightLeft ? (
+                            <span className="text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1">
+                              <span className="text-[#FF5338] font-bold">
+                                TT
+                              </span>{" "}
+                              {item.insightLeft}
+                            </span>
+                          ) : (
+                            <span />
+                          )}
+                          {item.insightRight && (
+                            <span
+                              className={
+                                item.insightRightColor || "text-[#059669]"
+                              }
+                            >
+                              {item.insightRight}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {item.note && (
+                        <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
+                          <span className="font-medium not-italic">Note:</span>{" "}
+                          "{item.note}"
+                        </div>
+                      )}
                     </div>
-                    <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
-                      <span className="font-medium not-italic">Note:</span> "
-                      {item.note || "Curated in research vault."}"
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
 

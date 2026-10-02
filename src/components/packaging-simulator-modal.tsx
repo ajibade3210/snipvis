@@ -1,10 +1,11 @@
 "use client";
 
+import { useInspirationsGlobal } from "@/hooks/use-inspirations";
 import { useSetMainThumbnail, useUpdateProject } from "@/hooks/use-projects";
 import {
+  DEFAULT_CHANNEL,
   PACKAGING_LIMITS,
   PSYCHOLOGY_CONSTANTS,
-  SIMULATOR_DEFAULTS,
 } from "@/lib/constants";
 import { useTheme } from "@/lib/theme-provider";
 import type {
@@ -44,8 +45,18 @@ export function PackagingSimulatorModal({
   );
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
+  // Editable simulator display values (candidate video hasn't been published yet)
+  const [simDuration, setSimDuration] = useState("00:00");
+  const [simViews, setSimViews] = useState("0 views");
+  const [simUploadTime, setSimUploadTime] = useState("Just now");
+
   const updateProjectMutation = useUpdateProject();
   const setMainMutation = useSetMainThumbnail();
+
+  // Fetch saved TITLE inspirations to use as formula pivots
+  const { data: titleInspirations = [] } = useInspirationsGlobal({
+    type: "TITLE",
+  });
 
   // Keep selected thumb, draft title, and default theme in sync when modal opens
   useEffect(() => {
@@ -78,7 +89,7 @@ export function PackagingSimulatorModal({
   const isSafeOnMobile = charCount <= PACKAGING_LIMITS.MOBILE_SAFE;
   const isSafeOnDesktop = charCount <= PACKAGING_LIMITS.DESKTOP_MAX;
 
-  const displayChannel = channelName || SIMULATOR_DEFAULTS.DEFAULT_CHANNEL;
+  const displayChannel = channelName || DEFAULT_CHANNEL;
 
   // Psychological Title Tension Analysis
   const lowerTitle = draftTitle.toLowerCase();
@@ -97,20 +108,27 @@ export function PackagingSimulatorModal({
       .replace(/^(the|how|why|i tested|i spent|what happens|from|stop)\s+/i, "")
       .trim() || projectName;
 
-  const formulaPivots = [
-    {
-      label: "Loss Aversion",
-      title: `The ${cleanSubject} Mistake Nobody Talks About`,
-    },
-    {
-      label: "📈 Extreme Contrast",
-      title: `I Tested ${cleanSubject} for 30 Days (Real Results)`,
-    },
-    {
-      label: "❓ Curiosity Gap",
-      title: `The Real Reason Why ${cleanSubject} Is Changing Forever`,
-    },
-  ];
+  // Formula pivots: use saved TITLE inspirations from DB; fall back to template strings
+  const formulaPivots =
+    titleInspirations.length > 0
+      ? titleInspirations.slice(0, 5).map((t) => ({
+          label: t.channelName ?? "Saved Formula",
+          title: t.title ?? "",
+        }))
+      : [
+          {
+            label: "Loss Aversion",
+            title: `The ${cleanSubject} Mistake Nobody Talks About`,
+          },
+          {
+            label: "📈 Extreme Contrast",
+            title: `I Tested ${cleanSubject} for 30 Days (Real Results)`,
+          },
+          {
+            label: "❓ Curiosity Gap",
+            title: `The Real Reason Why ${cleanSubject} Is Changing Forever`,
+          },
+        ];
 
   // Handlers for two-way sync
   const handleSaveTitle = async () => {
@@ -386,6 +404,51 @@ export function PackagingSimulatorModal({
                   : "Save Title to Project"}
               </button>
 
+              {/* Sim Stats (editable — candidate not yet published) */}
+              <div className="pt-2.5 border-t border-black/[0.04] dark:border-white/[0.05] space-y-1.5">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-[#8C8379]">
+                  Simulate Stats:
+                </span>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <div className="flex flex-col gap-0.5">
+                    <label className="text-[9px] text-[#8C8379] uppercase tracking-wider">
+                      Duration
+                    </label>
+                    <input
+                      type="text"
+                      value={simDuration}
+                      onChange={(e) => setSimDuration(e.target.value)}
+                      placeholder="e.g. 14:28"
+                      className="h-7 px-2 text-[11px] rounded-lg border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-1 focus:ring-[#FF5338] w-full"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <label className="text-[9px] text-[#8C8379] uppercase tracking-wider">
+                      Views
+                    </label>
+                    <input
+                      type="text"
+                      value={simViews}
+                      onChange={(e) => setSimViews(e.target.value)}
+                      placeholder="e.g. 142K views"
+                      className="h-7 px-2 text-[11px] rounded-lg border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-1 focus:ring-[#FF5338] w-full"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <label className="text-[9px] text-[#8C8379] uppercase tracking-wider">
+                      Posted
+                    </label>
+                    <input
+                      type="text"
+                      value={simUploadTime}
+                      onChange={(e) => setSimUploadTime(e.target.value)}
+                      placeholder="4 hours ago"
+                      className="h-7 px-2 text-[11px] rounded-lg border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-1 focus:ring-[#FF5338] w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Psychological Triggers & 1-Click Viral Formula Rewrites */}
               <div className="pt-3 border-t border-black/[0.04] dark:border-white/[0.05] space-y-2.5">
                 <div className="flex items-center justify-between text-[11px]">
@@ -606,7 +669,7 @@ export function PackagingSimulatorModal({
                       {/* YouTube Timestamp Badge */}
                       {showTimestamp && (
                         <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded text-[11px] font-bold font-mono bg-black/85 text-white tracking-tight">
-                          {SIMULATOR_DEFAULTS.DURATION}
+                          {simDuration}
                         </span>
                       )}
 
@@ -695,8 +758,7 @@ export function PackagingSimulatorModal({
                               : "text-[#606060]"
                           }`}
                         >
-                          {SIMULATOR_DEFAULTS.VIEWS} •{" "}
-                          {SIMULATOR_DEFAULTS.UPLOAD_TIME}
+                          {simViews} • {simUploadTime}
                         </p>
                       </div>
                     </div>
@@ -718,7 +780,7 @@ export function PackagingSimulatorModal({
                           />
                           {showTimestamp && (
                             <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded text-[11px] font-bold font-mono bg-black/85 text-white">
-                              {ref.duration || SIMULATOR_DEFAULTS.DURATION}
+                              {ref.duration || simDuration}
                             </span>
                           )}
                           <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-black/70 text-[#D1D1D1]">
@@ -821,7 +883,7 @@ export function PackagingSimulatorModal({
 
                       {showTimestamp && (
                         <span className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-bold font-mono bg-black/90 text-white">
-                          {SIMULATOR_DEFAULTS.DURATION}
+                          {simDuration}
                         </span>
                       )}
 
@@ -853,7 +915,7 @@ export function PackagingSimulatorModal({
                               : "text-[#606060]"
                           }`}
                         >
-                          {displayChannel} • {SIMULATOR_DEFAULTS.VIEWS}
+                          {displayChannel} • {simViews}
                         </p>
                       </div>
                       <span className="text-[#888888] text-xs">⋮</span>

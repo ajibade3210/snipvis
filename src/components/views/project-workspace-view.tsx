@@ -7,12 +7,9 @@ import { ThumbnailGallery } from "@/components/thumbnail-gallery";
 import { GlobalVaultView } from "@/components/views/global-vault-view";
 import { useProject, useUpdateProject } from "@/hooks/use-projects";
 import { DEFAULT_PROJECT_EMOJIS } from "@/lib/constants";
-import type {
-  FormattedInspiration,
-  ProjectRecord,
-  ProjectThumbnailRecord,
-} from "@/types";
+import type { ProjectRecord, ProjectThumbnailRecord } from "@/types";
 import type { ChannelRecord } from "@/types/channel";
+import type { FormattedInspiration } from "@/types/inspiration";
 import { useState } from "react";
 
 interface ProjectWorkspaceViewProps {

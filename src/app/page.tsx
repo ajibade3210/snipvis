@@ -22,7 +22,8 @@ import {
 
 import { useProjects } from "@/hooks/use-projects";
 import { formatInspirations } from "@/lib/format-inspirations";
-import type { FormattedInspiration, NavView } from "@/types";
+import type { NavView } from "@/types";
+import type { FormattedInspiration } from "@/types/inspiration";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 

@@ -1,6 +1,6 @@
 import { FILTER_ALL, QUERY_KEYS, QUERY_SUBKEYS } from "@/lib/constants";
 import { inspirationService } from "@/services/api/inspiration.service";
-import type { InspirationType } from "@/types";
+import type { InspirationType } from "@/types/inspiration";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useInspirationsGlobal = (params?: {

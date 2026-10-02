@@ -112,6 +112,10 @@ model Inspiration {
   sourceUrl        String?
   type             InspirationType      @default(THUMBNAIL)
   note             String?
+  duration         String?              @map("duration")
+  estimatedCtr     String?              @map("estimated_ctr")
+  insightLeft      String?              @map("insight_left")
+  insightRight     String?              @map("insight_right")
   hookType         String?              @map("hook_type")
   hookFormula      String?              @map("hook_formula")
   triggeredEmotion String?              @map("triggered_emotion")
@@ -121,6 +125,8 @@ model Inspiration {
   titleVariants    String[]             @default([])
   recreationIdeas  String[]             @default([])
   riskFlags        String[]             @default([])
+  isOutlier        Boolean              @default(false) @map("is_outlier")
+  multiplier       String?              @map("multiplier")
   userId           String
   user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt        DateTime             @default(now())

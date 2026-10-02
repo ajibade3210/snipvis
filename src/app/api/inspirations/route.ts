@@ -5,9 +5,30 @@ import { createInspirationSchema } from "@/lib/validations";
 import type { Inspiration, InspirationType } from "@prisma/client";
 import { type NextRequest, NextResponse } from "next/server";
 
-function formatInspirationPayload(insp: Inspiration) {
+function formatInspirationPayload(
+  insp: Inspiration & {
+    projects?: Array<{
+      projectId: string;
+      note?: string | null;
+      favorite?: boolean;
+      project?: { id: string; name: string; emoji?: string | null };
+    }>;
+  },
+) {
+  const primaryLink = insp.projects?.[0];
   return {
     ...insp,
+    duration: insp.duration,
+    estimated_ctr: insp.estimatedCtr,
+    estimatedCtr: insp.estimatedCtr,
+    insight_left: insp.insightLeft,
+    insightLeft: insp.insightLeft,
+    insight_right: insp.insightRight,
+    insightRight: insp.insightRight,
+    is_outlier: insp.isOutlier,
+    isOutlier: insp.isOutlier,
+    multiplier: insp.multiplier,
+    projectName: primaryLink?.project?.name ?? null,
     hook_type: insp.hookType,
     hook_formula: insp.hookFormula,
     triggered_emotion: insp.triggeredEmotion,
@@ -17,6 +38,14 @@ function formatInspirationPayload(insp: Inspiration) {
     title_variants: insp.titleVariants,
     recreation_ideas: insp.recreationIdeas,
     risk_flags: insp.riskFlags,
+    projectContext: primaryLink
+      ? {
+          projectId: primaryLink.projectId,
+          projectName: primaryLink.project?.name,
+          note: primaryLink.note,
+          favorite: primaryLink.favorite,
+        }
+      : undefined,
   };
 }
 
@@ -51,14 +80,25 @@ export async function GET(req: NextRequest) {
           ...(favorite === "true" ? { favorite: true } : {}),
           ...(type ? { inspiration: { type } } : {}),
         },
-        include: { inspiration: true },
+        include: {
+          inspiration: true,
+          project: {
+            select: {
+              id: true,
+              name: true,
+              emoji: true,
+            },
+          },
+        },
         orderBy: { createdAt: "desc" },
       });
       return NextResponse.json(
         links.map((l) => ({
           ...formatInspirationPayload(l.inspiration),
+          projectName: l.project.name,
           projectContext: {
             projectId: l.projectId,
+            projectName: l.project.name,
             note: l.note,
             favorite: l.favorite,
           },
@@ -70,6 +110,19 @@ export async function GET(req: NextRequest) {
       where: {
         userId: user.id,
         ...(type ? { type } : {}),
+      },
+      include: {
+        projects: {
+          include: {
+            project: {
+              select: {
+                id: true,
+                name: true,
+                emoji: true,
+              },
+            },
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -120,6 +173,10 @@ export async function POST(req: NextRequest) {
         sourceUrl: data.sourceUrl,
         type: data.type as InspirationType,
         note: data.note,
+        duration: data.duration,
+        estimatedCtr: data.estimated_ctr || data.estimatedCtr,
+        insightLeft: data.insight_left || data.insightLeft,
+        insightRight: data.insight_right || data.insightRight,
         hookType: data.hook_type || data.hookType,
         hookFormula: data.hook_formula || data.hookFormula,
         triggeredEmotion: data.triggered_emotion || data.triggeredEmotion,
@@ -129,6 +186,8 @@ export async function POST(req: NextRequest) {
         titleVariants: data.title_variants || data.titleVariants || [],
         recreationIdeas: data.recreation_ideas || data.recreationIdeas || [],
         riskFlags: data.risk_flags || data.riskFlags || [],
+        isOutlier: data.is_outlier ?? data.isOutlier ?? false,
+        multiplier: data.multiplier ?? null,
         userId: user.id,
         projects: data.projects?.length
           ? {
@@ -139,6 +198,19 @@ export async function POST(req: NextRequest) {
               })),
             }
           : undefined,
+      },
+      include: {
+        projects: {
+          include: {
+            project: {
+              select: {
+                id: true,
+                name: true,
+                emoji: true,
+              },
+            },
+          },
+        },
       },
     });
     return NextResponse.json(formatInspirationPayload(inspiration), {
