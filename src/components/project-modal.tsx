@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useChannels, useCreateChannel } from "@/hooks/use-channels";
 import { useCreateProject, useUpdateProject } from "@/hooks/use-projects";
 import { DEFAULT_PROJECT_EMOJIS } from "@/lib/constants";
@@ -154,31 +153,54 @@ export function ProjectModal({
     : createProject.isPending;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-      <div className="bg-card text-card-foreground border border-border rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in-0 zoom-in-95">
-        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-          <h3 className="font-semibold text-base">
-            {isEditing ? "Edit Project Details" : "Create New Project"}
-          </h3>
+    <dialog
+      open
+      aria-label={isEditing ? "Edit Project Details" : "Create New Project"}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/35 m-0 h-full w-full max-w-none border-0"
+    >
+      <div className="bg-[#FCFAF7] dark:bg-[#1C1815] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] rounded-3xl w-full max-w-lg flex flex-col shadow-2xl shadow-black/25 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Apple-Style Deferential Header */}
+        <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-black/[0.04] dark:border-white/[0.05]">
+          <div>
+            <h3 className="text-base font-semibold tracking-tight text-[#1E1A17] dark:text-white">
+              {isEditing ? "Edit Project Details" : "Create New Project"}
+            </h3>
+            <p className="text-xs text-[#8C8379] dark:text-[#A89F95] mt-0.5">
+              {isEditing
+                ? "Update project name, channel, and creative brief context."
+                : "Initialize a research workspace for your next video package."}
+            </p>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground text-sm font-semibold px-2 py-1 rounded"
+            className="w-8 h-8 rounded-full text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close"
           >
             ✕
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error ? (
-            <div className="p-3 text-xs rounded-md bg-destructive/10 text-destructive border border-destructive/20">
-              {error}
+          {error && (
+            <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs flex items-start gap-2">
+              <span className="font-semibold">Error:</span>
+              <p className="flex-1 leading-relaxed">{error}</p>
             </div>
-          ) : null}
+          )}
 
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
-              Project Emoji & Name <span className="text-red-500">*</span>
+          <div className="space-y-1.5">
+            <label
+              htmlFor="project-name-input"
+              className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+            >
+              Project Emoji & Name <span className="text-[#FF5338]">*</span>
             </label>
             <div className="flex gap-2">
               <input
@@ -188,32 +210,31 @@ export function ProjectModal({
                 value={emoji}
                 onChange={(e) => setEmoji(e.target.value)}
                 title="Project emoji icon"
-                className="w-12 h-9 text-center text-lg rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-12 h-10 text-center text-lg rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none"
               />
               <input
+                id="project-name-input"
                 type="text"
                 required
                 placeholder="e.g. How MrBeast Edits Retention Hooks"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="flex-1 h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="flex-1 h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none"
               />
             </div>
 
             {/* Quick Emoji Presets & Clear */}
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              <span className="text-[11px] text-muted-foreground mr-1">
-                Presets:
-              </span>
+              <span className="text-[11px] text-[#8C8379] mr-1">Presets:</span>
               {DEFAULT_PROJECT_EMOJIS.map((em) => (
                 <button
                   key={em}
                   type="button"
                   onClick={() => setEmoji(em)}
-                  className={`w-7 h-7 rounded-md text-sm flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer ${
+                  className={`w-7 h-7 rounded-lg text-xs flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer ${
                     emoji === em
-                      ? "bg-primary/15 border border-primary/40 ring-1 ring-primary/40"
-                      : "bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10"
+                      ? "bg-[#FF5338]/15 border border-[#FF5338]/40 ring-1 ring-[#FF5338]/30"
+                      : "bg-black/[0.04] dark:bg-white/[0.05] hover:bg-black/10 dark:hover:bg-white/10"
                   }`}
                   title={`Select ${em}`}
                 >
@@ -224,7 +245,7 @@ export function ProjectModal({
                 <button
                   type="button"
                   onClick={() => setEmoji("")}
-                  className="text-[11px] text-muted-foreground hover:text-destructive underline ml-1 cursor-pointer"
+                  className="text-[11px] text-[#8C8379] hover:text-red-500 underline ml-1 cursor-pointer"
                 >
                   Remove Emoji
                 </button>
@@ -232,11 +253,15 @@ export function ProjectModal({
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="project-channel-select"
+              className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+            >
               Target Channel (Optional)
             </label>
             <select
+              id="project-channel-select"
               value={isCreatingChannelInline ? "__NEW__" : selectedChannelId}
               onChange={(e) => {
                 const val = e.target.value;
@@ -247,7 +272,7 @@ export function ProjectModal({
                   setSelectedChannelId(val);
                 }
               }}
-              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full h-10 px-3 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none cursor-pointer"
             >
               <option value="">None (No Channel)</option>
               {channels.map((c) => (
@@ -259,9 +284,9 @@ export function ProjectModal({
             </select>
 
             {isCreatingChannelInline && (
-              <div className="mt-2.5 p-3 rounded-lg border border-primary/20 bg-primary/5 space-y-2.5">
+              <div className="mt-2.5 p-3 rounded-2xl bg-black/[0.025] dark:bg-white/[0.03] space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-foreground">
+                  <span className="text-xs font-semibold text-[#1E1A17] dark:text-white">
                     New Channel
                   </span>
                   <button
@@ -270,14 +295,14 @@ export function ProjectModal({
                       setIsCreatingChannelInline(false);
                       setInlineChannelError(null);
                     }}
-                    className="text-xs text-muted-foreground hover:text-foreground"
+                    className="text-xs text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white cursor-pointer"
                   >
                     Cancel
                   </button>
                 </div>
 
                 {inlineChannelError && (
-                  <div className="text-[11px] text-destructive">
+                  <div className="text-[11px] text-red-500">
                     {inlineChannelError}
                   </div>
                 )}
@@ -288,56 +313,64 @@ export function ProjectModal({
                     placeholder="Channel Name (e.g. MrBeast)"
                     value={inlineChannelName}
                     onChange={(e) => setInlineChannelName(e.target.value)}
-                    className="w-full h-8 px-2.5 text-xs rounded border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                    className="w-full h-8 px-2.5 text-xs rounded-lg bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
                   />
                   <input
                     type="url"
                     placeholder="Channel Link (optional, e.g. https://youtube.com/@...)"
                     value={inlineChannelLink}
                     onChange={(e) => setInlineChannelLink(e.target.value)}
-                    className="w-full h-8 px-2.5 text-xs rounded border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                    className="w-full h-8 px-2.5 text-xs rounded-lg bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2">
-                  <Button
+                <div className="flex justify-end">
+                  <button
                     type="button"
                     onClick={handleCreateChannelInline}
                     disabled={createChannelMutation.isPending}
-                    className="h-7 px-3 text-xs"
+                    className="h-8 px-3 rounded-full bg-[#1E1A17] dark:bg-white text-white dark:text-[#1E1A17] text-xs font-medium cursor-pointer shadow-xs"
                   >
                     {createChannelMutation.isPending
                       ? "Creating..."
                       : "Save & Select"}
-                  </Button>
+                  </button>
                 </div>
               </div>
             )}
           </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="project-description-textarea"
+              className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+            >
               Description (Optional)
             </label>
             <textarea
+              id="project-description-textarea"
               rows={2}
-              placeholder="General notes or goal for this project."
+              placeholder="General notes or creative goal for this project."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-2.5 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none"
+              className="w-full p-3 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none resize-none leading-relaxed"
             />
           </div>
 
-          <div className="pt-2 flex justify-end gap-2 border-t border-border">
-            <Button
+          <div className="pt-2 flex justify-end items-center gap-2 border-t border-black/[0.04] dark:border-white/[0.05]">
+            <button
               type="button"
-              variant="outline"
               onClick={onClose}
               disabled={isPending}
+              className="h-9 px-4 rounded-full text-xs font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white transition-colors cursor-pointer"
             >
               Cancel
-            </Button>
-            <Button type="submit" disabled={isPending}>
+            </button>
+            <button
+              type="submit"
+              disabled={isPending}
+              className="h-9 px-5 rounded-full bg-[#FF5338] hover:bg-[#E0452C] disabled:opacity-50 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+            >
               {isPending
                 ? isEditing
                   ? "Saving..."
@@ -345,10 +378,10 @@ export function ProjectModal({
                 : isEditing
                   ? "Save Changes"
                   : "Create Project"}
-            </Button>
+            </button>
           </div>
         </form>
       </div>
-    </div>
+    </dialog>
   );
 }

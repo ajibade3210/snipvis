@@ -100,3 +100,13 @@ export function getStrengthScoreBadgeStyle(score?: number | null): string {
   }
   return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20";
 }
+
+export interface DeepSeekChatMessage {
+  role: "system" | "user" | "assistant";
+  content:
+    | string
+    | Array<
+        | { type: "text"; text: string }
+        | { type: "image_url"; image_url: { url: string } }
+      >;
+}

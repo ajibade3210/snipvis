@@ -90,7 +90,7 @@ export function ProjectWorkspaceView({
   return (
     <div className="space-y-6">
       {/* Project Stage Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E3DCD3] dark:border-[#3C3530] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
         <div className="flex flex-wrap items-center gap-3">
           {/* Project Emoji & Quick Picker */}
           <div
@@ -111,14 +111,14 @@ export function ProjectWorkspaceView({
                   ? "Change or remove emoji"
                   : "Add project emoji"
               }
-              className="p-1 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center justify-center cursor-pointer group"
+              className="p-1 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors flex items-center justify-center cursor-pointer group"
             >
               {currentProject.emoji ? (
                 <span className="text-2xl sm:text-3xl leading-none">
                   {currentProject.emoji}
                 </span>
               ) : (
-                <span className="text-xs font-bold text-muted-foreground group-hover:text-foreground px-2 py-1 rounded-lg border border-dashed border-black/15 dark:border-white/15">
+                <span className="text-xs font-semibold text-[#8C8379] group-hover:text-[#1E1A17] dark:group-hover:text-[#FAF8F5] px-2 py-1 rounded-lg border border-dashed border-black/[0.1] dark:border-white/[0.1]">
                   + Add Icon
                 </span>
               )}
@@ -133,8 +133,8 @@ export function ProjectWorkspaceView({
                   className="fixed inset-0 z-40 bg-transparent cursor-default border-none p-0 w-full h-full"
                   onClick={() => setIsEmojiPickerOpen(false)}
                 />
-                <div className="absolute left-0 top-full mt-2 z-50 p-2.5 bg-card border border-border rounded-xl shadow-xl w-64 space-y-2 animate-in fade-in-0 zoom-in-95">
-                  <div className="flex items-center justify-between text-xs font-bold text-muted-foreground pb-1 border-b border-border/50">
+                <div className="absolute left-0 top-full mt-2 z-50 p-2.5 bg-[#FCFAF7] dark:bg-[#1C1815] border border-black/[0.06] dark:border-white/[0.08] rounded-2xl shadow-xl w-64 space-y-2 animate-in fade-in zoom-in-95">
+                  <div className="flex items-center justify-between text-xs font-bold text-[#8C8379] pb-1 border-b border-black/[0.04] dark:border-white/[0.05]">
                     <span>Project Emoji</span>
                     {currentProject.emoji ? (
                       <button
@@ -154,7 +154,7 @@ export function ProjectWorkspaceView({
                         title={`Select ${em}`}
                         aria-label={`Select ${em}`}
                         onClick={() => handleUpdateEmoji(em)}
-                        className={`w-8 h-8 rounded-lg text-lg flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-transform active:scale-90 cursor-pointer ${
+                        className={`w-8 h-8 rounded-lg text-lg flex items-center justify-center hover:bg-black/[0.05] dark:hover:bg-white/[0.08] transition-transform active:scale-90 cursor-pointer ${
                           currentProject.emoji === em
                             ? "bg-primary/20 ring-1 ring-primary"
                             : ""
@@ -182,7 +182,7 @@ export function ProjectWorkspaceView({
                   ? currentProject.channel
                   : null;
             return channelName ? (
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-white font-bold">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-black/[0.04] dark:bg-white/[0.06] text-[#1E1A17] dark:text-white font-medium">
                 @{channelName}
               </span>
             ) : null;
@@ -193,7 +193,7 @@ export function ProjectWorkspaceView({
             type="button"
             onClick={() => setIsEditModalOpen(true)}
             title="Edit project name & target channel"
-            className="p-1.5 rounded-lg text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors cursor-pointer"
           >
             <svg
               className="w-4 h-4"
@@ -220,12 +220,12 @@ export function ProjectWorkspaceView({
                 ? "Click to reopen this project"
                 : "Mark this video project as complete"
             }
-            className={`h-8 px-4 rounded-full text-xs font-extrabold flex items-center gap-2 transition-all duration-200 cursor-pointer select-none ${
+            className={`h-8 px-3.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all duration-200 cursor-pointer select-none ${
               updateProjectMutation.isPending
-                ? "opacity-60 cursor-not-allowed bg-[#E3DCD3] dark:bg-[#2A2521] text-[#8C8379]"
+                ? "opacity-60 cursor-not-allowed bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]"
                 : isDone
-                  ? "bg-transparent border-2 border-emerald-500/60 text-emerald-600 dark:text-emerald-400 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
-                  : "bg-[#059669] hover:bg-[#047857] active:scale-95 text-white shadow-sm shadow-emerald-900/20 tactile-btn"
+                  ? "bg-transparent border border-emerald-500/60 text-emerald-600 dark:text-emerald-400 hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20"
+                  : "bg-[#059669] hover:bg-[#047857] active:scale-95 text-white shadow-xs"
             }`}
           >
             {updateProjectMutation.isPending ? (
@@ -267,7 +267,7 @@ export function ProjectWorkspaceView({
                   />
                 </svg>
                 <span>Done</span>
-                <span className="text-[10px] font-medium opacity-70 border-l border-current/30 pl-2">
+                <span className="text-[10px] font-medium opacity-70 border-l border-current/30 pl-1.5">
                   Reopen?
                 </span>
               </>
@@ -293,14 +293,14 @@ export function ProjectWorkspaceView({
         </div>
 
         {/* Sub-Tab Switcher (4 Tabs) */}
-        <div className="flex items-center flex-wrap p-1 bg-[#F1EDE6] dark:bg-[#221E1A] rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] text-xs font-bold gap-0.5">
+        <div className="flex items-center flex-wrap p-0.5 bg-black/[0.03] dark:bg-white/[0.04] rounded-full border border-black/[0.04] dark:border-white/[0.06] text-xs font-medium gap-0.5">
           <button
             type="button"
             onClick={() => onTabChange("inspirations")}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
               activeTab === "inspirations"
-                ? "bg-white dark:bg-[#2A2521] text-[#FF5338] shadow-xs"
-                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white"
+                ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
             }`}
           >
             💡 Inspirations ({inspirations.length})
@@ -308,10 +308,10 @@ export function ProjectWorkspaceView({
           <button
             type="button"
             onClick={() => onTabChange("thumbnails")}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
               activeTab === "thumbnails"
-                ? "bg-white dark:bg-[#2A2521] text-[#FF5338] shadow-xs"
-                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white"
+                ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
             }`}
           >
             🖼️ Thumbnails ({thumbnailCount})
@@ -319,10 +319,10 @@ export function ProjectWorkspaceView({
           <button
             type="button"
             onClick={() => onTabChange("brief")}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
               activeTab === "brief"
-                ? "bg-white dark:bg-[#2A2521] text-[#FF5338] shadow-xs"
-                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white"
+                ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
             }`}
           >
             📋 Creative Brief
@@ -330,10 +330,10 @@ export function ProjectWorkspaceView({
           <button
             type="button"
             onClick={() => onTabChange("assets")}
-            className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
               activeTab === "assets"
-                ? "bg-white dark:bg-[#2A2521] text-[#FF5338] shadow-xs"
-                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white"
+                ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
             }`}
           >
             📎 Assets ({currentProject._count?.assets ?? 0})
@@ -387,7 +387,7 @@ export function ProjectWorkspaceView({
               type="button"
               onClick={() => setIsPreviewOpen(true)}
               title="Preview script as a standalone clean view"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#F1EDE6] dark:bg-[#2A2521] text-[#58524C] dark:text-[#A89F95] hover:bg-[#E8E0D5] dark:hover:bg-[#332E28] hover:text-[#1E1A17] dark:hover:text-white transition-all cursor-pointer border border-[#E3DCD3] dark:border-[#3C3530]"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-black/[0.03] dark:bg-white/[0.04] text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white transition-all cursor-pointer border border-black/[0.06] dark:border-white/[0.08]"
             >
               <svg
                 className="w-3.5 h-3.5"
@@ -432,13 +432,13 @@ export function ProjectWorkspaceView({
       {isPreviewOpen && (
         <dialog
           open
-          className="fixed inset-0 z-50 m-0 h-full w-full max-w-none bg-white dark:bg-[#0F0D0B] overflow-y-auto p-0 border-0"
+          className="fixed inset-0 z-50 m-0 h-full w-full max-w-none bg-[#FCFAF7] dark:bg-[#12100E] overflow-y-auto p-0 border-0"
           aria-label="Script Preview"
         >
           {/* Preview Toolbar */}
-          <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-3 border-b border-[#E3DCD3] dark:border-[#3C3530] bg-white/95 dark:bg-[#0F0D0B]/95 backdrop-blur-sm">
+          <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-3 border-b border-black/[0.05] dark:border-white/[0.06] bg-[#FCFAF7] dark:bg-[#12100E]">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-black uppercase tracking-widest text-[#8C8379] dark:text-[#A89F95]">
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#8C8379]">
                 Preview
               </span>
               <span className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5] truncate max-w-xs">
@@ -448,7 +448,7 @@ export function ProjectWorkspaceView({
             <button
               type="button"
               onClick={() => setIsPreviewOpen(false)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-all cursor-pointer"
             >
               <svg
                 className="w-4 h-4"

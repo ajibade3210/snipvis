@@ -40,9 +40,9 @@ function CadenceCalculator({
   };
 
   return (
-    <div className="p-3 bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] space-y-2 text-xs">
+    <div className="p-3.5 bg-black/[0.025] dark:bg-white/[0.03] rounded-2xl border border-black/[0.05] dark:border-white/[0.06] space-y-2.5 text-xs">
       <div className="flex items-center justify-between">
-        <span className="font-bold text-[11px] text-[#58524C] dark:text-[#A89F95]">
+        <span className="font-semibold text-xs text-[#58524C] dark:text-[#A89F95]">
           Average Upload Calculator
         </span>
         <span className="text-[10px] text-[#8C8379]">Paste 2+ video dates</span>
@@ -52,18 +52,18 @@ function CadenceCalculator({
         onChange={(e) => setDatesText(e.target.value)}
         placeholder="e.g. 2026-09-28, 2026-09-25, 2026-09-21 (or ISO timestamps)"
         rows={2}
-        className="w-full p-2 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338] resize-none"
+        className="w-full p-2.5 text-xs rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-1 focus:ring-[#FF5338] resize-none"
       />
       <div className="flex items-center justify-between gap-2">
         <button
           type="button"
           onClick={handleCalculate}
-          className="h-6 px-3 rounded-full bg-[#1E1A17] dark:bg-[#FAF8F5] text-white dark:text-[#1E1A17] text-[10px] font-bold tactile-btn"
+          className="h-7 px-3.5 rounded-full bg-[#1E1A17] dark:bg-[#FAF8F5] text-white dark:text-[#1E1A17] text-[11px] font-semibold cursor-pointer active:scale-95 transition-all"
         >
           Compute Frequency
         </button>
         {calcResult && (
-          <span className="text-[11px] font-bold text-[#FF5338]">
+          <span className="text-[11px] font-semibold text-[#FF5338]">
             Result: {calcResult}
           </span>
         )}
@@ -236,25 +236,25 @@ function AddCompetitorForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] p-5 space-y-4"
+      className="bg-white dark:bg-[#1E1A17] rounded-3xl border border-black/[0.06] dark:border-white/[0.08] p-6 space-y-4 shadow-[0_1px_3px_rgba(0,0,0,0.03)]"
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {avatarUrl && (
             <img
               src={avatarUrl}
               alt={channelName}
-              className="w-6 h-6 rounded-full object-cover border border-[#E3DCD3] dark:border-[#3C3530]"
+              className="w-6 h-6 rounded-full object-cover border border-black/[0.08] dark:border-white/[0.1]"
             />
           )}
-          <h3 className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
+          <h3 className="text-sm font-semibold text-[#1C1815] dark:text-[#FBF9F5]">
             Track New Competitor
           </h3>
         </div>
         <button
           type="button"
           onClick={() => setShowAdvanced((v) => !v)}
-          className="text-xs font-bold text-[#FF5338] hover:underline"
+          className="text-xs font-medium text-[#FF5338] hover:underline cursor-pointer"
         >
           {showAdvanced ? "Less Options ▲" : "More Details ▼"}
         </button>
@@ -262,25 +262,25 @@ function AddCompetitorForm({
 
       {/* Auto-fill notification badge */}
       {autoFilledBadge && (
-        <div className="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs font-medium text-emerald-800 dark:text-emerald-300">
+        <div className="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-medium text-emerald-700 dark:text-emerald-300">
           {autoFilledBadge}
         </div>
       )}
 
       {fetchError && (
-        <div className="px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-medium text-amber-800 dark:text-amber-300">
+        <div className="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs font-medium text-amber-700 dark:text-amber-300">
           {fetchError}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
         {/* Channel or Video URL with Instant Auto-Fill */}
-        <div className="space-y-1 md:col-span-2">
+        <div className="space-y-1.5 md:col-span-2">
           <div className="flex items-center justify-between">
-            <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+            <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
               YouTube Channel or Video URL *
             </label>
-            <span className="text-[10px] text-[#8C8379]">
+            <span className="text-[10px] text-[#8C827A]">
               Paste any channel or video link to auto-fill
             </span>
           </div>
@@ -302,13 +302,13 @@ function AddCompetitorForm({
               }}
               placeholder="https://youtube.com/@channel or https://youtube.com/watch?v=..."
               required
-              className="flex-1 h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+              className="flex-1 h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
             />
             <button
               type="button"
               onClick={() => handleFetchYoutube(channelUrl)}
               disabled={isFetchingYt || !channelUrl.trim()}
-              className="h-9 px-4 rounded-lg bg-[#FAF8F5] dark:bg-[#2A2521] border border-[#E3DCD3] dark:border-[#3C3530] text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] hover:border-[#FF5338] transition-colors disabled:opacity-50 shrink-0 flex items-center gap-1.5"
+              className="h-9 px-4 rounded-xl bg-black/[0.03] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.1] text-xs font-semibold text-[#1C1815] dark:text-[#FBF9F5] hover:bg-black/[0.06] dark:hover:bg-white/[0.07] transition-colors disabled:opacity-50 shrink-0 flex items-center gap-1.5 cursor-pointer"
             >
               {isFetchingYt ? (
                 <>
@@ -325,8 +325,8 @@ function AddCompetitorForm({
           </div>
         </div>
 
-        <div className="space-y-1">
-          <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
             Channel Name *
           </label>
           <input
@@ -335,12 +335,12 @@ function AddCompetitorForm({
             onChange={(e) => setChannelName(e.target.value)}
             placeholder="e.g. MrBeast"
             required
-            className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+            className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
           />
         </div>
 
-        <div className="space-y-1">
-          <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
             Current Subscribers
           </label>
           <input
@@ -348,20 +348,20 @@ function AddCompetitorForm({
             value={currentSubscriberCount}
             onChange={(e) => setCurrentSubscriberCount(e.target.value)}
             placeholder="e.g. 1.2M or 450K"
-            className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+            className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
           />
         </div>
 
         {/* Upload Cadence with Presets & Calculator */}
         <div className="space-y-1.5 md:col-span-2">
           <div className="flex items-center justify-between">
-            <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+            <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
               Upload Cadence
             </label>
             <button
               type="button"
               onClick={() => setShowCalculator((v) => !v)}
-              className="text-[11px] font-semibold text-[#FF5338] hover:underline"
+              className="text-[11px] font-medium text-[#FF5338] hover:underline cursor-pointer"
             >
               {showCalculator
                 ? "Hide Calculator"
@@ -375,10 +375,10 @@ function AddCompetitorForm({
                 key={preset}
                 type="button"
                 onClick={() => setUploadFrequency(preset)}
-                className={`px-2.5 py-1 text-[11px] rounded-full border transition-colors capitalize ${
+                className={`px-3 py-1 text-[11px] rounded-full border transition-all capitalize cursor-pointer ${
                   uploadFrequency === preset
-                    ? "bg-[#FF5338] text-white border-[#FF5338] font-bold"
-                    : "border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#58524C] dark:text-[#A89F95] hover:border-[#FF5338]"
+                    ? "bg-[#FF5338] text-white border-[#FF5338] font-semibold shadow-xs"
+                    : "border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#8C827A] dark:text-[#A89F97] hover:border-[#FF5338]/40"
                 }`}
               >
                 {preset}
@@ -391,7 +391,7 @@ function AddCompetitorForm({
             value={uploadFrequency}
             onChange={(e) => setUploadFrequency(e.target.value)}
             placeholder="e.g. twice weekly, once daily, 5 times daily"
-            className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+            className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
           />
 
           {showCalculator && (
@@ -406,20 +406,20 @@ function AddCompetitorForm({
 
         {showAdvanced && (
           <>
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
                 Last Upload Date
               </label>
               <input
                 type="date"
                 value={lastUploadDate}
                 onChange={(e) => setLastUploadDate(e.target.value)}
-                className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+                className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white focus:outline-none focus:border-[#FF5338] transition-colors"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
                 Channel Focus / Description
               </label>
               <input
@@ -427,12 +427,12 @@ function AddCompetitorForm({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="e.g. High-velocity visual storytelling & challenge formats"
-                className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+                className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
                 Top / Outlier Video Title
               </label>
               <input
@@ -440,12 +440,12 @@ function AddCompetitorForm({
                 value={mostPopularVideoTitle}
                 onChange={(e) => setMostPopularVideoTitle(e.target.value)}
                 placeholder="e.g. I Spent 50 Hours In Solitary"
-                className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+                className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
                 Top Video URL
               </label>
               <input
@@ -453,24 +453,24 @@ function AddCompetitorForm({
                 value={mostPopularVideoUrl}
                 onChange={(e) => setMostPopularVideoUrl(e.target.value)}
                 placeholder="https://youtube.com/watch?v=..."
-                className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+                className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
                 Channel Started Date
               </label>
               <input
                 type="date"
                 value={startedDate}
                 onChange={(e) => setStartedDate(e.target.value)}
-                className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+                className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
                 Avg Views / Video
               </label>
               <input
@@ -478,14 +478,14 @@ function AddCompetitorForm({
                 value={avgViewCount}
                 onChange={(e) => setAvgViewCount(e.target.value)}
                 placeholder="e.g. 250K or 1.2M"
-                className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+                className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
               />
             </div>
           </>
         )}
 
-        <div className="space-y-1 md:col-span-2">
-          <label className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95]">
+        <div className="space-y-1.5 md:col-span-2">
+          <label className="text-[11px] font-medium text-[#8C827A] dark:text-[#A89F97]">
             Personal Note
           </label>
           <input
@@ -493,43 +493,43 @@ function AddCompetitorForm({
             value={personalNote}
             onChange={(e) => setPersonalNote(e.target.value)}
             placeholder="Why you're tracking this channel..."
-            className="w-full h-9 px-3 text-xs rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+            className="w-full h-9 px-3.5 text-xs rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.025] dark:bg-white/[0.025] text-[#1C1815] dark:text-white placeholder:text-[#A89F97] focus:outline-none focus:border-[#FF5338] transition-colors"
           />
         </div>
 
         {/* Reproducible Niche Toggle */}
-        <div className="flex items-center gap-3 md:col-span-2 p-3 rounded-xl bg-[#FAF8F5] dark:bg-[#221E1A] border border-[#E3DCD3] dark:border-[#3C3530]">
+        <div className="flex items-center gap-3 md:col-span-2 p-3.5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.025] border border-black/[0.06] dark:border-white/[0.08]">
           <input
             type="checkbox"
             id="competitor-reproducible-checkbox"
             checked={reproducible}
             onChange={(e) => setReproducible(e.target.checked)}
-            className="w-4 h-4 rounded text-[#FF5338] accent-[#FF5338] focus:ring-[#FF5338] border-[#E3DCD3] dark:border-[#3C3530] cursor-pointer"
+            className="w-4 h-4 rounded text-[#FF5338] accent-[#FF5338] focus:ring-[#FF5338] border-black/[0.1] dark:border-white/[0.1] cursor-pointer"
           />
           <label
             htmlFor="competitor-reproducible-checkbox"
-            className="text-xs font-semibold text-[#1E1A17] dark:text-[#FAF8F5] cursor-pointer select-none"
+            className="text-xs font-medium text-[#1C1815] dark:text-[#FBF9F5] cursor-pointer select-none"
           >
             Reproducible Niche{" "}
-            <span className="text-[11px] font-normal text-[#8C8379]">
+            <span className="text-[11px] font-normal text-[#8C827A]">
               (Can we reproduce/execute this channel&apos;s format and niche?)
             </span>
           </label>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 pt-1">
+      <div className="flex items-center gap-2 pt-2 border-t border-black/[0.04] dark:border-white/[0.05]">
         <button
           type="submit"
           disabled={isPending || isFetchingYt}
-          className="h-8 px-5 rounded-full bg-[#FF5338] text-white text-xs font-bold tactile-btn disabled:opacity-50"
+          className="h-9 px-5 rounded-full bg-[#FF5338] text-white text-xs font-semibold shadow-sm hover:bg-[#E0452C] transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
         >
           {isPending ? "Adding…" : "Add Competitor"}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="h-8 px-4 rounded-full text-xs font-bold text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+          className="h-9 px-4 rounded-full text-xs font-medium text-[#8C827A] dark:text-[#A89F97] hover:text-[#1C1815] dark:hover:text-white transition-colors cursor-pointer"
         >
           Cancel
         </button>
@@ -558,11 +558,11 @@ function CompetitorCard({
           onInspect();
         }
       }}
-      className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] hover:border-[#FF5338]/60 overflow-hidden card-lift flex flex-col transition-all duration-200 group/card text-left cursor-pointer"
+      className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-black/[0.06] dark:border-white/[0.08] hover:border-[#FF5338]/40 overflow-hidden shadow-xs hover:shadow-md flex flex-col transition-all duration-200 group/card text-left cursor-pointer"
     >
       {/* Channel Header */}
       <div className="p-5 pb-3 flex items-start gap-3.5">
-        <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#F1EDE6] dark:bg-[#2A2521] shrink-0 flex items-center justify-center border border-[#E3DCD3]/60 dark:border-[#3C3530]/60 shadow-xs">
+        <div className="w-11 h-11 rounded-xl overflow-hidden bg-black/[0.03] dark:bg-white/[0.04] shrink-0 flex items-center justify-center border border-black/[0.05] dark:border-white/[0.06] shadow-xs">
           {competitor.avatarUrl ? (
             <img
               src={competitor.avatarUrl}
@@ -570,7 +570,7 @@ function CompetitorCard({
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="text-base font-black text-[#FF5338]">
+            <span className="text-sm font-bold text-[#FF5338]">
               {competitor.channelName.slice(0, 2).toUpperCase()}
             </span>
           )}
@@ -578,7 +578,7 @@ function CompetitorCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="font-extrabold text-sm text-[#1E1A17] dark:text-[#FAF8F5] truncate group-hover/card:text-[#FF5338] transition-colors">
+              <h3 className="font-bold text-sm text-[#1E1A17] dark:text-[#FAF8F5] truncate group-hover/card:text-[#FF5338] transition-colors">
                 {competitor.channelName}
               </h3>
               <a
@@ -586,7 +586,7 @@ function CompetitorCard({
                 target="_blank"
                 rel="noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="text-[11px] text-[#8C8379] hover:text-[#FF5338] hover:underline font-grotesk truncate block"
+                className="text-[11px] text-[#8C8379] hover:text-[#FF5338] hover:underline font-mono truncate block"
               >
                 {competitor.customUrl ||
                   competitor.channelUrl.replace(
@@ -603,7 +603,7 @@ function CompetitorCard({
                 onDelete();
               }}
               title="Stop tracking"
-              className="text-[#8C8379] hover:text-[#FF5338] transition-colors p-1 -mt-1 -mr-1 rounded-md"
+              className="text-[#8C8379] hover:text-[#FF5338] transition-colors p-1 -mt-1 -mr-1 rounded-md cursor-pointer"
             >
               <svg
                 className="w-3.5 h-3.5"
@@ -632,10 +632,10 @@ function CompetitorCard({
             onUpdate({ reproducible: !competitor.reproducible });
           }}
           title="Click to toggle reproducible niche status"
-          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all border ${
+          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold transition-all border cursor-pointer ${
             competitor.reproducible
-              ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100"
-              : "bg-[#FAF8F5] dark:bg-[#221E1A] text-[#8C8379] border-[#E3DCD3] dark:border-[#3C3530] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
+              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/15"
+              : "bg-black/[0.025] dark:bg-white/[0.03] text-[#8C8379] border-black/[0.05] dark:border-white/[0.06] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
           }`}
         >
           <span>{competitor.reproducible ? "✓" : "○"}</span>
@@ -647,7 +647,7 @@ function CompetitorCard({
         </button>
 
         {competitor.uploadFrequency && (
-          <span className="text-[10px] font-bold text-[#914c00] dark:text-amber-300 bg-[#FFF0D6] dark:bg-amber-950/30 px-2.5 py-0.5 rounded-full capitalize shrink-0">
+          <span className="text-[10px] font-semibold text-[#914c00] dark:text-amber-300 bg-amber-500/10 px-2.5 py-0.5 rounded-full capitalize shrink-0">
             {competitor.uploadFrequency}
           </span>
         )}
@@ -655,20 +655,20 @@ function CompetitorCard({
 
       {/* Key Metrics Essentials Grid */}
       <div className="px-5 pb-3 grid grid-cols-2 gap-2">
-        <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-2.5 space-y-0.5">
-          <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+        <div className="bg-black/[0.025] dark:bg-white/[0.03] rounded-xl p-2.5 space-y-0.5">
+          <p className="text-[10px] font-semibold text-[#8C8379] uppercase tracking-wide">
             Subscribers
           </p>
-          <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
+          <p className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
             {competitor.currentSubscriberCount || "—"}
           </p>
         </div>
 
-        <div className="bg-[#F7F4EF] dark:bg-[#221E1A] rounded-xl p-2.5 space-y-0.5">
-          <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+        <div className="bg-black/[0.025] dark:bg-white/[0.03] rounded-xl p-2.5 space-y-0.5">
+          <p className="text-[10px] font-semibold text-[#8C8379] uppercase tracking-wide">
             Avg Views / Video
           </p>
-          <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
+          <p className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
             {competitor.avgViewCount || "—"}
           </p>
         </div>
@@ -677,9 +677,9 @@ function CompetitorCard({
       {/* Top Video 1-line Signal */}
       {competitor.mostPopularVideoTitle && (
         <div className="px-5 pb-3">
-          <div className="bg-[#FAF8F5] dark:bg-[#221E1A] border border-[#E3DCD3]/60 dark:border-[#3C3530]/60 rounded-xl px-3 py-2 flex items-center gap-2">
+          <div className="bg-black/[0.02] dark:bg-white/[0.025] border border-black/[0.04] dark:border-white/[0.05] rounded-xl px-3 py-2 flex items-center gap-2">
             <span className="text-xs shrink-0 text-[#FF5338]">⚡</span>
-            <p className="text-xs font-semibold text-[#1E1A17] dark:text-[#FAF8F5] truncate min-w-0">
+            <p className="text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] truncate min-w-0">
               {competitor.mostPopularVideoTitle}
             </p>
           </div>
@@ -687,8 +687,8 @@ function CompetitorCard({
       )}
 
       {/* Apple-grade Footer Affordance */}
-      <div className="px-5 py-3 mt-auto border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50 flex items-center justify-between text-[11px] text-[#8C8379] group-hover/card:text-[#FF5338] transition-colors">
-        <span className="font-semibold">Inspect channel intel</span>
+      <div className="px-5 py-3 mt-auto border-t border-black/[0.04] dark:border-white/[0.05] flex items-center justify-between text-[11px] text-[#8C8379] group-hover/card:text-[#FF5338] transition-colors">
+        <span className="font-medium">Inspect channel intel</span>
         <span className="font-bold">→</span>
       </div>
     </div>
@@ -733,13 +733,13 @@ export function CompetitorSpyView() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCD3] dark:border-[#3C3530] pb-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
         <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
+          <h2 className="text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
             🎯 Competitor Benchmark Radar
           </h2>
           {competitors.length > 0 && (
-            <span className="px-3 py-0.5 rounded-full text-xs font-bold font-grotesk bg-[#FFF0D6] text-[#914c00] dark:bg-amber-950/40 dark:text-amber-300">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]">
               {competitors.length} Tracked
             </span>
           )}
@@ -747,7 +747,7 @@ export function CompetitorSpyView() {
         <button
           type="button"
           onClick={() => setShowAddForm((v) => !v)}
-          className="h-9 px-5 rounded-full text-xs font-bold flex items-center gap-2 bg-[#1E1A17] dark:bg-[#FAF8F5] text-white dark:text-[#1E1A17] tactile-btn shrink-0"
+          className="h-9 px-4 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
         >
           <span>{showAddForm ? "✕ Cancel" : "+ Track Channel"}</span>
         </button>
@@ -764,14 +764,14 @@ export function CompetitorSpyView() {
 
       {/* Filter Tabs */}
       {!isLoading && competitors.length > 0 && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => setFilter("all")}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
               filter === "all"
-                ? "bg-[#1E1A17] text-white dark:bg-[#FAF8F5] dark:text-[#1E1A17]"
-                : "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#58524C] dark:text-[#A89F95] hover:bg-[#E3DCD3] dark:hover:bg-[#3C3530]"
+                ? "bg-[#1E1A17] text-white dark:bg-[#FAF8F5] dark:text-[#1E1A17] shadow-xs font-semibold"
+                : "bg-black/[0.03] dark:bg-white/[0.04] text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.05] dark:hover:bg-white/[0.06]"
             }`}
           >
             All Channels ({competitors.length})
@@ -779,10 +779,10 @@ export function CompetitorSpyView() {
           <button
             type="button"
             onClick={() => setFilter("reproducible")}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5 ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
               filter === "reproducible"
-                ? "bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white"
-                : "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#58524C] dark:text-[#A89F95] hover:bg-[#E3DCD3] dark:hover:bg-[#3C3530]"
+                ? "bg-emerald-600 text-white dark:bg-emerald-500 dark:text-white shadow-xs font-semibold"
+                : "bg-black/[0.03] dark:bg-white/[0.04] text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.05] dark:hover:bg-white/[0.06]"
             }`}
           >
             <span>✓</span> Reproducible Niche ({reproducibleCount})
@@ -796,28 +796,28 @@ export function CompetitorSpyView() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-64 rounded-2xl bg-[#F1EDE6] dark:bg-[#221E1A] animate-pulse"
+              className="h-64 rounded-2xl bg-black/[0.03] dark:bg-white/[0.04] animate-pulse"
             />
           ))}
         </div>
       ) : competitors.length === 0 ? (
-        <div className="py-20 text-center rounded-2xl border-2 border-dashed border-[#E3DCD3] dark:border-[#3C3530] space-y-3">
+        <div className="py-20 text-center rounded-3xl border border-dashed border-black/[0.08] dark:border-white/[0.08] bg-black/[0.01] dark:bg-white/[0.01] space-y-3 p-8">
           <div className="text-3xl">🕵️</div>
           <h3 className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
             No competitors tracked yet
           </h3>
-          <p className="text-xs text-[#58524C] dark:text-[#A89F95] max-w-sm mx-auto">
+          <p className="text-xs text-[#8C8379] max-w-sm mx-auto">
             Click &quot;Track Channel&quot; to start spying on competitors —
             paste any YouTube channel or video link to automatically detect
             upload cadence, subscribers, and top-performing content.
           </p>
         </div>
       ) : displayedCompetitors.length === 0 ? (
-        <div className="py-16 text-center rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#1E1A17] space-y-2">
+        <div className="py-16 text-center rounded-3xl border border-dashed border-black/[0.08] dark:border-white/[0.08] bg-black/[0.01] dark:bg-white/[0.01] p-8 space-y-2">
           <p className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
             No reproducible competitors marked yet
           </p>
-          <p className="text-xs text-[#58524C] dark:text-[#A89F95]">
+          <p className="text-xs text-[#8C8379]">
             Click &quot;Mark Reproducible&quot; on any channel card to flag
             niches you can reproduce.
           </p>

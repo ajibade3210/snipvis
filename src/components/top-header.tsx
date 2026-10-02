@@ -49,11 +49,11 @@ export function TopHeader({
   }, []);
 
   return (
-    <header className="h-[65px] border-b border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5]/95 dark:bg-[#171412]/95 backdrop-blur-md sticky top-0 z-40 px-6 flex items-center justify-between gap-4">
+    <header className="h-[65px] border-b border-black/[0.05] dark:border-white/[0.06] bg-[#FAF8F5] dark:bg-[#171412] sticky top-0 z-40 px-6 flex items-center justify-between gap-4">
       {/* Search Capsule */}
       <div className="flex-1 max-w-2xl relative flex items-center">
         <svg
-          className="w-4 h-4 text-[#8C8379] absolute left-4.5 pointer-events-none"
+          className="w-4 h-4 text-[#8C8379] absolute left-4 pointer-events-none"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -72,28 +72,29 @@ export function TopHeader({
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           onKeyDown={onSearchKeyDown}
-          className="w-full h-11 pl-11 pr-14 text-xs font-medium rounded-full border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338] shadow-xs"
+          className="w-full h-10 pl-10 pr-14 text-xs font-medium rounded-full border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.025] dark:bg-white/[0.03] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:bg-white dark:focus:bg-[#201C18] focus:border-[#FF5338]/40 focus:ring-2 focus:ring-[#FF5338]/15 transition-all shadow-xs"
         />
-        <kbd className="absolute right-4 px-2 py-0.5 text-[10px] font-grotesk font-bold rounded bg-[#F1EDE6] dark:bg-[#2A2521] text-[#8C8379] border border-[#E3DCD3] dark:border-[#3C3530] pointer-events-none">
+        <kbd className="absolute right-3.5 px-1.5 py-0.5 text-[10px] font-mono font-medium rounded-md bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] border border-black/[0.04] dark:border-white/[0.06] pointer-events-none">
           ⌘K
         </kbd>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={onOpenAddInspiration}
-          className="h-10 px-5 rounded-full bg-[#FF5338] text-white text-xs font-bold flex items-center gap-1.5 tactile-btn shadow-sm hover:bg-[#d93820] cursor-pointer"
+          className="h-9 px-4 rounded-full bg-[#FF5338] text-white text-xs font-bold flex items-center gap-1.5 shadow-sm hover:bg-[#d93820] active:scale-95 transition-all cursor-pointer"
         >
+          <span className="text-sm leading-none">+</span>
           <span>Add Inspiration</span>
         </button>
 
-        <div className="h-6 w-px bg-[#E3DCD3] dark:bg-[#3C3530] mx-1" />
+        <div className="h-5 w-px bg-black/[0.06] dark:bg-white/[0.08] mx-1" />
 
         <button
           type="button"
-          className="w-9 h-9 rounded-full flex items-center justify-center text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] relative transition-colors"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] relative transition-colors cursor-pointer"
           title="Notifications"
         >
           <svg
@@ -115,7 +116,7 @@ export function TopHeader({
         <button
           type="button"
           onClick={toggle}
-          className="w-9 h-9 rounded-full flex items-center justify-center text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] transition-colors"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors cursor-pointer"
           title="Toggle Theme"
         >
           {theme === "dark" ? "☀️" : "🌙"}
@@ -132,7 +133,7 @@ export function TopHeader({
                 ? `${userProfile.name || "Creator"} (${userProfile.email})`
                 : "Creator Profile & Settings"
             }
-            className="w-8 h-8 rounded-full overflow-hidden border border-[#E3DCD3] dark:border-[#3C3530] shadow-xs cursor-pointer flex items-center justify-center bg-[#F1EDE6] dark:bg-[#2A2521] transition-transform active:scale-95"
+            className="w-8 h-8 rounded-full overflow-hidden border border-black/[0.08] dark:border-white/[0.1] shadow-xs cursor-pointer flex items-center justify-center bg-black/[0.03] dark:bg-white/[0.05] transition-transform active:scale-95"
           >
             {userProfile?.avatarUrl ? (
               <img
@@ -141,7 +142,7 @@ export function TopHeader({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-[11px] font-black font-grotesk text-[#FF5338]">
+              <span className="text-[11px] font-bold text-[#FF5338]">
                 {userProfile?.name
                   ? userProfile.name.slice(0, 2).toUpperCase()
                   : userProfile?.email
@@ -154,10 +155,10 @@ export function TopHeader({
           {menuOpen && (
             <div
               id="profile-dropdown"
-              className="absolute right-0 top-10 w-52 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#1E1A17] shadow-lg py-1.5 z-50"
+              className="absolute right-0 top-10 w-56 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-[#FCFAF7] dark:bg-[#1C1815] shadow-xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100"
             >
               {/* User info header */}
-              <div className="px-3.5 py-2.5 border-b border-[#E3DCD3] dark:border-[#3C3530]">
+              <div className="px-3.5 py-2.5 border-b border-black/[0.04] dark:border-white/[0.05]">
                 <p className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] truncate">
                   {userProfile?.name || "Creator"}
                 </p>
@@ -167,57 +168,59 @@ export function TopHeader({
               </div>
 
               {/* Settings */}
-              <button
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  onOpenSettings?.();
-                }}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F7F4EF] dark:hover:bg-[#2A2521] transition-colors text-left"
-              >
-                <svg
-                  className="w-3.5 h-3.5 opacity-60"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
+              <div className="p-1 space-y-0.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onOpenSettings?.();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors text-left cursor-pointer"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                Settings
-              </button>
+                  <svg
+                    className="w-3.5 h-3.5 opacity-60"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  Settings
+                </button>
 
-              {/* Sign Out */}
-              <button
-                type="button"
-                id="sign-out-btn"
-                onClick={handleSignOut}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-semibold text-[#FF5338] hover:bg-[#FFF0EE] dark:hover:bg-[#2A1A17] transition-colors text-left"
-              >
-                <svg
-                  className="w-3.5 h-3.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
+                {/* Sign Out */}
+                <button
+                  type="button"
+                  id="sign-out-btn"
+                  onClick={handleSignOut}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#FF5338] hover:bg-[#FF5338]/10 transition-colors text-left cursor-pointer"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  />
-                </svg>
-                Sign out
-              </button>
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  Sign out
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useCreateInspiration } from "@/hooks/use-inspirations";
 import { createInspirationSchema } from "@/lib/validations";
 import { mediaService } from "@/services/api/media.service";
@@ -187,79 +186,93 @@ export function InspirationModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="bg-card text-card-foreground border border-border rounded-xl shadow-xl w-full max-w-xl my-8 overflow-hidden animate-in fade-in-0 zoom-in-95">
-        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+    <dialog
+      open
+      aria-label="Add Research Inspiration"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/35 m-0 h-full w-full max-w-none border-0"
+    >
+      <div className="bg-[#FCFAF7] dark:bg-[#1C1815] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] rounded-3xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl shadow-black/25 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Apple-Style Deferential Header */}
+        <div className="flex items-center justify-between px-6 sm:px-7 pt-5 pb-3 border-b border-black/[0.04] dark:border-white/[0.05]">
           <div>
-            <h3 className="font-semibold text-base">
+            <h3 className="text-base font-semibold tracking-tight text-[#1E1A17] dark:text-white">
               Add Research Inspiration
             </h3>
-            <p className="text-xs text-muted-foreground">
-              Save thumbnails, titles, or hooks to your research vault.
+            <p className="text-xs text-[#8C8379] dark:text-[#A89F95] mt-0.5">
+              Save high-CTR thumbnails, titles, or hooks to your research vault.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground text-sm font-semibold px-2 py-1 rounded"
+            className="w-8 h-8 rounded-full text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close"
           >
             ✕
           </button>
         </div>
 
         {/* Quick YouTube Paste */}
-        <div className="bg-muted/40 p-4 border-b border-border">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">
-            ⚡ Quick Auto-Fill from YouTube
+        <div className="px-6 sm:px-7 py-3.5 bg-black/[0.02] dark:bg-white/[0.02] border-b border-black/[0.04] dark:border-white/[0.05] space-y-1.5">
+          <label
+            htmlFor="youtube-autofill-input"
+            className="block text-[11px] font-semibold uppercase tracking-wider text-[#8C8379]"
+          >
+            Auto-Fill from YouTube
           </label>
           <div className="flex gap-2">
             <input
+              id="youtube-autofill-input"
               type="url"
               placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
               value={youtubeUrl}
               onChange={(e) => setYoutubeUrl(e.target.value)}
-              className="flex-1 h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="flex-1 h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none"
             />
-            <Button
+            <button
               type="button"
-              variant="outline"
               onClick={handleFetchYoutube}
               disabled={isFetchingYt || !youtubeUrl.trim()}
-              className="h-9 text-xs font-medium"
+              className="h-10 px-4 rounded-xl bg-[#1E1A17] dark:bg-white text-white dark:text-[#1E1A17] text-xs font-semibold disabled:opacity-50 transition-colors cursor-pointer shadow-xs shrink-0"
             >
               {isFetchingYt ? "Fetching..." : "Auto-Fill"}
-            </Button>
+            </button>
           </div>
-          {ytError ? (
-            <p className="text-xs text-destructive mt-1.5">{ytError}</p>
-          ) : null}
+          {ytError && <p className="text-xs text-red-500 mt-1">{ytError}</p>}
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="p-6 space-y-4 max-h-[70vh] overflow-y-auto"
+          className="p-6 sm:p-7 space-y-4 overflow-y-auto flex-1"
         >
-          {formError ? (
-            <div className="p-3 text-xs rounded-md bg-destructive/10 text-destructive border border-destructive/20">
-              {formError}
+          {formError && (
+            <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs flex items-start gap-2">
+              <span className="font-semibold">Error:</span>
+              <p className="flex-1 leading-relaxed">{formError}</p>
             </div>
-          ) : null}
+          )}
 
-          {/* Type Selector */}
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
-              Inspiration Type <span className="text-red-500">*</span>
+          {/* Type Selector: Apple Segmented Pill Control */}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]">
+              Inspiration Type <span className="text-[#FF5338]">*</span>
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1 p-1 bg-black/[0.04] dark:bg-white/[0.05] rounded-xl">
               {(["THUMBNAIL", "TITLE", "HOOK"] as const).map((t) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() => setType(t)}
-                  className={`py-2 text-xs font-medium rounded-md border transition-all ${
+                  className={`py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer text-center ${
                     type === t
-                      ? "border-primary bg-primary text-primary-foreground font-semibold"
-                      : "border-input bg-background hover:bg-accent text-foreground"
+                      ? "bg-white dark:bg-[#2A2420] text-[#1E1A17] dark:text-white shadow-xs font-semibold"
+                      : "text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
                   }`}
                 >
                   {t === "THUMBNAIL"
@@ -273,21 +286,24 @@ export function InspirationModal({
           </div>
 
           {/* Thumbnail URL */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-medium text-foreground">
-                Thumbnail / Image URL <span className="text-red-500">*</span>
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="inspiration-thumbnail-input"
+                className="text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              >
+                Thumbnail / Image URL <span className="text-[#FF5338]">*</span>
               </label>
               <button
                 type="button"
                 onClick={() => thumbInputRef.current?.click()}
                 disabled={isUploadingThumb}
-                className="text-xs text-primary hover:underline flex items-center gap-1 font-medium disabled:opacity-50"
+                className="text-xs text-[#FF5338] hover:underline flex items-center gap-1 font-medium disabled:opacity-50 cursor-pointer"
               >
                 {isUploadingThumb ? (
                   <span>Uploading to R2...</span>
                 ) : (
-                  <span>Upload local image to R2</span>
+                  <span>Upload local image</span>
                 )}
               </button>
             </div>
@@ -299,15 +315,16 @@ export function InspirationModal({
               className="hidden"
             />
             <input
+              id="inspiration-thumbnail-input"
               type="url"
               required
-              placeholder="https://... (or click 'Upload local image to R2')"
+              placeholder="https://... (or click 'Upload local image')"
               value={thumbnailUrl}
               onChange={(e) => setThumbnailUrl(e.target.value)}
-              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none"
             />
-            {thumbnailUrl ? (
-              <div className="mt-2 rounded-md overflow-hidden border border-border aspect-video max-h-36 bg-muted flex items-center justify-center">
+            {thumbnailUrl && (
+              <div className="mt-2 rounded-2xl overflow-hidden border border-black/[0.06] dark:border-white/[0.08] aspect-video max-h-36 bg-black/5 flex items-center justify-center">
                 <img
                   src={thumbnailUrl}
                   alt="Preview thumbnail"
@@ -317,99 +334,123 @@ export function InspirationModal({
                   }}
                 />
               </div>
-            ) : null}
+            )}
           </div>
 
           {/* Title */}
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="inspiration-title-input"
+              className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+            >
               Video / Asset Title
             </label>
             <input
+              id="inspiration-title-input"
               type="text"
               placeholder="e.g. I Spent 100 Hours Crafting the Ultimate Intro"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none"
             />
           </div>
 
           {/* Hook (if type is HOOK or extra details) */}
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="inspiration-hook-textarea"
+              className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+            >
               Hook / Script Segment{" "}
               {type === "HOOK" ? "(Important)" : "(Optional)"}
             </label>
             <textarea
+              id="inspiration-hook-textarea"
               rows={2}
               placeholder="Write or paste the exact retention hook used in the first 10 seconds..."
               value={hook}
               onChange={(e) => setHook(e.target.value)}
-              className="w-full p-2.5 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-none"
+              className="w-full p-3 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none resize-none leading-relaxed"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-medium mb-1.5 text-foreground">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="inspiration-channel-input"
+                className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              >
                 Channel Name
               </label>
               <input
+                id="inspiration-channel-input"
                 type="text"
                 placeholder="e.g. Cleo Abram"
                 value={channelName}
                 onChange={(e) => setChannelName(e.target.value)}
-                className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
               />
             </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5 text-foreground">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="inspiration-views-input"
+                className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              >
                 Views
               </label>
               <input
+                id="inspiration-views-input"
                 type="text"
                 placeholder="e.g. 2.4M views"
                 value={views}
                 onChange={(e) => setViews(e.target.value)}
-                className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="inspiration-source-input"
+              className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+            >
               Source URL
             </label>
             <input
+              id="inspiration-source-input"
               type="url"
               placeholder="https://youtube.com/watch?v=..."
               value={sourceUrl}
               onChange={(e) => setSourceUrl(e.target.value)}
-              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
             />
           </div>
 
           {/* Project Linkage */}
-          <div className="p-3 bg-muted/30 rounded-lg border border-border space-y-3">
+          <div className="p-4 bg-black/[0.025] dark:bg-white/[0.03] rounded-2xl space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-foreground">
+              <label
+                htmlFor="inspiration-project-select"
+                className="text-xs font-semibold text-[#1E1A17] dark:text-white"
+              >
                 Assign to Project (Optional)
               </label>
-              <label className="flex items-center gap-1.5 text-xs text-foreground cursor-pointer">
+              <label className="flex items-center gap-1.5 text-xs text-[#58524C] dark:text-[#A89F95] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={favorite}
                   onChange={(e) => setFavorite(e.target.checked)}
-                  className="rounded border-input text-primary"
+                  className="rounded border-black/20 text-[#FF5338] focus:ring-[#FF5338]"
                 />
                 Mark as Favorite (★)
               </label>
             </div>
 
             <select
+              id="inspiration-project-select"
               value={targetProjectId}
               onChange={(e) => setTargetProjectId(e.target.value)}
-              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full h-10 px-3 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none cursor-pointer"
             >
               <option value="">No Project (Global Vault Only)</option>
               {projects.map((p) => (
@@ -419,34 +460,36 @@ export function InspirationModal({
               ))}
             </select>
 
-            {targetProjectId ? (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Per-project note (e.g. Try this color grading style)"
-                  value={projectNote}
-                  onChange={(e) => setProjectNote(e.target.value)}
-                  className="w-full h-8 px-2.5 text-xs rounded border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                />
-              </div>
-            ) : null}
+            {targetProjectId && (
+              <input
+                type="text"
+                placeholder="Per-project note (e.g. Try this color grading style)"
+                value={projectNote}
+                onChange={(e) => setProjectNote(e.target.value)}
+                className="w-full h-9 px-3 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none"
+              />
+            )}
           </div>
 
-          <div className="pt-2 flex justify-end gap-2 border-t border-border">
-            <Button
+          <div className="pt-2 flex justify-end items-center gap-2 border-t border-black/[0.04] dark:border-white/[0.05]">
+            <button
               type="button"
-              variant="outline"
               onClick={onClose}
               disabled={createInspiration.isPending}
+              className="h-9 px-4 rounded-full text-xs font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white transition-colors cursor-pointer"
             >
               Cancel
-            </Button>
-            <Button type="submit" disabled={createInspiration.isPending}>
+            </button>
+            <button
+              type="submit"
+              disabled={createInspiration.isPending}
+              className="h-9 px-5 rounded-full bg-[#FF5338] hover:bg-[#E0452C] disabled:opacity-50 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+            >
               {createInspiration.isPending ? "Saving..." : "Save Inspiration"}
-            </Button>
+            </button>
           </div>
         </form>
       </div>
-    </div>
+    </dialog>
   );
 }

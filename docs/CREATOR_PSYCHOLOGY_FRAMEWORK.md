@@ -110,12 +110,12 @@ This playbook documents the **psychological laws**, **creator failure modes**, *
 ## 4. Generative AI Asset Creation: Psychological Prompting
 
 ### 4.1 Engineering Prompts for Human Vision
-* **Scientific Principle:** Generative image models (Midjourney, FLUX, DALL-E) produce aesthetic art by default, but aesthetics $\neq$ click-through rate. High-CTR thumbnails require extreme lighting contrast, minimal background noise, and negative space for platform overlays.
+* **Scientific Principle:** Generative image models produce aesthetic art by default, but aesthetics $\neq$ click-through rate. High-CTR thumbnails require extreme lighting contrast, minimal background noise, and negative space for platform overlays.
 * **The Countermeasure:** The **AI Thumbnail Prompt Generator** forces AI image models to follow these scientific constraints:
   - Automatically commands a **high-contrast rim-lit subject** (Weber-Fechner Law).
   - Explicitly restricts elements to **1 Hero Anchor + 1 Context Tension** (Miller's Law).
   - Commands the **bottom-right corner to be empty negative space** (Gestalt Blocker Zone).
-  - Enforces `--ar 16:9 --v 6.1 --style raw` for direct copy-pasting.
+  - Enforces universal photographic and scene composition for direct use in any image generation tool.
 * **Where It Lives in Snipvis:**
   - **Endpoint:** `src/app/api/thumbnail-prompt/route.ts`
   - **UI Modal:** `src/components/thumbnail-prompt-modal.tsx`
@@ -133,4 +133,4 @@ This playbook documents the **psychological laws**, **creator failure modes**, *
 | **Curiosity Gap Scorer** | Loewenstein Information Gap Theory | Does the title tease the payoff without spoiling it? | `src/components/packaging-simulator-modal.tsx` |
 | **Mobile Truncation Meter** | Hick-Hyman Law & Reading Limits | Will critical words get cut off with `...` on phones? | `src/constants/packaging.ts` & `src/components/packaging-simulator-modal.tsx` |
 | **Hook Retention Stopwatch** | Attention Decay Curve (WPM Pacing) | Is the opening hook short enough (<10s) to hold retention? | `src/components/brief-view.tsx` |
-| **AI Prompt Generator** | Psychological Multi-Model Prompting | How do I generate high-CTR artwork in Midjourney/FLUX? | `src/app/api/thumbnail-prompt/route.ts` & `src/components/thumbnail-prompt-modal.tsx` |
+| **AI Prompt Generator** | Psychological Multi-Model Prompting | How do I generate high-CTR artwork in image generation tools? | `src/app/api/thumbnail-prompt/route.ts` & `src/components/thumbnail-prompt-modal.tsx` |

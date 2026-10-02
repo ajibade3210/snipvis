@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
 type ApiOptions<T> = Omit<RequestInit, "body"> & {
-  schema?: z.ZodType<T>;
+  schema?: z.ZodType<T, z.ZodTypeDef, unknown>;
   body?: unknown;
 };
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { ConceptSkeletonLoader } from "@/components/ui/concept-skeleton-loader";
 import { HOOK_EMOTION_STYLES } from "@/constants/ai";
 import { useAnalyzeHook } from "@/hooks/use-analyze-hook";
 import { useCreateInspiration } from "@/hooks/use-inspirations";
@@ -24,20 +25,13 @@ export function AnalyzeHookModal({
   onClose,
   projects,
   defaultProjectId,
-  initialUrl,
 }: AnalyzeHookModalProps) {
-  const [activeTab, setActiveTab] = useState<"url" | "image">("url");
-
-  // Input states
-  const [url, setUrl] = useState(initialUrl || "");
-  const [manualText, setManualText] = useState("");
-  const [showManualFallback, setShowManualFallback] = useState(false);
-  const [fallbackMessage, setFallbackMessage] = useState<string | null>(null);
-
   // Image states
   const [imageBase64, setImageBase64] = useState<string>("");
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isCompressingImage, setIsCompressingImage] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [manualNotes, setManualNotes] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Results & Saving states
@@ -50,47 +44,60 @@ export function AnalyzeHookModal({
   const [saveError, setSaveError] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  // Loading animation phase
-  const [loadingPhase, setLoadingPhase] = useState(0);
-
   const analyzeMutation = useAnalyzeHook();
   const createInspiration = useCreateInspiration();
 
   // Reset or initialize when modal opens/closes
   useEffect(() => {
     if (isOpen) {
-      if (initialUrl) {
-        setUrl(initialUrl);
-        setActiveTab("url");
-      }
       setIsSavedSuccess(false);
       setSaveError(null);
     } else {
       setAnalysisResult(null);
-      setShowManualFallback(false);
-      setFallbackMessage(null);
+      setImageBase64("");
+      setImagePreview("");
+      setManualNotes("");
       setCopiedField(null);
+      setIsDragging(false);
     }
-  }, [isOpen, initialUrl]);
+  }, [isOpen]);
 
-  // Loading phase cycle
+  // Global clipboard paste listener (Cmd+V / Ctrl+V)
   useEffect(() => {
-    if (!analyzeMutation.isPending) {
-      setLoadingPhase(0);
-      return;
-    }
+    if (!isOpen) return;
 
-    const phases = [0, 1, 2];
-    const timer = setInterval(() => {
-      setLoadingPhase((prev) => (prev + 1) % phases.length);
-    }, 2200);
+    const handlePaste = (e: ClipboardEvent) => {
+      // Don't intercept paste if user is typing in an input or textarea
+      const activeEl = document.activeElement;
+      if (
+        activeEl instanceof HTMLInputElement ||
+        activeEl instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
 
-    return () => clearInterval(timer);
-  }, [analyzeMutation.isPending]);
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.startsWith("image/")) {
+          const file = items[i].getAsFile();
+          if (file) {
+            e.preventDefault();
+            handleImageFile(file);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("paste", handlePaste);
+    return () => window.removeEventListener("paste", handlePaste);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  // Copy helper with brief state indicator
+  // Copy helper
   const copyToClipboard = (text: string, identifier: string) => {
     navigator.clipboard.writeText(text);
     setCopiedField(identifier);
@@ -99,7 +106,7 @@ export function AnalyzeHookModal({
     }, 2000);
   };
 
-  // Client-side canvas image downscaler to guarantee payload < 300KB
+  // Client-side downscaler
   const handleImageFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
       setSaveError("Please select a valid image file (PNG, JPG, WebP).");
@@ -145,6 +152,7 @@ export function AnalyzeHookModal({
 
   const handleDrop = (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
+    setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) handleImageFile(file);
   };
@@ -152,45 +160,25 @@ export function AnalyzeHookModal({
   const handleAnalyze = async () => {
     setSaveError(null);
 
-    if (activeTab === "url" && !url.trim() && !manualText.trim()) {
-      setSaveError("Please enter a valid video URL or paste the hook text.");
-      return;
-    }
-
-    if (activeTab === "image" && !imageBase64) {
-      setSaveError("Please upload or drag a thumbnail image to analyze.");
+    if (!imageBase64) {
+      setSaveError("Please select or paste a thumbnail image to analyze.");
       return;
     }
 
     try {
       const response = await analyzeMutation.mutateAsync({
-        inputType: activeTab === "image" ? "image" : "url",
-        url: activeTab === "url" ? url.trim() : undefined,
-        manualText: manualText.trim() || undefined,
-        imageBase64: activeTab === "image" ? imageBase64 : undefined,
+        inputType: "image",
+        imageBase64,
+        manualText: manualNotes.trim() || undefined,
       });
 
-      if (response.needsManualFallback) {
-        setShowManualFallback(true);
-        setFallbackMessage(
-          response.why_it_works ||
-            "Unable to auto-extract from this link. Please paste the hook copy below.",
-        );
-      } else {
-        setAnalysisResult(response);
-      }
+      setAnalysisResult(response);
     } catch (err: unknown) {
       const msg =
-        err instanceof Error ? err.message : "Failed to analyze hook.";
-      if (
-        msg.includes("platform bot restrictions") ||
-        msg.includes("timed out")
-      ) {
-        setShowManualFallback(true);
-        setFallbackMessage(msg);
-      } else {
-        setSaveError(msg);
-      }
+        err instanceof Error
+          ? err.message
+          : "Failed to analyze thumbnail hook.";
+      setSaveError(msg);
     }
   };
 
@@ -208,8 +196,7 @@ export function AnalyzeHookModal({
       await createInspiration.mutateAsync({
         title: analysisResult.perceived_copy,
         hook: analysisResult.why_it_works,
-        thumbnailUrl: analysisResult.thumbnailUrl || "",
-        sourceUrl: analysisResult.sourceUrl || url.trim() || undefined,
+        thumbnailUrl: analysisResult.thumbnailUrl || imageBase64 || "",
         channelName: analysisResult.channelName || "Creator Analysis",
         type: "HOOK",
         note: combinedNote,
@@ -249,312 +236,242 @@ export function AnalyzeHookModal({
       ? HOOK_EMOTION_STYLES[analysisResult.triggered_emotion]
       : HOOK_EMOTION_STYLES.Default;
 
-  const loadingTextPhases = [
-    "Deconstructing visual & textual retention cues...",
-    "Evaluating psychological curiosity gaps...",
-    "Generating actionable creator recreation formulas...",
-  ];
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-white dark:bg-[#1E1A17] border border-[#E3DCD3] dark:border-[#3C3530] rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
-        {/* Modal Header */}
-        <div className="p-5 border-b border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-between bg-[#FAF8F5] dark:bg-[#25201C] shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#FF5338] text-white flex items-center justify-center font-bold text-base shadow-xs">
-              ✨
-            </div>
-            <div>
-              <h2 className="font-extrabold text-base text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1.5">
-                <span>Instant AI Hook Breakdown</span>
-                <span className="text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-[#FF5338]/10 text-[#FF5338]">
-                  DeepSeek
-                </span>
-              </h2>
-              <p className="text-[11px] text-[#58524C] dark:text-[#A89F95] mt-0.5 font-medium">
-                Deconstruct psychological retention triggers and get recreation
-                formulas.
-              </p>
-            </div>
+    <dialog
+      open
+      aria-label="AI Hook Breakdown"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/35 m-0 h-full w-full max-w-none border-0"
+    >
+      <div className="bg-[#FCFAF7] dark:bg-[#1C1815] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] rounded-3xl w-full max-w-2xl max-h-[88vh] flex flex-col shadow-2xl shadow-black/25 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Apple-Style Deferential Header */}
+        <div className="flex items-center justify-between px-6 sm:px-7 pt-5 pb-3 border-b border-black/[0.04] dark:border-white/[0.05]">
+          <div>
+            <h2 className="text-base font-semibold tracking-tight text-[#1E1A17] dark:text-white">
+              AI Hook Breakdown
+            </h2>
+            <p className="text-xs text-[#8C8379] dark:text-[#A89F95] mt-0.5">
+              Analyze retention psychology and visual contrast from any
+              thumbnail.
+            </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-7 h-7 rounded-lg text-[#8C8379] hover:bg-[#E3DCD3]/60 dark:hover:bg-[#3C3530] flex items-center justify-center text-sm font-bold cursor-pointer"
+            className="w-8 h-8 rounded-full text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close"
           >
             ✕
           </button>
         </div>
 
-        {/* Modal Scrollable Body */}
-        <div className="p-6 overflow-y-auto space-y-5 flex-1">
-          {/* Global error message */}
+        {/* Modal Scrollable Body with Fixed Height Stability */}
+        <div className="p-6 sm:p-7 space-y-5 overflow-y-auto flex-1 min-h-[440px]">
+          {/* Error Banner */}
           {saveError && (
-            <div className="p-3 text-xs rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 font-semibold">
-              ⚠️ {saveError}
+            <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs flex items-start gap-2.5">
+              <span className="font-semibold">Error:</span>
+              <p className="flex-1 leading-relaxed">{saveError}</p>
             </div>
           )}
 
-          {!analysisResult ? (
-            <>
-              {/* Input Mode Selector Tabs */}
-              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#F1EDE6] dark:bg-[#2A2521] border border-[#E3DCD3] dark:border-[#3C3530]">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveTab("url");
-                    setSaveError(null);
-                  }}
-                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                    activeTab === "url"
-                      ? "bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs"
-                      : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
-                  }`}
-                >
-                  <span>🔗</span>
-                  <span>Video / Post URL</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveTab("image");
-                    setSaveError(null);
-                  }}
-                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                    activeTab === "image"
-                      ? "bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs"
-                      : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
-                  }`}
-                >
-                  <span>🖼️</span>
-                  <span>Thumbnail Image (Vision)</span>
-                </button>
-              </div>
+          {analyzeMutation.isPending ? (
+            <ConceptSkeletonLoader
+              message="Deconstructing retention hook & visual mechanics..."
+              submessage="Evaluating visual anchors, chiaroscuro contrast, and psychological trigger"
+            />
+          ) : !analysisResult ? (
+            /* Thumbnail Ingestion Drop Zone */
+            <div className="space-y-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleImageFile(file);
+                  e.target.value = "";
+                }}
+                className="hidden"
+              />
 
-              {/* Tab 1: URL Input Mode */}
-              {activeTab === "url" && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-xs font-bold text-[#58524C] dark:text-[#A89F95] block mb-1.5">
-                      Social or Video URL (YouTube, TikTok, Instagram, X)
-                    </label>
-                    <input
-                      type="url"
-                      placeholder="https://www.youtube.com/watch?v=... or https://x.com/..."
-                      value={url}
-                      onChange={(e) => {
-                        setUrl(e.target.value);
-                        setSaveError(null);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleAnalyze();
-                      }}
-                      className="w-full h-11 px-3.5 text-xs font-medium rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#25201C] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
+              {imagePreview ? (
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={handleDrop}
+                  className="relative rounded-2xl p-6 bg-black/[0.02] dark:bg-white/[0.02] text-center space-y-3"
+                >
+                  <div className="relative rounded-2xl overflow-hidden shadow-lg border border-black/[0.06] dark:border-white/[0.08] aspect-video bg-black/5 max-w-md mx-auto">
+                    <img
+                      src={imagePreview}
+                      alt="Thumbnail preview"
+                      className="w-full h-full object-cover"
                     />
                   </div>
-
-                  {/* Fallback Manual Textarea if extraction failed or user expands */}
-                  {showManualFallback ? (
-                    <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/5 space-y-2 animate-in fade-in">
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
-                        <span>⚠️</span>
-                        <span>{fallbackMessage || "Manual Hook Input"}</span>
-                      </div>
-                      <textarea
-                        rows={3}
-                        placeholder="Paste the video title, post hook, or caption here..."
-                        value={manualText}
-                        onChange={(e) => setManualText(e.target.value)}
-                        className="w-full p-2.5 text-xs font-medium rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
-                      />
-                    </div>
-                  ) : (
+                  <div className="flex items-center justify-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setShowManualFallback(true)}
-                      className="text-[11px] font-bold text-[#FF5338] hover:underline cursor-pointer flex items-center gap-1"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="text-xs font-medium text-[#FF5338] hover:underline cursor-pointer"
                     >
-                      <span>+</span>
-                      <span>Add manual hook text or notes (optional)</span>
+                      Change Image
                     </button>
-                  )}
-                </div>
-              )}
-
-              {/* Tab 2: Thumbnail Image Mode (Vision) */}
-              {activeTab === "image" && (
-                <div className="space-y-4">
-                  <div className="p-3 rounded-xl border border-blue-500/20 bg-blue-500/5 text-blue-700 dark:text-blue-400 text-xs font-medium">
-                    ℹ️ Note: DeepSeek operates text-only. Visual image teardown
-                    requires a vision-capable provider (e.g. OpenRouter).
-                  </div>
-
-                  <button
-                    type="button"
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={handleDrop}
-                    onClick={() => fileInputRef.current?.click()}
-                    className={`w-full border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 ${
-                      imagePreview
-                        ? "border-[#FF5338]/60 bg-[#FF5338]/5"
-                        : "border-[#E3DCD3] dark:border-[#3C3530] hover:border-[#FF5338]/40 hover:bg-[#FAF8F5] dark:hover:bg-[#25201C]"
-                    }`}
-                  >
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/png,image/jpeg,image/webp"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleImageFile(file);
+                    <span className="text-[#8C8379]">•</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImageBase64("");
+                        setImagePreview("");
                       }}
-                      className="hidden"
-                    />
-
-                    {imagePreview ? (
-                      <div className="space-y-2 w-full max-w-sm mx-auto">
-                        <img
-                          src={imagePreview}
-                          alt="Thumbnail preview"
-                          className="w-full h-auto max-h-48 object-contain rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] mx-auto shadow-sm"
-                        />
-                        <p className="text-[11px] font-bold text-[#FF5338]">
-                          Click or drag to change thumbnail
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="w-12 h-12 rounded-full bg-[#FF5338]/10 text-[#FF5338] flex items-center justify-center text-xl">
-                          🖼️
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
-                            Click to upload or drag & drop thumbnail
-                          </p>
-                          <p className="text-[10px] text-[#8C8379] mt-0.5">
-                            PNG, JPG, WebP (auto-optimized client-side)
-                          </p>
-                        </div>
-                      </>
-                    )}
-                  </button>
-
-                  <div>
-                    <label className="text-xs font-bold text-[#58524C] dark:text-[#A89F95] block mb-1.5">
-                      Optional context or title notes
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Finance channel test A/B variant"
-                      value={manualText}
-                      onChange={(e) => setManualText(e.target.value)}
-                      className="w-full h-10 px-3 text-xs font-medium rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#25201C] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
-                    />
+                      className="text-xs font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white cursor-pointer"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
+              ) : (
+                <button
+                  type="button"
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    setIsDragging(true);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDragging(true);
+                  }}
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    setIsDragging(false);
+                  }}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`w-full relative rounded-2xl p-6 sm:p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center min-h-[260px] border-2 border-dashed ${
+                    isDragging
+                      ? "border-[#FF5338] bg-[#FF5338]/[0.04]"
+                      : "border-black/10 dark:border-white/10 hover:border-[#FF5338]/50 hover:bg-[#FF5338]/[0.02]"
+                  }`}
+                >
+                  <div className="space-y-3 max-w-sm mx-auto">
+                    <div className="w-12 h-12 rounded-full bg-[#FF5338]/10 text-[#FF5338] flex items-center justify-center mx-auto text-xl">
+                      🖼️
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[#1E1A17] dark:text-[#FAF8F5]">
+                        {isCompressingImage
+                          ? "Optimizing image..."
+                          : "Drop thumbnail image here"}
+                      </p>
+                      <p className="text-xs text-[#8C8379] mt-1 leading-relaxed">
+                        Click to browse, drag & drop, or press{" "}
+                        <kbd className="px-1.5 py-0.5 rounded-md bg-black/5 dark:bg-white/10 font-mono text-[11px]">
+                          ⌘V
+                        </kbd>{" "}
+                        to paste from clipboard.
+                      </p>
+                    </div>
+                  </div>
+                </button>
               )}
 
-              {/* Loading Skeleton during Analysis */}
-              {analyzeMutation.isPending && (
-                <div className="p-4 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221D19] space-y-3 animate-pulse">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#FF5338]">
-                    <span className="animate-spin text-sm">⏳</span>
-                    <span>{loadingTextPhases[loadingPhase]}</span>
-                  </div>
-                  <div className="h-4 bg-[#E3DCD3]/70 dark:bg-[#3C3530] rounded w-3/4" />
-                  <div className="h-4 bg-[#E3DCD3]/50 dark:bg-[#3C3530]/70 rounded w-1/2" />
-                  <div className="h-20 bg-[#E3DCD3]/30 dark:bg-[#3C3530]/40 rounded-xl" />
-                </div>
-              )}
-            </>
+              {/* Optional Creator Context Notes */}
+              <div className="space-y-1.5 pt-1">
+                <label
+                  htmlFor="manual-notes-input"
+                  className="text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+                >
+                  Optional Creator Context / Title Notes
+                </label>
+                <input
+                  id="manual-notes-input"
+                  type="text"
+                  placeholder="e.g. Finance video, testing high-curiosity packaging"
+                  value={manualNotes}
+                  onChange={(e) => setManualNotes(e.target.value)}
+                  className="w-full h-10 px-3.5 rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-xs text-[#1E1A17] dark:text-white outline-none"
+                />
+              </div>
+
+              {/* Action Bar */}
+              <div className="flex justify-end items-center gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="h-9 px-4 rounded-full text-xs font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAnalyze}
+                  disabled={!imageBase64 || isCompressingImage}
+                  className="h-10 px-6 rounded-full bg-[#FF5338] hover:bg-[#E0452C] disabled:opacity-50 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+                >
+                  {isCompressingImage
+                    ? "Optimizing..."
+                    : "Analyze Thumbnail Hook"}
+                </button>
+              </div>
+            </div>
           ) : (
-            /* Result Breakdown Display (11 fields) */
-            <div className="space-y-4 animate-in fade-in duration-200">
-              {/* 1. Perceived Hook Card */}
-              <div className="p-4 rounded-xl bg-gradient-to-br from-[#FAF8F5] to-[#F1EDE6] dark:from-[#25201C] dark:to-[#1A1613] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2.5">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#8C8379]">
-                    Perceived Hook / Title
+            /* Result Breakdown View (No card-in-card nesting) */
+            <div className="space-y-6 animate-in fade-in-50 duration-200">
+              {/* Header Badges */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 flex-wrap text-xs">
+                  <span
+                    className={`font-semibold px-2.5 py-0.5 rounded-full text-[11px] border ${getStrengthScoreBadgeStyle(
+                      analysisResult.strength_score,
+                    )}`}
+                  >
+                    ⭐ {analysisResult.strength_score}/10 Strength
                   </span>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {/* Emotion badge */}
-                    <span
-                      className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border ${emotionStyle.bg} ${emotionStyle.text} ${emotionStyle.border}`}
-                    >
-                      ⚡ {analysisResult.triggered_emotion}
-                    </span>
-
-                    {/* Hook Type human-readable badge */}
-                    <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20">
-                      🎯{" "}
-                      {HOOK_TYPE_LABELS[analysisResult.hook_type] ||
-                        analysisResult.hook_type}
-                    </span>
-
-                    {/* Strength Score badge (1-4 red, 5-7 amber, 8-10 green) */}
-                    <span
-                      className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full border ${getStrengthScoreBadgeStyle(
-                        analysisResult.strength_score,
-                      )}`}
-                    >
-                      ⭐ {analysisResult.strength_score}/10
-                    </span>
-                  </div>
+                  <span
+                    className={`font-medium px-2.5 py-0.5 rounded-full text-[11px] ${emotionStyle.bg} ${emotionStyle.text}`}
+                  >
+                    ⚡ {analysisResult.triggered_emotion}
+                  </span>
+                  <span className="font-medium px-2.5 py-0.5 rounded-full text-[11px] bg-black/5 dark:bg-white/10 text-[#58524C] dark:text-[#C5BCB2]">
+                    🎯{" "}
+                    {HOOK_TYPE_LABELS[analysisResult.hook_type] ||
+                      analysisResult.hook_type}
+                  </span>
                 </div>
 
-                <h3 className="text-base font-extrabold text-[#1E1A17] dark:text-[#FAF8F5] leading-snug">
-                  "
-                  {analysisResult.perceived_copy ||
-                    "No analyzable copy detected"}
-                  "
-                </h3>
+                <div className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5] leading-snug">
+                  &ldquo;
+                  {analysisResult.perceived_copy || "Visual Hook Detected"}
+                  &rdquo;
+                </div>
 
-                {/* Score Reason caption */}
                 {analysisResult.score_reason && (
-                  <p className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed pt-0.5 border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50">
-                    <span className="font-semibold not-italic text-[#1E1A17] dark:text-[#FAF8F5]">
-                      Score breakdown:
-                    </span>{" "}
+                  <p className="text-xs text-[#8C8379] leading-relaxed">
                     {analysisResult.score_reason}
                   </p>
                 )}
-
-                {/* Risk Flags (only rendered if non-empty) */}
-                {analysisResult.risk_flags &&
-                  analysisResult.risk_flags.length > 0 && (
-                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                      {analysisResult.risk_flags.map((flag) => (
-                        <span
-                          key={flag}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
-                        >
-                          <span>⚠️</span>
-                          <span>{RISK_FLAG_LABELS[flag] || flag}</span>
-                        </span>
-                      ))}
-                    </div>
-                  )}
               </div>
 
-              {/* 2. Why It Works & Hook Formula Card */}
-              <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-3">
-                <div className="space-y-1.5">
-                  <h4 className="text-xs font-bold text-[#FF5338] flex items-center gap-1.5">
-                    <span>🧠</span>
-                    <span>Why It Works (Psychological Breakdown)</span>
-                  </h4>
-                  <p className="text-xs text-[#58524C] dark:text-[#A89F95] leading-relaxed">
-                    {analysisResult.why_it_works}
-                  </p>
+              {/* Psychological Breakdown Surface */}
+              <div className="rounded-2xl bg-black/[0.025] dark:bg-white/[0.03] p-4 sm:p-5 space-y-3">
+                <div className="text-xs font-semibold text-[#1E1A17] dark:text-white">
+                  Why It Works
                 </div>
+                <p className="text-xs text-[#58524C] dark:text-[#C5BCB2] leading-relaxed">
+                  {analysisResult.why_it_works}
+                </p>
 
                 {analysisResult.hook_formula && (
-                  <div className="p-3 rounded-lg bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 flex items-center justify-between gap-3">
-                    <div className="space-y-1 min-w-0 flex-1">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#8C8379] block">
+                  <div className="pt-2 border-t border-black/[0.04] dark:border-white/[0.05] flex items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-[#8C8379] block mb-0.5">
                         Hook Formula Template
                       </span>
-                      <code className="text-xs font-mono font-bold text-[#1E1A17] dark:text-[#FAF8F5] block truncate">
+                      <code className="text-xs font-mono font-medium text-[#1E1A17] dark:text-white block truncate">
                         {analysisResult.hook_formula}
                       </code>
                     </div>
@@ -563,7 +480,7 @@ export function AnalyzeHookModal({
                       onClick={() =>
                         copyToClipboard(analysisResult.hook_formula, "formula")
                       }
-                      className="shrink-0 px-2.5 py-1 text-[11px] font-bold rounded-md bg-white dark:bg-[#2A2521] border border-[#E3DCD3] dark:border-[#3C3530] text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
+                      className="h-7 px-3 rounded-full text-xs font-medium bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-[#1E1A17] dark:text-white transition-colors cursor-pointer shrink-0"
                     >
                       {copiedField === "formula" ? "✓ Copied" : "Copy"}
                     </button>
@@ -571,57 +488,53 @@ export function AnalyzeHookModal({
                 )}
               </div>
 
-              {/* 3. Improve This Hook Card */}
-              {analysisResult.improvements &&
-                analysisResult.improvements.length > 0 && (
-                  <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2">
-                    <h4 className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1.5">
-                      <span>💡</span>
-                      <span>Improve This Hook</span>
-                    </h4>
-                    <ul className="space-y-1.5 pl-1">
+              {/* Improvements, Title Variants, Recreation Ideas & Risk Flags */}
+              <div className="space-y-4 text-xs text-[#58524C] dark:text-[#B5ACA2]">
+                {/* Actionable Recommendations */}
+                {analysisResult.improvements?.length > 0 && (
+                  <div className="space-y-2">
+                    <span className="font-semibold text-[#1E1A17] dark:text-white text-xs block">
+                      Key Recommendations
+                    </span>
+                    <ul className="space-y-1.5">
                       {analysisResult.improvements.map((improvement, idx) => (
                         <li
-                          key={`improvement-${idx}-${improvement.slice(0, 10)}`}
-                          className="flex items-start gap-2 text-xs text-[#58524C] dark:text-[#A89F95] leading-relaxed"
+                          key={`imp-${idx}-${improvement.slice(0, 16)}`}
+                          className="flex items-start gap-2 p-2.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.02]"
                         >
-                          <span className="text-[#FF5338] font-bold text-sm leading-none mt-0.5">
+                          <span className="text-[#FF5338] font-bold text-xs shrink-0 mt-0.5">
                             •
                           </span>
-                          <span>{improvement}</span>
+                          <span className="leading-relaxed flex-1 text-xs">
+                            {improvement}
+                          </span>
                         </li>
                       ))}
                     </ul>
                   </div>
                 )}
 
-              {/* 4. Title Variants Card */}
-              {analysisResult.title_variants &&
-                analysisResult.title_variants.length > 0 && (
-                  <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2.5">
-                    <h4 className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1.5">
-                      <span>🔀</span>
-                      <span>Title Variants</span>
-                    </h4>
-                    <div className="space-y-2">
-                      {analysisResult.title_variants.map((variant, idx) => (
+                {/* Alternative Title Variants */}
+                {analysisResult.title_variants?.length > 0 && (
+                  <div className="space-y-2">
+                    <span className="font-semibold text-[#1E1A17] dark:text-white text-xs block">
+                      Alternative Title Variants
+                    </span>
+                    <div className="space-y-1.5">
+                      {analysisResult.title_variants.map((variant) => (
                         <div
-                          key={`variant-${idx}-${variant.slice(0, 10)}`}
-                          className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3]/50 dark:border-[#3C3530]/50"
+                          key={`var-${variant.slice(0, 24)}`}
+                          className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.02]"
                         >
-                          <p className="text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] leading-snug flex-1">
+                          <span className="leading-snug flex-1 text-xs">
                             {variant}
-                          </p>
+                          </span>
                           <button
                             type="button"
-                            onClick={() =>
-                              copyToClipboard(variant, `variant-${idx}`)
-                            }
-                            className="shrink-0 px-2 py-1 text-[10px] font-bold rounded-md bg-white dark:bg-[#2A2521] border border-[#E3DCD3] dark:border-[#3C3530] text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
+                            onClick={() => copyToClipboard(variant, variant)}
+                            className="text-[11px] font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white cursor-pointer shrink-0"
                           >
-                            {copiedField === `variant-${idx}`
-                              ? "✓ Copied"
-                              : "Copy"}
+                            {copiedField === variant ? "✓" : "Copy"}
                           </button>
                         </div>
                       ))}
@@ -629,119 +542,98 @@ export function AnalyzeHookModal({
                   </div>
                 )}
 
-              {/* 5. Recreation Ideas */}
-              {analysisResult.recreation_ideas &&
-                analysisResult.recreation_ideas.length > 0 && (
-                  <div className="p-4 rounded-xl bg-white dark:bg-[#221D19] border border-[#E3DCD3] dark:border-[#3C3530] space-y-2.5">
-                    <h4 className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1.5">
-                      <span>🎯</span>
-                      <span>Actionable Creator Recreation Ideas</span>
-                    </h4>
-                    <div className="space-y-2">
+                {/* Actionable Recreation Ideas */}
+                {analysisResult.recreation_ideas?.length > 0 && (
+                  <div className="space-y-2">
+                    <span className="font-semibold text-[#1E1A17] dark:text-white text-xs block">
+                      Recreation Formulas
+                    </span>
+                    <div className="space-y-1.5">
                       {analysisResult.recreation_ideas.map((idea, idx) => (
                         <div
                           key={`idea-${idx}-${idea.slice(0, 16)}`}
-                          className="flex items-start gap-2.5 p-2 rounded-lg bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3]/50 dark:border-[#3C3530]/50"
+                          className="flex items-start gap-2.5 p-2.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.02]"
                         >
-                          <span className="w-5 h-5 rounded-full bg-[#FF5338] text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="w-4 h-4 rounded-full bg-[#FF5338]/10 text-[#FF5338] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
                             {idx + 1}
                           </span>
-                          <p className="text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] leading-relaxed">
+                          <span className="leading-relaxed flex-1 text-xs">
                             {idea}
-                          </p>
+                          </span>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-              {/* 6. Project Destination Selector */}
-              <div className="p-3.5 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#25201C] space-y-1.5">
-                <label className="text-xs font-bold text-[#58524C] dark:text-[#A89F95] block">
-                  Save Destination
-                </label>
-                <select
-                  value={targetProjectId}
-                  onChange={(e) => setTargetProjectId(e.target.value)}
-                  className="w-full h-9 px-3 text-xs font-semibold rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#1E1A17] text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#FF5338]"
-                >
-                  <option value="">
-                    Global Vault (Shared Across Projects)
-                  </option>
-                  {projects.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      Project: {p.name}
-                    </option>
-                  ))}
-                </select>
+                {/* Risk Flags if any */}
+                {analysisResult.risk_flags &&
+                  analysisResult.risk_flags.length > 0 && (
+                    <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                      {analysisResult.risk_flags.map((flag) => (
+                        <span
+                          key={flag}
+                          className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20"
+                        >
+                          ⚠️ {RISK_FLAG_LABELS[flag] || flag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+              </div>
+
+              {/* Save Destination & Actions */}
+              <div className="pt-3 border-t border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[#8C8379]">Save to:</span>
+                  <select
+                    value={targetProjectId}
+                    onChange={(e) => setTargetProjectId(e.target.value)}
+                    className="h-8 px-2.5 rounded-lg text-xs bg-black/[0.03] dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none cursor-pointer"
+                  >
+                    <option value="">Global Vault</option>
+                    {projects.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAnalysisResult(null);
+                      setImageBase64("");
+                      setImagePreview("");
+                    }}
+                    className="h-9 px-4 rounded-full text-xs font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white transition-colors cursor-pointer"
+                  >
+                    ← Analyze Another
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveToVault}
+                    disabled={createInspiration.isPending || isSavedSuccess}
+                    className={`h-9 px-5 rounded-full text-xs font-semibold text-white transition-all cursor-pointer shadow-xs ${
+                      isSavedSuccess
+                        ? "bg-emerald-600"
+                        : "bg-[#059669] hover:bg-[#047857]"
+                    }`}
+                  >
+                    {createInspiration.isPending
+                      ? "Saving..."
+                      : isSavedSuccess
+                        ? "✓ Saved to Vault"
+                        : "Save to Vault"}
+                  </button>
+                </div>
               </div>
             </div>
           )}
         </div>
-
-        {/* Modal Actions Footer - Pinned */}
-        <div className="p-4 border-t border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-between bg-[#FAF8F5] dark:bg-[#25201C] shrink-0">
-          {!analysisResult ? (
-            <>
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-xs font-bold text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleAnalyze}
-                disabled={analyzeMutation.isPending || isCompressingImage}
-                className="px-5 py-2.5 rounded-xl bg-[#FF5338] hover:bg-[#d93820] text-white text-xs font-bold tactile-btn shadow-sm transition-transform active:scale-95 flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
-              >
-                {analyzeMutation.isPending ? (
-                  <>
-                    <span className="animate-spin text-sm">⏳</span>
-                    <span>Analyzing Hook...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>✨</span>
-                    <span>Analyze Hook</span>
-                  </>
-                )}
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() => setAnalysisResult(null)}
-                className="px-4 py-2 text-xs font-bold text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] cursor-pointer"
-              >
-                ← Analyze Another
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveToVault}
-                disabled={createInspiration.isPending || isSavedSuccess}
-                className={`px-5 py-2.5 rounded-xl text-white text-xs font-bold tactile-btn shadow-sm transition-transform active:scale-95 flex items-center gap-1.5 cursor-pointer ${
-                  isSavedSuccess
-                    ? "bg-emerald-600 hover:bg-emerald-600"
-                    : "bg-[#059669] hover:bg-[#047857]"
-                }`}
-              >
-                {createInspiration.isPending ? (
-                  <span>Saving...</span>
-                ) : isSavedSuccess ? (
-                  <span>✓ Saved to Vault!</span>
-                ) : (
-                  <>
-                    <span>Save to Vault</span>
-                  </>
-                )}
-              </button>
-            </>
-          )}
-        </div>
       </div>
-    </div>
+    </dialog>
   );
 }

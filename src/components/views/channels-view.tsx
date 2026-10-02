@@ -87,50 +87,39 @@ export function ChannelsView({
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
               Channels
             </h1>
-            <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-black/5 dark:bg-white/10 text-muted-foreground border border-black/5 dark:border-white/5">
+            <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]">
               {channels.length}
             </span>
           </div>
         </div>
 
-        <Button
+        <button
+          type="button"
           onClick={() => {
             setIsAddingChannel(true);
             setCreateError(null);
           }}
-          className="h-9 px-3.5 text-xs font-medium gap-1.5 self-start sm:self-auto"
+          className="h-9 px-4 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all self-start sm:self-auto cursor-pointer"
         >
-          <svg
-            className="w-3.5 h-3.5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-          New Channel
-        </Button>
+          <span className="text-sm leading-none">+</span>
+          <span>New Channel</span>
+        </button>
       </div>
 
       {/* Inline Create Form */}
       {isAddingChannel && (
         <form
           onSubmit={handleCreateChannel}
-          className="p-4 rounded-xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-[#1f1b18]/80 backdrop-blur-md shadow-xs space-y-3 animate-in fade-in-0 slide-in-from-top-2"
+          className="p-5 rounded-3xl border border-black/[0.06] dark:border-white/[0.08] bg-[#FCFAF7] dark:bg-[#1C1815] shadow-xs space-y-3.5 animate-in fade-in-0 slide-in-from-top-2"
         >
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="flex items-center justify-between pb-2 border-b border-black/[0.04] dark:border-white/[0.05]">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#8C8379]">
               Add New Channel
             </h3>
             <button
@@ -139,22 +128,22 @@ export function ChannelsView({
                 setIsAddingChannel(false);
                 setCreateError(null);
               }}
-              className="text-xs text-muted-foreground hover:text-foreground"
+              className="text-xs font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] cursor-pointer"
             >
               Cancel
             </button>
           </div>
 
           {createError && (
-            <div className="p-2 text-xs rounded bg-destructive/10 text-destructive border border-destructive/20">
+            <div className="p-2.5 text-xs rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
               {createError}
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-foreground mb-1">
-                Channel Name <span className="text-red-500">*</span>
+              <label className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95] mb-1">
+                Channel Name <span className="text-[#FF5338]">*</span>
               </label>
               <input
                 type="text"
@@ -162,12 +151,12 @@ export function ChannelsView({
                 placeholder="e.g. MrBeast, Ali Abdaal"
                 value={newChannelName}
                 onChange={(e) => setNewChannelName(e.target.value)}
-                className="w-full h-9 px-3 text-xs rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-9 px-3 text-xs rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.025] dark:bg-white/[0.03] text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:bg-white dark:focus:bg-[#201C18] focus:border-[#FF5338]/40 focus:ring-1 focus:ring-[#FF5338]/20 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-foreground mb-1">
+              <label className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95] mb-1">
                 Channel URL / Link (Optional)
               </label>
               <input
@@ -175,31 +164,30 @@ export function ChannelsView({
                 placeholder="https://youtube.com/@..."
                 value={newChannelLink}
                 onChange={(e) => setNewChannelLink(e.target.value)}
-                className="w-full h-9 px-3 text-xs rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-9 px-3 text-xs rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.025] dark:bg-white/[0.03] text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:bg-white dark:focus:bg-[#201C18] focus:border-[#FF5338]/40 focus:ring-1 focus:ring-[#FF5338]/20 transition-all"
               />
             </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-1">
-            <Button
+            <button
               type="button"
-              variant="outline"
               onClick={() => {
                 setIsAddingChannel(false);
                 setCreateError(null);
               }}
               disabled={createChannelMutation.isPending}
-              className="h-8 px-3 text-xs"
+              className="h-8 px-3.5 rounded-full text-xs font-medium text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors cursor-pointer"
             >
               Cancel
-            </Button>
-            <Button
+            </button>
+            <button
               type="submit"
               disabled={createChannelMutation.isPending}
-              className="h-8 px-3 text-xs"
+              className="h-8 px-4 rounded-full text-xs font-semibold bg-[#FF5338] hover:bg-[#d93820] text-white shadow-xs active:scale-95 transition-all cursor-pointer disabled:opacity-50"
             >
               {createChannelMutation.isPending ? "Creating..." : "Save Channel"}
-            </Button>
+            </button>
           </div>
         </form>
       )}
@@ -208,7 +196,7 @@ export function ChannelsView({
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
           <svg
-            className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#8C8379]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -225,13 +213,13 @@ export function ChannelsView({
             placeholder="Search channels..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-8 pl-8 pr-3 text-xs rounded-lg border border-black/10 dark:border-white/10 bg-white/50 dark:bg-black/20 text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-1 focus:ring-ring"
+            className="w-full h-8 pl-8 pr-3 text-xs rounded-full border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.025] dark:bg-white/[0.03] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:bg-white dark:focus:bg-[#201C18] focus:border-[#FF5338]/40 focus:ring-1 focus:ring-[#FF5338]/20 transition-all shadow-xs"
           />
         </div>
       </div>
 
       {/* Channels Table */}
-      <div className="border border-black/10 dark:border-white/10 rounded-xl overflow-hidden bg-white/40 dark:bg-[#1a1714]/40 backdrop-blur-sm shadow-xs">
+      <div className="border border-black/[0.06] dark:border-white/[0.08] rounded-2xl overflow-hidden bg-white dark:bg-[#1E1A17] shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -457,10 +445,23 @@ export function ChannelsView({
 
       {/* Apple-style Confirmation Modal */}
       {channelToDelete && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-white dark:bg-[#1E1A17] border border-[#E3DCD3] dark:border-[#3C3530] rounded-2xl max-w-sm w-full p-5 shadow-2xl space-y-4">
+        <dialog
+          open
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !isDeleting) {
+              setChannelToDelete(null);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" && !isDeleting) {
+              setChannelToDelete(null);
+            }
+          }}
+          className="fixed inset-0 z-50 m-0 h-full w-full max-w-none bg-black/35 p-4 flex items-center justify-center border-0 backdrop:bg-transparent"
+        >
+          <div className="bg-[#FCFAF7] dark:bg-[#1C1815] border border-black/[0.08] dark:border-white/[0.1] rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0 border border-red-500/20">
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -490,8 +491,8 @@ export function ChannelsView({
             </div>
 
             {(channelToDelete._count?.projects ?? 0) > 0 && (
-              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-800 dark:text-amber-300 space-y-0.5">
-                <p className="font-bold">Active Projects Linked</p>
+              <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-700 dark:text-amber-300 space-y-0.5">
+                <p className="font-semibold">Active Projects Linked</p>
                 <p>
                   This channel is linked to {channelToDelete._count?.projects}{" "}
                   {channelToDelete._count?.projects === 1
@@ -508,7 +509,7 @@ export function ChannelsView({
                 type="button"
                 onClick={() => setChannelToDelete(null)}
                 disabled={isDeleting}
-                className="h-8 px-3.5 rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] text-xs font-semibold text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] transition-colors disabled:opacity-50"
+                className="h-8 px-4 rounded-full text-xs font-medium text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-colors disabled:opacity-50 cursor-pointer"
               >
                 Cancel
               </button>
@@ -516,13 +517,13 @@ export function ChannelsView({
                 type="button"
                 onClick={handleDeleteChannel}
                 disabled={isDeleting}
-                className="h-8 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1.5 shadow-xs"
+                className="h-8 px-4 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-all disabled:opacity-50 flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
               >
                 {isDeleting ? "Deleting…" : "Delete Channel"}
               </button>
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   );

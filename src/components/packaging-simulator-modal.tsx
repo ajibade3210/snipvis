@@ -174,54 +174,51 @@ export function PackagingSimulatorModal({
       onKeyDown={(e) => {
         if (e.key === "Escape") onClose();
       }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 dark:bg-black/85 backdrop-blur-md overflow-y-auto m-0 h-full w-full max-w-none border-0"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/35 m-0 h-full w-full max-w-none border-0"
     >
-      <div className="bg-[#FAF8F5] dark:bg-[#12100E] border border-[#E3DCD3] dark:border-[#3C3530] text-[#1E1A17] dark:text-[#FAF8F5] rounded-3xl w-full max-w-7xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        {/* Top Ribbon / Control Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-[#E3DCD3] dark:border-[#2D2824] bg-white dark:bg-[#181411]">
-          <div className="flex items-center gap-3">
-            <span className="text-xl">⚡</span>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-sm font-black tracking-tight text-[#1E1A17] dark:text-white uppercase">
-                  Packaging Simulator
-                </h2>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FF5338]/10 dark:bg-[#FF5338]/20 text-[#FF5338] border border-[#FF5338]/30">
-                  YouTube Feed Replica
-                </span>
-              </div>
-              <p className="text-[11px] text-[#58524C] dark:text-[#A89F95]">
-                Stress-test your thumbnail standout, timestamp obstruction, and
-                mobile title cutoff.
-              </p>
+      <div className="bg-[#FCFAF7] dark:bg-[#1C1815] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] rounded-3xl w-full max-w-7xl max-h-[92vh] flex flex-col shadow-2xl shadow-black/25 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Apple-Style Deferential Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4 px-6 sm:px-7 pt-5 pb-3 border-b border-black/[0.04] dark:border-white/[0.05]">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-semibold tracking-tight text-[#1E1A17] dark:text-white">
+                Packaging Simulator
+              </h2>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FF5338]/10 text-[#FF5338]">
+                Feed Stress-Test
+              </span>
             </div>
+            <p className="text-xs text-[#8C8379] dark:text-[#A89F95] mt-0.5">
+              Simulate thumbnail standout, duration badge obstruction, and
+              mobile title cutoff.
+            </p>
           </div>
 
           {/* Quick Action Ribbon */}
           <div className="flex flex-wrap items-center gap-2">
-            {/* Device Switcher */}
-            <div className="flex items-center bg-[#F1EDE6] dark:bg-[#25201C] p-1 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530]">
+            {/* Device Switcher - Apple Sliding Pill Style */}
+            <div className="flex items-center p-1 bg-black/[0.04] dark:bg-white/[0.05] rounded-xl">
               <button
                 type="button"
                 onClick={() => setDevice("desktop")}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                   device === "desktop"
-                    ? "bg-[#FF5338] text-white shadow-xs"
-                    : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white"
+                    ? "bg-white dark:bg-[#2A2420] text-[#1E1A17] dark:text-white shadow-xs"
+                    : "text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
                 }`}
               >
-                🖥️ Desktop
+                Desktop
               </button>
               <button
                 type="button"
                 onClick={() => setDevice("mobile")}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                   device === "mobile"
-                    ? "bg-[#FF5338] text-white shadow-xs"
-                    : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white"
+                    ? "bg-white dark:bg-[#2A2420] text-[#1E1A17] dark:text-white shadow-xs"
+                    : "text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
                 }`}
               >
-                📱 Mobile
+                Mobile
               </button>
             </div>
 
@@ -230,14 +227,14 @@ export function PackagingSimulatorModal({
               type="button"
               onClick={() => setIsSquintActive((prev) => !prev)}
               title="Applies blur & grayscale to test thumbnail contrast on small screens"
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`h-8 px-3 rounded-full text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
                 isSquintActive
-                  ? "bg-[#FFD700] text-black border-[#FFD700] shadow-sm font-extrabold"
-                  : "bg-[#F1EDE6] dark:bg-[#25201C] text-[#58524C] dark:text-[#A89F95] border-[#E3DCD3] dark:border-[#3C3530] hover:text-[#1E1A17] dark:hover:text-white hover:border-[#D1C7BA] dark:hover:border-[#8C8379]"
+                  ? "bg-[#1E1A17] dark:bg-white text-white dark:text-[#1E1A17] shadow-xs"
+                  : "bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
               }`}
             >
               <span>👁️</span>
-              <span>{isSquintActive ? "Squint ON" : "Squint Test"}</span>
+              <span>{isSquintActive ? "Squinting" : "Squint Test"}</span>
             </button>
 
             {/* Rule of 3 Cognitive Guard Toggle */}
@@ -245,27 +242,25 @@ export function PackagingSimulatorModal({
               type="button"
               onClick={() => setShowRuleOfThree((prev) => !prev)}
               title="Miller's Law: Verifies thumbnail has at most 3 focal elements"
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`h-8 px-3 rounded-full text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
                 showRuleOfThree
-                  ? "bg-[#A855F7] text-white border-[#A855F7] shadow-sm font-extrabold"
-                  : "bg-[#F1EDE6] dark:bg-[#25201C] text-[#58524C] dark:text-[#A89F95] border-[#E3DCD3] dark:border-[#3C3530] hover:text-[#1E1A17] dark:hover:text-white hover:border-[#D1C7BA] dark:hover:border-[#8C8379]"
+                  ? "bg-[#1E1A17] dark:bg-white text-white dark:text-[#1E1A17] shadow-xs"
+                  : "bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
               }`}
             >
-              <span>🧠</span>
-              <span>{showRuleOfThree ? "Rule of 3 ON" : "Rule of 3"}</span>
+              <span>Rule of 3</span>
             </button>
 
             {/* Timestamp Toggle */}
             <button
               type="button"
               onClick={() => setShowTimestamp((prev) => !prev)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`h-8 px-3 rounded-full text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
                 showTimestamp
-                  ? "bg-[#1E1A17] dark:bg-[#25201C] text-white border-[#1E1A17] dark:border-[#58524C]"
-                  : "bg-[#F1EDE6] dark:bg-[#25201C] text-[#8C8379] dark:text-[#58524C] border-[#E3DCD3] dark:border-[#3C3530] line-through"
+                  ? "bg-black/[0.08] dark:bg-white/[0.12] text-[#1E1A17] dark:text-white"
+                  : "bg-black/[0.03] dark:bg-white/[0.04] text-[#8C8379] line-through"
               }`}
             >
-              <span>⏱️</span>
               <span>14:28 Badge</span>
             </button>
 
@@ -274,14 +269,13 @@ export function PackagingSimulatorModal({
               type="button"
               onClick={() => setShowDangerZone((prev) => !prev)}
               title="Highlights the bottom-right area where YouTube badges cover your art"
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`h-8 px-3 rounded-full text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
                 showDangerZone
-                  ? "bg-red-500/20 text-red-600 dark:text-red-300 border-red-500/40"
-                  : "bg-[#F1EDE6] dark:bg-[#25201C] text-[#58524C] dark:text-[#A89F95] border-[#E3DCD3] dark:border-[#3C3530] hover:text-[#1E1A17] dark:hover:text-white"
+                  ? "bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30"
+                  : "bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
               }`}
             >
-              <span>🚨</span>
-              <span>Blocker Zone</span>
+              <span>Badge Blocker</span>
             </button>
 
             {/* Theme Toggle for Feed Viewport */}
@@ -290,7 +284,7 @@ export function PackagingSimulatorModal({
               onClick={() =>
                 setTheme((prev) => (prev === "dark" ? "light" : "dark"))
               }
-              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#F1EDE6] dark:bg-[#25201C] text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white border border-[#E3DCD3] dark:border-[#3C3530] transition-all cursor-pointer"
+              className="h-8 px-3 rounded-full text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white transition-colors cursor-pointer"
             >
               {theme === "dark" ? "🌙 Dark Feed" : "☀️ Light Feed"}
             </button>
@@ -299,8 +293,8 @@ export function PackagingSimulatorModal({
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-xl bg-[#F1EDE6] dark:bg-[#25201C] hover:bg-[#E8E0D5] dark:hover:bg-[#3C3530] text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer ml-2"
-              aria-label="Close simulator"
+              className="w-8 h-8 rounded-full text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer ml-1"
+              aria-label="Close"
             >
               ✕
             </button>
@@ -310,10 +304,10 @@ export function PackagingSimulatorModal({
         {/* Workspace Body: Split Studio */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
           {/* Left Column: Decision & Controls Studio (4 cols) */}
-          <div className="lg:col-span-4 border-r border-[#E3DCD3] dark:border-[#2D2824] bg-[#F7F4EE] dark:bg-[#15120F] p-6 space-y-6 overflow-y-auto">
+          <div className="lg:col-span-4 border-r border-black/[0.04] dark:border-white/[0.05] bg-black/[0.015] dark:bg-white/[0.015] p-6 space-y-6 overflow-y-auto">
             {/* Status message */}
             {saveStatus && (
-              <div className="p-3 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium flex items-center gap-2 animate-in fade-in">
                 <span>✓</span>
                 <span>{saveStatus}</span>
               </div>
@@ -324,17 +318,17 @@ export function PackagingSimulatorModal({
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="simulator-title-input"
-                  className="text-xs font-extrabold uppercase tracking-wider text-[#58524C] dark:text-[#A89F95]"
+                  className="text-xs font-semibold text-[#1E1A17] dark:text-white"
                 >
                   Draft Video Title
                 </label>
                 <span
-                  className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-medium ${
                     isSafeOnMobile
-                      ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30"
+                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
                       : isSafeOnDesktop
-                        ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30"
-                        : "bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-500/30"
+                        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                        : "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
                   }`}
                 >
                   {charCount} chars
@@ -347,7 +341,7 @@ export function PackagingSimulatorModal({
                 value={draftTitle}
                 onChange={(e) => setDraftTitle(e.target.value)}
                 placeholder="Enter YouTube title to test..."
-                className="w-full rounded-xl bg-white dark:bg-[#1F1B17] border border-[#E3DCD3] dark:border-[#3C3530] focus:border-[#FF5338] focus:ring-1 focus:ring-[#FF5338] text-sm text-[#1E1A17] dark:text-[#FAF8F5] p-3 transition-colors outline-none resize-none font-medium"
+                className="w-full rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-xs text-[#1E1A17] dark:text-white p-3 outline-none resize-none font-medium"
               />
 
               {/* Character Truncation Diagnostics */}
@@ -385,58 +379,58 @@ export function PackagingSimulatorModal({
                   updateProjectMutation.isPending ||
                   draftTitle.trim() === projectName
                 }
-                className="w-full py-2 rounded-xl bg-[#1E1A17] dark:bg-[#25201C] hover:bg-[#FF5338] hover:text-white text-xs font-bold text-white transition-all disabled:opacity-40 disabled:hover:bg-[#1E1A17] dark:disabled:hover:bg-[#25201C] cursor-pointer"
+                className="w-full h-9 rounded-full bg-[#1E1A17] dark:bg-white hover:bg-[#332C26] dark:hover:bg-white/90 text-white dark:text-[#1E1A17] text-xs font-semibold transition-all disabled:opacity-40 cursor-pointer shadow-xs"
               >
                 {updateProjectMutation.isPending
                   ? "Saving..."
-                  : "💾 Save Title to Project"}
+                  : "Save Title to Project"}
               </button>
 
               {/* Psychological Triggers & 1-Click Viral Formula Rewrites */}
-              <div className="pt-3 border-t border-[#E3DCD3] dark:border-[#2D2824] space-y-2.5">
+              <div className="pt-3 border-t border-black/[0.04] dark:border-white/[0.05] space-y-2.5">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-extrabold text-[#58524C] dark:text-[#A89F95] uppercase">
+                  <span className="font-semibold text-[#8C8379] dark:text-[#A89F95] uppercase tracking-wider text-[10px]">
                     Viral Tension Drivers
                   </span>
                   <span
-                    className={`font-bold px-2 py-0.5 rounded-full text-[10px] ${
+                    className={`font-semibold px-2 py-0.5 rounded-full text-[10px] ${
                       hasLossAversion || hasCuriosityGap || hasExtremeStakes
-                        ? "bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-500/30"
-                        : "bg-[#EAE4DC] dark:bg-[#25201C] text-[#736B63] dark:text-[#8C8379]"
+                        ? "bg-[#FF5338]/10 text-[#FF5338]"
+                        : "bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]"
                     }`}
                   >
                     {hasLossAversion && hasCuriosityGap
-                      ? "🔥 High Viral Tension"
+                      ? "High Viral Tension"
                       : hasLossAversion || hasCuriosityGap || hasExtremeStakes
-                        ? "⚡ Active Hook Driver"
+                        ? "Active Hook Driver"
                         : "Neutral / Informational"}
                   </span>
                 </div>
 
                 <div className="flex flex-wrap gap-1 text-[10px]">
                   <span
-                    className={`px-2 py-0.5 rounded-md font-semibold ${
+                    className={`px-2 py-0.5 rounded-md font-medium ${
                       hasLossAversion
-                        ? "bg-red-100 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-500/30"
-                        : "bg-white dark:bg-[#1F1B17] text-[#8C8379] dark:text-[#58524C] border border-[#E3DCD3] dark:border-transparent"
+                        ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
+                        : "bg-black/[0.03] dark:bg-white/[0.04] text-[#8C8379]"
                     }`}
                   >
                     Loss Aversion {hasLossAversion ? "✓" : "○"}
                   </span>
                   <span
-                    className={`px-2 py-0.5 rounded-md font-semibold ${
+                    className={`px-2 py-0.5 rounded-md font-medium ${
                       hasCuriosityGap
-                        ? "bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-500/30"
-                        : "bg-white dark:bg-[#1F1B17] text-[#8C8379] dark:text-[#58524C] border border-[#E3DCD3] dark:border-transparent"
+                        ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
+                        : "bg-black/[0.03] dark:bg-white/[0.04] text-[#8C8379]"
                     }`}
                   >
                     Curiosity Gap {hasCuriosityGap ? "✓" : "○"}
                   </span>
                   <span
-                    className={`px-2 py-0.5 rounded-md font-semibold ${
+                    className={`px-2 py-0.5 rounded-md font-medium ${
                       hasExtremeStakes
-                        ? "bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30"
-                        : "bg-white dark:bg-[#1F1B17] text-[#8C8379] dark:text-[#58524C] border border-[#E3DCD3] dark:border-transparent"
+                        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                        : "bg-black/[0.03] dark:bg-white/[0.04] text-[#8C8379]"
                     }`}
                   >
                     Extreme Stakes {hasExtremeStakes ? "✓" : "○"}
@@ -445,7 +439,7 @@ export function PackagingSimulatorModal({
 
                 {/* 1-Click Formula Rewrites */}
                 <div className="pt-1.5 space-y-1">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-[#736B63] dark:text-[#8C8379]">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-[#8C8379]">
                     1-Click Formula Pivots:
                   </span>
                   <div className="space-y-1">
@@ -454,13 +448,13 @@ export function PackagingSimulatorModal({
                         key={pivot.label}
                         type="button"
                         onClick={() => setDraftTitle(pivot.title)}
-                        className="w-full text-left p-2 rounded-xl bg-white dark:bg-[#1B1714] hover:bg-[#F1EDE6] dark:hover:bg-[#25201C] border border-[#E3DCD3] dark:border-[#2D2824] hover:border-[#FF5338]/40 transition-colors text-[11px] cursor-pointer group shadow-2xs"
+                        className="w-full text-left p-2.5 rounded-xl bg-white dark:bg-[#201C18] hover:bg-black/[0.02] dark:hover:bg-white/[0.04] border border-black/[0.05] dark:border-white/[0.06] hover:border-[#FF5338]/40 transition-colors text-xs cursor-pointer group shadow-2xs"
                       >
-                        <div className="flex items-center justify-between text-[9px] font-extrabold text-[#58524C] dark:text-[#A89F95] group-hover:text-[#FF5338]">
+                        <div className="flex items-center justify-between text-[10px] font-semibold text-[#8C8379] group-hover:text-[#FF5338]">
                           <span>{pivot.label}</span>
                           <span>Apply ↵</span>
                         </div>
-                        <p className="font-semibold truncate mt-0.5 text-xs text-[#1E1A17] dark:text-white">
+                        <p className="font-medium truncate mt-0.5 text-xs text-[#1E1A17] dark:text-white">
                           {pivot.title}
                         </p>
                       </button>
@@ -471,19 +465,19 @@ export function PackagingSimulatorModal({
             </div>
 
             {/* Thumbnail Variants Selector */}
-            <div className="space-y-3 pt-4 border-t border-[#E3DCD3] dark:border-[#2D2824]">
+            <div className="space-y-3 pt-4 border-t border-black/[0.04] dark:border-white/[0.05]">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-[#58524C] dark:text-[#A89F95]">
+                <span className="text-xs font-semibold text-[#1E1A17] dark:text-white">
                   Test Thumbnail Variant
                 </span>
-                <span className="text-[11px] text-[#736B63] dark:text-[#8C8379]">
+                <span className="text-xs text-[#8C8379]">
                   {thumbnails.length} concept
                   {thumbnails.length === 1 ? "" : "s"}
                 </span>
               </div>
 
               {thumbnails.length === 0 ? (
-                <p className="text-xs text-[#736B63] dark:text-[#8C8379] italic">
+                <p className="text-xs text-[#8C8379] italic">
                   No thumbnails uploaded in project. Upload concepts in the
                   Thumbnail Lab.
                 </p>
@@ -498,8 +492,8 @@ export function PackagingSimulatorModal({
                         onClick={() => setSelectedThumbId(thumb.id)}
                         className={`relative aspect-video rounded-xl overflow-hidden border-2 transition-all cursor-pointer group text-left ${
                           isSelected
-                            ? "border-[#FF5338] ring-2 ring-[#FF5338]/30 shadow-md"
-                            : "border-[#E3DCD3] dark:border-[#3C3530] opacity-70 hover:opacity-100 hover:border-[#736B63] dark:hover:border-[#8C8379]"
+                            ? "border-[#FF5338] ring-2 ring-[#FF5338]/20 shadow-xs"
+                            : "border-black/[0.06] dark:border-white/[0.08] opacity-75 hover:opacity-100"
                         }`}
                       >
                         <img
@@ -522,7 +516,7 @@ export function PackagingSimulatorModal({
                   type="button"
                   onClick={() => handleSetMain(activeThumbnail.id)}
                   disabled={setMainMutation.isPending}
-                  className="w-full py-2 rounded-xl bg-[#FF5338]/10 dark:bg-[#FF5338]/20 hover:bg-[#FF5338] text-[#FF5338] hover:text-white border border-[#FF5338]/30 dark:border-[#FF5338]/40 text-xs font-bold transition-all cursor-pointer"
+                  className="w-full h-9 rounded-full bg-[#FF5338] hover:bg-[#E0452C] text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
                 >
                   {setMainMutation.isPending
                     ? "Updating..."
@@ -532,20 +526,20 @@ export function PackagingSimulatorModal({
             </div>
 
             {/* Standout Controls */}
-            <div className="space-y-3 pt-4 border-t border-[#E3DCD3] dark:border-[#2D2824]">
+            <div className="space-y-2 pt-4 border-t border-black/[0.04] dark:border-white/[0.05]">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-[#58524C] dark:text-[#A89F95]">
+                <span className="text-xs font-semibold text-[#1E1A17] dark:text-white">
                   Vault Standout Context
                 </span>
                 <button
                   type="button"
                   onClick={() => setShowReferences((prev) => !prev)}
-                  className="text-xs text-[#FF5338] font-bold hover:underline cursor-pointer"
+                  className="text-xs text-[#FF5338] font-medium hover:underline cursor-pointer"
                 >
                   {showReferences ? "Hide References" : "Show References"}
                 </button>
               </div>
-              <p className="text-[11px] text-[#736B63] dark:text-[#8C8379] leading-relaxed">
+              <p className="text-xs text-[#8C8379] leading-relaxed">
                 Puts your candidate next to saved reference videos to test
                 whether your visual hook cuts through the noise.
               </p>

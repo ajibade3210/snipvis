@@ -91,12 +91,12 @@ export function ProjectsHubView({
         }`}
       >
         {/* YouTube 16:9 Thumbnail Box */}
-        <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-[#2D2824] border border-black/10 dark:border-white/10 shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:scale-[1.015]">
+        <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-[#201C18] border border-black/[0.06] dark:border-white/[0.08] shadow-xs transition-all duration-300 group-hover:shadow-md group-hover:scale-[1.01]">
           {mainThumbnail ? (
             <img
               src={mainThumbnail.url}
               alt={proj.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-102"
             />
           ) : (
             /* Colorful Default Dynamic Thumbnail with Rich Typography */
@@ -106,13 +106,13 @@ export function ProjectsHubView({
               {/* Subtle background pattern */}
               <div className="absolute inset-0 bg-black/15 pointer-events-none" />
 
-              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner mb-2 border border-white/30 group-hover:scale-110 transition-transform">
-                <span className="font-black text-xl tracking-tight text-white drop-shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner mb-2 border border-white/25 group-hover:scale-105 transition-transform">
+                <span className="font-extrabold text-xl tracking-tight text-white drop-shadow-sm">
                   {proj.emoji || initials || "SV"}
                 </span>
               </div>
 
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-white/90 drop-shadow-sm text-center line-clamp-1 px-4">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-white/90 drop-shadow-sm text-center line-clamp-1 px-4">
                 {proj.name}
               </span>
             </div>
@@ -121,7 +121,7 @@ export function ProjectsHubView({
           {/* Done Badge Overlay */}
           {isDone && (
             <div className="absolute bottom-2.5 right-2.5">
-              <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#059669] text-white shadow-xs">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#059669] text-white shadow-xs">
                 ✓ Done
               </span>
             </div>
@@ -129,10 +129,10 @@ export function ProjectsHubView({
         </div>
 
         {/* YouTube Video Info Row: Avatar + Title/Channel Details */}
-        <div className="flex items-start gap-3 mt-3 px-1">
+        <div className="flex items-start gap-3 mt-3 px-0.5">
           {/* Channel Avatar Circle */}
           <div
-            className={`w-9 h-9 rounded-full bg-gradient-to-br ${gradientTheme.gradient} shrink-0 flex items-center justify-center text-white font-extrabold text-xs shadow-xs border border-white/10`}
+            className={`w-8 h-8 rounded-full bg-gradient-to-br ${gradientTheme.gradient} shrink-0 flex items-center justify-center text-white font-bold text-xs shadow-xs border border-white/10`}
           >
             {channelName
               ? channelName.slice(0, 1).toUpperCase()
@@ -142,13 +142,13 @@ export function ProjectsHubView({
           {/* Details Column */}
           <div className="flex-1 min-w-0">
             {/* Title (2-line clamp, bold) */}
-            <h3 className="font-extrabold text-sm md:text-base text-[#1E1A17] dark:text-[#FAF8F5] leading-snug line-clamp-2 group-hover:text-[#FF5338] transition-colors">
+            <h3 className="font-bold text-sm md:text-base text-[#1E1A17] dark:text-[#FAF8F5] leading-snug line-clamp-2 group-hover:text-[#FF5338] transition-colors">
               {proj.emoji ? <span className="mr-1.5">{proj.emoji}</span> : null}
               {proj.name}
             </h3>
 
             {/* Channel handle */}
-            <div className="text-xs font-semibold text-[#8C8379] dark:text-[#A89F95] mt-1 flex items-center gap-1.5 truncate">
+            <div className="text-xs text-[#8C8379] dark:text-[#A89F95] mt-0.5 flex items-center gap-1.5 truncate">
               {channelName ? (
                 <span>@{channelName}</span>
               ) : (
@@ -172,13 +172,13 @@ export function ProjectsHubView({
   return (
     <div className="space-y-8">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E3DCD3] dark:border-[#3C3530] pb-5">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
+            <h1 className="text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
               🎬 Projects
             </h1>
-            <span className="px-3 py-0.5 rounded-full text-xs font-bold font-grotesk bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40 dark:text-red-300">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]">
               {activeCount} Active Production{activeCount === 1 ? "" : "s"}
             </span>
           </div>
@@ -187,16 +187,16 @@ export function ProjectsHubView({
         <button
           type="button"
           onClick={onOpenNewProject}
-          className="h-10 px-5 rounded-full bg-[#FF5338] text-white text-xs font-bold flex items-center gap-1.5 tactile-btn shadow-sm hover:bg-[#d93820] self-start md:self-auto cursor-pointer"
+          className="h-9 px-4 rounded-full bg-[#FF5338] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:bg-[#d93820] active:scale-95 transition-all self-start md:self-auto cursor-pointer"
         >
-          <span className="text-sm font-black leading-none">+</span>
+          <span className="text-sm leading-none">+</span>
           <span>Create New Project</span>
         </button>
       </div>
 
       {/* Filter Pill Banner */}
       {selectedChannelId && (
-        <div className="flex items-center justify-between p-3 px-4 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs text-foreground">
+        <div className="flex items-center justify-between p-3 px-4 rounded-2xl bg-black/[0.025] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.06] text-xs text-foreground">
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground">Filtered by Channel:</span>
             <span className="font-bold text-foreground">
@@ -222,7 +222,7 @@ export function ProjectsHubView({
       {/* Active Projects Grid (YouTube-Style) */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-extrabold uppercase tracking-wider text-[#8C8379] dark:text-[#A89F95]">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-[#8C8379]">
             In Production ({activeCount})
           </h2>
         </div>
@@ -234,11 +234,11 @@ export function ProjectsHubView({
           <button
             type="button"
             onClick={onOpenNewProject}
-            className="aspect-video w-full rounded-2xl border-2 border-dashed border-[#E3DCD3] dark:border-[#3C3530] p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#FF5338] hover:bg-[#FFEBE7]/20 dark:hover:bg-red-950/10 transition-all group"
+            className="aspect-video w-full rounded-2xl border border-dashed border-black/[0.1] dark:border-white/[0.1] bg-black/[0.01] dark:bg-white/[0.01] p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#FF5338] hover:bg-[#FFEBE7]/20 dark:hover:bg-red-950/10 transition-all group"
           >
-            <div className="w-12 h-12 rounded-full bg-[#F1EDE6] dark:bg-[#2A2521] text-[#FF5338] flex items-center justify-center group-hover:scale-110 transition-transform mb-2">
+            <div className="w-10 h-10 rounded-full bg-black/[0.04] dark:bg-white/[0.05] text-[#FF5338] flex items-center justify-center group-hover:scale-105 transition-transform mb-2">
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -251,7 +251,7 @@ export function ProjectsHubView({
                 />
               </svg>
             </div>
-            <h3 className="font-extrabold text-sm text-[#1E1A17] dark:text-[#FAF8F5]">
+            <h3 className="font-bold text-sm text-[#1E1A17] dark:text-[#FAF8F5]">
               Start New Video Project
             </h3>
             <span className="text-[11px] text-[#8C8379] mt-1">
@@ -263,9 +263,9 @@ export function ProjectsHubView({
 
       {/* Completed Projects Section (if any) */}
       {doneProjects.length > 0 && (
-        <div className="space-y-4 pt-6 border-t border-[#E3DCD3]/60 dark:border-[#3C3530]/60">
+        <div className="space-y-4 pt-6 border-t border-black/[0.05] dark:border-white/[0.06]">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-extrabold uppercase tracking-wider text-[#8C8379] dark:text-[#A89F95]">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-[#8C8379]">
               Completed Projects ({doneProjects.length})
             </h2>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#D1FAE5] text-[#065F46] dark:bg-emerald-950/40 dark:text-emerald-300">

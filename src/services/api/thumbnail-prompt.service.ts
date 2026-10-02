@@ -1,4 +1,5 @@
 import { API_ROUTES } from "@/lib/constants";
+import { conceptSchema } from "@/lib/thumbnail-prompt/schema";
 import type {
   GenerateThumbnailPromptRequest,
   GenerateThumbnailPromptResponse,
@@ -6,25 +7,10 @@ import type {
 import { z } from "zod";
 import { api } from "./client";
 
-const thumbnailPromptConceptSchema = z.object({
-  id: z.string(),
-  conceptName: z.string(),
-  thumbnailCopy: z.string().optional(),
-  visualAnalogy: z.string().optional(),
-  colorScheme: z.string().optional(),
-  prompt: z.string(),
-  psychologicalAngle: z.string(),
-  squintTestFeature: z.string(),
-  ruleOfThreeBreakdown: z.object({
-    anchor: z.string(),
-    context: z.string(),
-    accent: z.string(),
-  }),
-});
-
 const generateThumbnailPromptResponseSchema = z.object({
-  concepts: z.array(thumbnailPromptConceptSchema),
-  providerUsed: z.string(),
+  concepts: z.array(conceptSchema),
+  concept: conceptSchema.optional(),
+  providerUsed: z.string().optional(),
 });
 
 export const thumbnailPromptService = {

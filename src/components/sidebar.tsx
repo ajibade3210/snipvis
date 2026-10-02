@@ -84,14 +84,14 @@ export function Sidebar({
 
   return (
     <aside
-      className={`border-r border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#1A1613] flex flex-col h-[calc(100vh-65px)] sticky top-[65px] select-none text-[#1E1A17] dark:text-[#FAF8F5] transition-all duration-200 shrink-0 ${
+      className={`border-r border-black/[0.05] dark:border-white/[0.06] bg-[#FAF8F5] dark:bg-[#171412] flex flex-col h-[calc(100vh-65px)] sticky top-[65px] select-none text-[#1E1A17] dark:text-[#FAF8F5] transition-all duration-200 shrink-0 ${
         isCollapsed ? "w-full md:w-[68px]" : "w-full md:w-72"
       }`}
     >
       {/* Brand & Minimize / Expand Action Header */}
       {isCollapsed ? (
-        <div className="p-3 border-b border-[#E3DCD3]/70 dark:border-[#3C3530]/70 flex flex-col items-center gap-2.5">
-          <div className="w-10 h-10 rounded-full overflow-hidden bg-white border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center shrink-0 shadow-xs">
+        <div className="p-3 border-b border-black/[0.05] dark:border-white/[0.06] flex flex-col items-center gap-2.5">
+          <div className="w-10 h-10 rounded-xl overflow-hidden bg-white dark:bg-[#201C18] border border-black/[0.06] dark:border-white/[0.08] flex items-center justify-center shrink-0 shadow-xs">
             <img
               src={BRAND_ASSETS.LOGO}
               alt={`${BRAND_ASSETS.APP_NAME} ${BRAND_ASSETS.APP_SUFFIX}`}
@@ -101,7 +101,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={toggleCollapse}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-[#8C8379] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-[#8C8379] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
             title="Expand Sidebar"
             aria-label="Expand Sidebar"
           >
@@ -121,9 +121,9 @@ export function Sidebar({
           </button>
         </div>
       ) : (
-        <div className="p-4 border-b border-[#E3DCD3]/70 dark:border-[#3C3530]/70 flex items-center justify-between">
+        <div className="p-4 border-b border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full overflow-hidden bg-white border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center shrink-0 shadow-xs">
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-white dark:bg-[#201C18] border border-black/[0.06] dark:border-white/[0.08] flex items-center justify-center shrink-0 shadow-xs">
               <img
                 src={BRAND_ASSETS.LOGO}
                 alt={`${BRAND_ASSETS.APP_NAME} ${BRAND_ASSETS.APP_SUFFIX}`}
@@ -131,13 +131,13 @@ export function Sidebar({
               />
             </div>
             <div>
-              <div className="flex items-center gap-1 font-extrabold text-base tracking-tight leading-none">
+              <div className="flex items-center gap-1 font-extrabold text-sm tracking-tight leading-none">
                 <span>{BRAND_ASSETS.APP_NAME}</span>
                 <span className="text-[#FF5338]">
                   {BRAND_ASSETS.APP_SUFFIX}
                 </span>
               </div>
-              <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] font-medium tracking-tight mt-0.5">
+              <div className="text-[11px] text-[#8C8379] font-medium tracking-tight mt-0.5">
                 {BRAND_ASSETS.TAGLINE}
               </div>
             </div>
@@ -145,7 +145,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={toggleCollapse}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-[#8C8379] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-[#8C8379] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
             title="Minimize Sidebar"
             aria-label="Minimize Sidebar"
           >
@@ -167,7 +167,7 @@ export function Sidebar({
       )}
 
       {/* New Project CTA */}
-      <div className={isCollapsed ? "p-2 flex justify-center" : "p-4 pb-2"}>
+      <div className={isCollapsed ? "p-2 flex justify-center" : "p-3 pb-1"}>
         <button
           type="button"
           onClick={onOpenNewProject}
@@ -175,11 +175,11 @@ export function Sidebar({
           aria-label="New Project"
           className={
             isCollapsed
-              ? "w-10 h-10 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#221E1A] hover:bg-[#F7F4EF] dark:hover:bg-[#2A2521] font-bold text-base text-[#FF5338] flex items-center justify-center shadow-xs transition-all active:scale-[0.98] cursor-pointer"
-              : "w-full h-10 px-4 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#221E1A] hover:bg-[#F7F4EF] dark:hover:bg-[#2A2521] font-bold text-xs tracking-tight text-[#1E1A17] dark:text-[#FAF8F5] flex items-center justify-center gap-2 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
+              ? "w-10 h-10 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#201C18] hover:bg-black/[0.02] dark:hover:bg-white/[0.03] font-bold text-base text-[#FF5338] flex items-center justify-center shadow-xs transition-all active:scale-[0.98] cursor-pointer"
+              : "w-full h-9 px-3.5 rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#201C18] hover:bg-black/[0.02] dark:hover:bg-white/[0.03] font-semibold text-xs tracking-tight text-[#1E1A17] dark:text-[#FAF8F5] flex items-center justify-center gap-1.5 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
           }
         >
-          <span className="text-[#FF5338] text-base leading-none font-black">
+          <span className="text-[#FF5338] text-sm leading-none font-bold">
             +
           </span>
           {!isCollapsed && <span>New Project</span>}
@@ -204,13 +204,13 @@ export function Sidebar({
             isCollapsed
               ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                   selectedProjectId === null && activeNav === "global"
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
                 }`
-              : `w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
+              : `w-full text-left px-3 py-2 rounded-xl text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
                   selectedProjectId === null && activeNav === "global"
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] font-medium"
                 }`
           }
         >
@@ -240,8 +240,8 @@ export function Sidebar({
             <span
               className={`px-2 py-0.5 rounded-full text-[10px] font-bold font-grotesk ${
                 selectedProjectId === null && activeNav === "global"
-                  ? "bg-white/25 text-white"
-                  : "bg-[#EBE5DC] dark:bg-[#322C28] text-[#58524C] dark:text-[#A89F95]"
+                  ? "bg-white/20 text-white"
+                  : "bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]"
               }`}
             >
               {totalInspirationsCount}
@@ -259,13 +259,13 @@ export function Sidebar({
             isCollapsed
               ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                   isProjectsActive
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
                 }`
-              : `w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
+              : `w-full text-left px-3 py-2 rounded-xl text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
                   isProjectsActive
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] font-medium"
                 }`
           }
         >
@@ -295,8 +295,8 @@ export function Sidebar({
             <span
               className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold font-grotesk ${
                 isProjectsActive
-                  ? "bg-white/25 text-white"
-                  : "bg-[#EBE5DC] dark:bg-[#322C28] text-[#58524C] dark:text-[#A89F95]"
+                  ? "bg-white/20 text-white"
+                  : "bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]"
               }`}
             >
               {activeProjectsCount}
@@ -314,13 +314,13 @@ export function Sidebar({
             isCollapsed
               ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                   isChannelsActive
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
                 }`
-              : `w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
+              : `w-full text-left px-3 py-2 rounded-xl text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
                   isChannelsActive
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] font-medium"
                 }`
           }
         >
@@ -347,8 +347,8 @@ export function Sidebar({
             <span
               className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold font-grotesk ${
                 isChannelsActive
-                  ? "bg-white/25 text-white"
-                  : "bg-[#EBE5DC] dark:bg-[#322C28] text-[#58524C] dark:text-[#A89F95]"
+                  ? "bg-white/20 text-white"
+                  : "bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]"
               }`}
             >
               {channels.length}
@@ -366,13 +366,13 @@ export function Sidebar({
             isCollapsed
               ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                   isCompetitorSpyActive
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
                 }`
-              : `w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
+              : `w-full text-left px-3 py-2 rounded-xl text-xs tracking-tight flex items-center justify-between transition-all cursor-pointer ${
                   isCompetitorSpyActive
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] font-medium"
                 }`
           }
         >
@@ -415,13 +415,13 @@ export function Sidebar({
             isCollapsed
               ? `w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                   isSettingsActive
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
                 }`
-              : `w-full text-left px-3.5 py-2.5 rounded-xl font-bold text-xs tracking-tight flex items-center gap-2.5 transition-all cursor-pointer ${
+              : `w-full text-left px-3 py-2 rounded-xl text-xs tracking-tight flex items-center gap-2.5 transition-all cursor-pointer ${
                   isSettingsActive
-                    ? "bg-[#FF5338] text-white shadow-sm"
-                    : "text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521]"
+                    ? "bg-[#FF5338] text-white shadow-xs font-semibold"
+                    : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] font-medium"
                 }`
           }
         >
@@ -448,10 +448,10 @@ export function Sidebar({
       </div>
 
       {/* Projects List Section */}
-      <div className="flex-1 overflow-y-auto px-2 py-3 border-t border-[#E3DCD3]/70 dark:border-[#3C3530]/70">
+      <div className="flex-1 overflow-y-auto px-2 py-3 border-t border-black/[0.05] dark:border-white/[0.06]">
         {!isCollapsed && (
           <div className="flex items-center justify-between px-3 mb-2">
-            <span className="text-[11px] font-bold tracking-wider uppercase text-[#8C8379]">
+            <span className="text-[11px] font-semibold tracking-wider uppercase text-[#8C8379]">
               PROJECTS ({topActiveProjects.length})
             </span>
             <svg
@@ -479,14 +479,12 @@ export function Sidebar({
         >
           {topActiveProjects.length === 0 ? (
             !isCollapsed ? (
-              <div className="p-3 text-center rounded-xl bg-white/50 dark:bg-[#221E1A]/50 border border-dashed border-[#E3DCD3] dark:border-[#3C3530]">
-                <p className="text-xs text-[#58524C] dark:text-[#A89F95]">
-                  No active projects.
-                </p>
+              <div className="p-3 text-center rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-dashed border-black/[0.08] dark:border-white/[0.08]">
+                <p className="text-xs text-[#8C8379]">No active projects.</p>
                 <button
                   type="button"
                   onClick={onOpenNewProject}
-                  className="mt-2 text-xs font-bold text-[#FF5338] hover:underline cursor-pointer"
+                  className="mt-2 text-xs font-semibold text-[#FF5338] hover:underline cursor-pointer"
                 >
                   + Create Project
                 </button>
@@ -505,15 +503,15 @@ export function Sidebar({
                   aria-label={proj.name}
                   className={
                     isCollapsed
-                      ? `w-10 h-10 rounded-xl text-xs font-bold tracking-tight flex items-center justify-center transition-all cursor-pointer ${
+                      ? `w-10 h-10 rounded-xl text-xs font-medium tracking-tight flex items-center justify-center transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5] ring-2 ring-[#FF5338]/40 shadow-xs"
-                            : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/60 dark:hover:bg-[#2A2521]"
+                            ? "bg-black/[0.06] dark:bg-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] ring-1 ring-[#FF5338]/40 shadow-xs"
+                            : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                         }`
-                      : `w-full text-left px-3 py-2 rounded-xl text-xs font-bold tracking-tight flex items-center justify-between transition-all group cursor-pointer ${
+                      : `w-full text-left px-3 py-2 rounded-xl text-xs tracking-tight flex items-center justify-between transition-all group cursor-pointer ${
                           isSelected
-                            ? "bg-[#F1EDE6] dark:bg-[#2A2521] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs"
-                            : "text-[#58524C] dark:text-[#A89F95] hover:bg-[#F1EDE6]/60 dark:hover:bg-[#2A2521]"
+                            ? "bg-black/[0.06] dark:bg-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] font-semibold shadow-xs"
+                            : "text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] font-medium"
                         }`
                   }
                 >
@@ -554,29 +552,29 @@ export function Sidebar({
 
       {/* Instant AI Hook Breakdown Section */}
       {onAnalyzeUrl ? (
-        <div className="p-3 border-t border-[#E3DCD3]/70 dark:border-[#3C3530]/70 mt-auto shrink-0 flex justify-center">
+        <div className="p-3 border-t border-black/[0.05] dark:border-white/[0.06] mt-auto shrink-0 flex justify-center">
           {isCollapsed ? (
             <button
               type="button"
               onClick={onAnalyzeUrl}
               title="Instant AI Hook Breakdown (Analyze URL)"
               aria-label="Instant AI Hook Breakdown"
-              className="w-10 h-10 rounded-xl bg-[#2D2824] dark:bg-[#221D19] border border-white/10 text-white flex items-center justify-center shadow-xs hover:bg-[#FF5338] transition-colors cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.06] dark:border-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] flex items-center justify-center shadow-xs hover:bg-[#FF5338] hover:text-white transition-colors cursor-pointer"
             >
               <span className="text-[#FF8A00] text-base leading-none">✨</span>
             </button>
           ) : (
-            <div className="w-full p-3.5 rounded-2xl bg-[#2D2824] dark:bg-[#221D19] text-white shadow-sm border border-white/10 flex flex-col gap-2.5">
-              <div className="flex items-center gap-2 text-xs font-bold">
+            <div className="w-full p-3 rounded-2xl bg-black/[0.025] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.06] flex flex-col gap-2">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1E1A17] dark:text-[#FAF8F5]">
                 <span className="text-[#FF8A00]">✨</span>
-                <span className="tracking-tight text-white/95">
-                  Instant AI Hook Breakdown ready
+                <span className="tracking-tight">
+                  Instant AI Hook Breakdown
                 </span>
               </div>
               <button
                 type="button"
                 onClick={onAnalyzeUrl}
-                className="w-full h-8 rounded-xl bg-[#FF5338] hover:bg-[#d93820] text-white text-xs font-bold tactile-btn shadow-sm transition-transform active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full h-8 rounded-xl bg-[#FF5338] hover:bg-[#d93820] text-white text-xs font-semibold shadow-xs transition-transform active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <span>Analyze URL</span>
                 <span className="text-xs">→</span>

@@ -159,12 +159,22 @@ export function CompetitorInspectorModal({
   const keywordsList = competitor.keywords || [];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-in fade-in overflow-y-auto">
-      <div className="bg-white dark:bg-[#1E1A17] border border-[#E3DCD3] dark:border-[#3C3530] rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl space-y-6 my-auto max-h-[92vh] overflow-y-auto">
-        {/* Header Bar */}
+    <dialog
+      open
+      aria-label={competitor.channelName}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/35 m-0 h-full w-full max-w-none border-0"
+    >
+      <div className="bg-[#FCFAF7] dark:bg-[#1C1815] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] rounded-3xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl shadow-black/25 space-y-6 max-h-[92vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+        {/* Apple-Style Deferential Header */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3.5 min-w-0">
-            <div className="w-14 h-14 rounded-2xl overflow-hidden bg-[#F1EDE6] dark:bg-[#2A2521] shrink-0 border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center shadow-xs">
+            <div className="w-12 h-12 rounded-2xl overflow-hidden bg-black/5 dark:bg-white/5 shrink-0 border border-black/[0.06] dark:border-white/[0.08] flex items-center justify-center">
               {competitor.avatarUrl ? (
                 <img
                   src={competitor.avatarUrl}
@@ -172,28 +182,28 @@ export function CompetitorInspectorModal({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-xl font-black text-[#FF5338]">
+                <span className="text-base font-bold text-[#FF5338]">
                   {competitor.channelName.slice(0, 2).toUpperCase()}
                 </span>
               )}
             </div>
             <div className="min-w-0 space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-lg font-extrabold text-[#1E1A17] dark:text-[#FAF8F5] truncate">
+                <h2 className="text-base sm:text-lg font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5] truncate">
                   {competitor.channelName}
                 </h2>
                 {competitor.country && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F1EDE6] dark:bg-[#2A2521] text-[#58524C] dark:text-[#A89F95] border border-[#E3DCD3] dark:border-[#3C3530] uppercase">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] dark:text-[#A89F95] uppercase">
                     {competitor.country}
                   </span>
                 )}
                 <button
                   type="button"
                   onClick={handleToggleReproducible}
-                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold transition-all border ${
+                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium transition-all cursor-pointer ${
                     competitor.reproducible
-                      ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100"
-                      : "bg-[#FAF8F5] dark:bg-[#221E1A] text-[#8C8379] border-[#E3DCD3] dark:border-[#3C3530] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
+                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                      : "bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
                   }`}
                 >
                   <span>{competitor.reproducible ? "✓" : "○"}</span>
@@ -227,7 +237,7 @@ export function CompetitorInspectorModal({
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="w-8 h-8 rounded-full border border-[#E3DCD3] dark:border-[#3C3530] flex items-center justify-center text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] transition-colors shrink-0 cursor-pointer"
+            className="w-8 h-8 rounded-full text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
           >
             ✕
           </button>
@@ -235,7 +245,7 @@ export function CompetitorInspectorModal({
 
         {/* Sync Status Badge */}
         {syncStatus && (
-          <div className="px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-800 dark:text-emerald-300 animate-in fade-in">
+          <div className="px-3.5 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-medium text-emerald-600 dark:text-emerald-400 animate-in fade-in">
             {syncStatus}
           </div>
         )}
@@ -243,7 +253,7 @@ export function CompetitorInspectorModal({
         {/* Metrics Grid */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#8C8379] uppercase tracking-wider">
+            <span className="text-[11px] font-semibold text-[#8C8379] uppercase tracking-wider">
               Channel Intelligence Metrics
             </span>
             <span className="text-[10px] text-[#8C8379]">
@@ -253,11 +263,11 @@ export function CompetitorInspectorModal({
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {/* Subscribers */}
-            <div className="bg-[#FAF8F5] dark:bg-[#221E1A] p-3 rounded-2xl border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-0.5">
-              <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+            <div className="bg-black/[0.025] dark:bg-white/[0.03] p-3.5 rounded-2xl space-y-0.5">
+              <p className="text-[10px] font-medium text-[#8C8379] uppercase tracking-wide">
                 Subscribers
               </p>
-              <p className="text-base font-black text-[#1E1A17] dark:text-[#FAF8F5]">
+              <p className="text-base font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
                 {competitor.hiddenSubscriberCount
                   ? "Hidden"
                   : competitor.currentSubscriberCount || "—"}
@@ -270,22 +280,22 @@ export function CompetitorInspectorModal({
             </div>
 
             {/* Total Views */}
-            <div className="bg-[#FAF8F5] dark:bg-[#221E1A] p-3 rounded-2xl border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-0.5">
-              <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+            <div className="bg-black/[0.025] dark:bg-white/[0.03] p-3.5 rounded-2xl space-y-0.5">
+              <p className="text-[10px] font-medium text-[#8C8379] uppercase tracking-wide">
                 All-Time Views
               </p>
-              <p className="text-base font-black text-[#1E1A17] dark:text-[#FAF8F5]">
+              <p className="text-base font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
                 {competitor.totalViewCount || "—"}
               </p>
               <p className="text-[10px] text-[#8C8379]">Total channel reach</p>
             </div>
 
             {/* Video Count */}
-            <div className="bg-[#FAF8F5] dark:bg-[#221E1A] p-3 rounded-2xl border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-0.5">
-              <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+            <div className="bg-black/[0.025] dark:bg-white/[0.03] p-3.5 rounded-2xl space-y-0.5">
+              <p className="text-[10px] font-medium text-[#8C8379] uppercase tracking-wide">
                 Public Videos
               </p>
-              <p className="text-base font-black text-[#1E1A17] dark:text-[#FAF8F5]">
+              <p className="text-base font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
                 {competitor.videoCount !== null &&
                 competitor.videoCount !== undefined
                   ? competitor.videoCount.toLocaleString()
@@ -295,22 +305,22 @@ export function CompetitorInspectorModal({
             </div>
 
             {/* Avg Views */}
-            <div className="bg-[#FAF8F5] dark:bg-[#221E1A] p-3 rounded-2xl border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-0.5">
-              <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+            <div className="bg-black/[0.025] dark:bg-white/[0.03] p-3.5 rounded-2xl space-y-0.5">
+              <p className="text-[10px] font-medium text-[#8C8379] uppercase tracking-wide">
                 Avg Views / Video
               </p>
-              <p className="text-base font-black text-[#1E1A17] dark:text-[#FAF8F5]">
+              <p className="text-base font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
                 {competitor.avgViewCount ? `~${competitor.avgViewCount}` : "—"}
               </p>
               <p className="text-[10px] text-[#8C8379]">Recent 15 uploads</p>
             </div>
 
             {/* Upload Frequency */}
-            <div className="col-span-2 bg-[#FAF8F5] dark:bg-[#221E1A] p-3 rounded-2xl border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-0.5">
-              <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+            <div className="col-span-2 bg-black/[0.025] dark:bg-white/[0.03] p-3.5 rounded-2xl space-y-0.5">
+              <p className="text-[10px] font-medium text-[#8C8379] uppercase tracking-wide">
                 Upload Cadence
               </p>
-              <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5] capitalize">
+              <p className="text-xs font-semibold text-[#1E1A17] dark:text-[#FAF8F5] capitalize">
                 {competitor.uploadFrequency || "Unscheduled / Irregular"}
               </p>
               <p className="text-[10px] text-[#8C8379]">
@@ -319,11 +329,11 @@ export function CompetitorInspectorModal({
             </div>
 
             {/* Last Upload */}
-            <div className="col-span-2 bg-[#FAF8F5] dark:bg-[#221E1A] p-3 rounded-2xl border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-0.5">
-              <p className="text-[10px] font-bold text-[#8C8379] uppercase tracking-wide">
+            <div className="col-span-2 bg-black/[0.025] dark:bg-white/[0.03] p-3.5 rounded-2xl space-y-0.5">
+              <p className="text-[10px] font-medium text-[#8C8379] uppercase tracking-wide">
                 Last Upload Date
               </p>
-              <p className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
+              <p className="text-xs font-semibold text-[#1E1A17] dark:text-[#FAF8F5]">
                 {formattedLastUpload || "—"}
               </p>
               <p className="text-[10px] text-[#8C8379]">
@@ -336,10 +346,10 @@ export function CompetitorInspectorModal({
         {/* Channel Description */}
         {competitor.description && (
           <div className="space-y-1.5">
-            <span className="text-[11px] font-bold text-[#8C8379] uppercase tracking-wider">
+            <span className="text-[11px] font-semibold text-[#8C8379] uppercase tracking-wider">
               Channel Focus & Bio
             </span>
-            <div className="p-3.5 rounded-2xl bg-[#FAF8F5] dark:bg-[#221E1A] border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 text-xs text-[#58524C] dark:text-[#A89F95] leading-relaxed whitespace-pre-wrap max-h-32 overflow-y-auto">
+            <div className="p-3.5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] text-xs text-[#58524C] dark:text-[#A89F95] leading-relaxed whitespace-pre-wrap max-h-32 overflow-y-auto">
               {competitor.description}
             </div>
           </div>
@@ -348,14 +358,14 @@ export function CompetitorInspectorModal({
         {/* Channel Keywords / Tags */}
         {keywordsList.length > 0 && (
           <div className="space-y-1.5">
-            <span className="text-[11px] font-bold text-[#8C8379] uppercase tracking-wider">
+            <span className="text-[11px] font-semibold text-[#8C8379] uppercase tracking-wider">
               Channel Keywords & SEO Tags ({keywordsList.length})
             </span>
-            <div className="flex flex-wrap gap-1.5 p-3 rounded-2xl bg-[#FAF8F5] dark:bg-[#221E1A] border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 max-h-28 overflow-y-auto">
+            <div className="flex flex-wrap gap-1.5 p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] max-h-28 overflow-y-auto">
               {keywordsList.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-white dark:bg-[#1E1A17] text-[#58524C] dark:text-[#A89F95] border border-[#E3DCD3] dark:border-[#3C3530] shadow-2xs"
+                  className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-white dark:bg-[#201C18] text-[#58524C] dark:text-[#A89F95] border border-black/[0.06] dark:border-white/[0.08]"
                 >
                   #{tag}
                 </span>
@@ -367,19 +377,19 @@ export function CompetitorInspectorModal({
         {/* Top / Outlier Video Preview */}
         {competitor.mostPopularVideoTitle && (
           <div className="space-y-1.5">
-            <span className="text-[11px] font-bold text-[#8C8379] uppercase tracking-wider">
+            <span className="text-[11px] font-semibold text-[#8C8379] uppercase tracking-wider">
               Top / Outlier Video
             </span>
-            <div className="p-3 rounded-2xl bg-[#FAF8F5] dark:bg-[#221E1A] border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 flex items-center gap-3">
+            <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] flex items-center gap-3">
               {competitor.mostPopularVideoThumb && (
                 <img
                   src={competitor.mostPopularVideoThumb}
                   alt={competitor.mostPopularVideoTitle}
-                  className="w-24 h-14 rounded-lg object-cover border border-[#E3DCD3] dark:border-[#3C3530] shrink-0"
+                  className="w-24 h-14 rounded-xl object-cover shrink-0"
                 />
               )}
               <div className="min-w-0 flex-1 space-y-1">
-                <p className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-1">
+                <p className="text-xs font-semibold text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-1">
                   {competitor.mostPopularVideoTitle}
                 </p>
                 {competitor.mostPopularVideoUrl && (
@@ -401,7 +411,7 @@ export function CompetitorInspectorModal({
         {/* Strategy Notes & Creator Observations */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#8C8379] uppercase tracking-wider">
+            <span className="text-[11px] font-semibold text-[#8C8379] uppercase tracking-wider">
               Strategy Notes & Creator Audit
             </span>
             {competitor.personalNote && (
@@ -415,14 +425,14 @@ export function CompetitorInspectorModal({
             onChange={(e) => setNote(e.target.value)}
             rows={3}
             placeholder="Record observations: pacing, audio choices, visual hooks, title formulas, thumbnail contrast..."
-            className="w-full p-3 text-xs rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] bg-[#FAF8F5] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] focus:outline-none focus:ring-2 focus:ring-[#FF5338] resize-none leading-relaxed"
+            className="w-full p-3.5 text-xs rounded-2xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-[#FAF8F5] placeholder-[#8C8379] outline-none resize-none leading-relaxed"
           />
           <div className="flex justify-end">
             <button
               type="button"
               onClick={handleSaveNote}
               disabled={isSavingNote}
-              className="h-7 px-3.5 rounded-full bg-[#FF5338] text-white text-[11px] font-bold tactile-btn disabled:opacity-50"
+              className="h-8 px-4 rounded-full bg-[#FF5338] hover:bg-[#E0452C] text-white text-xs font-semibold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
             >
               {isSavingNote ? "Saving…" : "Save Notes"}
             </button>
@@ -430,12 +440,12 @@ export function CompetitorInspectorModal({
         </div>
 
         {/* Bottom Actions Bar */}
-        <div className="pt-2 border-t border-[#E3DCD3] dark:border-[#3C3530] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="pt-3 border-t border-black/[0.04] dark:border-white/[0.05] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <button
             type="button"
             onClick={handleSyncLatestStats}
             disabled={isSyncing}
-            className="h-8 px-4 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#221E1A] hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-2xs"
+            className="h-9 px-4 rounded-full bg-black/[0.04] dark:bg-white/[0.05] hover:bg-black/10 dark:hover:bg-white/10 text-xs font-semibold text-[#1E1A17] dark:text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
           >
             {isSyncing ? (
               <>
@@ -443,30 +453,27 @@ export function CompetitorInspectorModal({
                 <span>Syncing YouTube API…</span>
               </>
             ) : (
-              <>
-                <span>🔄</span>
-                <span>Refresh YouTube Stats</span>
-              </>
+              <span>Refresh YouTube Stats</span>
             )}
           </button>
 
           {showDeleteConfirm ? (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-red-600 dark:text-red-400 font-semibold">
+              <span className="text-xs text-red-600 dark:text-red-400 font-medium">
                 Stop tracking?
               </span>
               <button
                 type="button"
                 onClick={handleDeleteCompetitor}
                 disabled={isDeleting}
-                className="h-7 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors disabled:opacity-50"
+                className="h-8 px-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {isDeleting ? "Deleting…" : "Confirm"}
               </button>
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(false)}
-                className="h-7 px-2.5 rounded-lg border border-[#E3DCD3] dark:border-[#3C3530] text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+                className="h-8 px-3.5 rounded-full text-xs font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white cursor-pointer"
               >
                 Cancel
               </button>
@@ -475,13 +482,13 @@ export function CompetitorInspectorModal({
             <button
               type="button"
               onClick={() => setShowDeleteConfirm(true)}
-              className="text-xs font-semibold text-[#8C8379] hover:text-red-600 dark:hover:text-red-400 transition-colors self-center sm:self-auto py-1"
+              className="text-xs font-medium text-[#8C8379] hover:text-red-600 dark:hover:text-red-400 transition-colors self-center sm:self-auto py-1 cursor-pointer"
             >
               Stop Tracking Channel
             </button>
           )}
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }

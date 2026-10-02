@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useCreateAsset } from "@/hooks/use-assets";
 import { createAssetSchema } from "@/lib/validations";
 
@@ -131,41 +130,67 @@ export function AssetModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-      <div className="bg-card text-card-foreground border border-border rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in-0 zoom-in-95">
-        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-          <h3 className="font-semibold text-base">Add Project Asset</h3>
+    <dialog
+      open
+      aria-label="Add Production Asset"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/35 m-0 h-full w-full max-w-none border-0"
+    >
+      <div className="bg-[#FCFAF7] dark:bg-[#1C1815] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] rounded-3xl w-full max-w-lg max-h-[88vh] flex flex-col shadow-2xl shadow-black/25 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Apple-Style Deferential Header */}
+        <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b border-black/[0.04] dark:border-white/[0.05]">
+          <div>
+            <h3 className="text-base font-semibold tracking-tight text-[#1E1A17] dark:text-white">
+              Add Production Asset
+            </h3>
+            <p className="text-xs text-[#8C8379] dark:text-[#A89F95] mt-0.5">
+              Link or upload b-roll, audio, fonts, or graphics to your projects.
+            </p>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground text-sm font-semibold px-2 py-1 rounded"
+            className="w-8 h-8 rounded-full text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close"
           >
             ✕
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {error ? (
-            <div className="p-3 text-xs rounded-md bg-destructive/10 text-destructive border border-destructive/20">
-              {error}
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 space-y-4 overflow-y-auto flex-1"
+        >
+          {error && (
+            <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs flex items-start gap-2">
+              <span className="font-semibold">Error:</span>
+              <p className="flex-1 leading-relaxed">{error}</p>
             </div>
-          ) : null}
+          )}
 
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-medium text-foreground">
-                Asset Media URL <span className="text-red-500">*</span>
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="asset-url-input"
+                className="text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              >
+                Asset Media URL <span className="text-[#FF5338]">*</span>
               </label>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploading}
-                className="text-xs text-primary hover:underline flex items-center gap-1 font-medium disabled:opacity-50"
+                className="text-xs text-[#FF5338] hover:underline flex items-center gap-1 font-medium disabled:opacity-50 cursor-pointer"
               >
                 {isUploading ? (
                   <span>Uploading to R2...</span>
                 ) : (
-                  <span>Upload local file to R2</span>
+                  <span>Upload local file</span>
                 )}
               </button>
             </div>
@@ -176,24 +201,29 @@ export function AssetModal({
               className="hidden"
             />
             <input
+              id="asset-url-input"
               type="url"
               required
-              placeholder="https://... (or click 'Upload local file to R2')"
+              placeholder="https://... (or click 'Upload local file')"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-medium mb-1.5 text-foreground">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="asset-type-select"
+                className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              >
                 Asset Type
               </label>
               <select
+                id="asset-type-select"
                 value={type}
                 onChange={(e) => setType(e.target.value as AssetType)}
-                className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-10 px-3 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none cursor-pointer"
               >
                 <option value="VIDEO">Video Footage</option>
                 <option value="AUDIO">Sound Effect / Music</option>
@@ -202,14 +232,18 @@ export function AssetModal({
                 <option value="OTHER">Other</option>
               </select>
             </div>
-            <div>
-              <label className="block text-xs font-medium mb-1.5 text-foreground">
+            <div className="space-y-1.5">
+              <label
+                htmlFor="asset-source-select"
+                className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              >
                 Source Provider
               </label>
               <select
+                id="asset-source-select"
                 value={source}
                 onChange={(e) => setSource(e.target.value as AssetSource)}
-                className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-10 px-3 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-white outline-none cursor-pointer"
               >
                 <option value="PEXELS">Pexels</option>
                 <option value="PIXABAY">Pixabay</option>
@@ -220,53 +254,61 @@ export function AssetModal({
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="asset-license-input"
+              className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+            >
               License Info (Optional)
             </label>
             <input
+              id="asset-license-input"
               type="text"
               placeholder="e.g. CC0, Free for Commercial with Attribution, etc."
               value={licenseText}
               onChange={(e) => setLicenseText(e.target.value)}
-              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none"
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
+          <div className="space-y-1.5">
+            <label
+              htmlFor="asset-note-input"
+              className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+            >
               Note (Optional)
             </label>
             <input
+              id="asset-note-input"
               type="text"
               placeholder="e.g. Use for b-roll at 01:23 hook transition"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full h-9 px-3 text-sm rounded-md border border-input bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full h-10 px-3.5 text-xs rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-[#1E1A17] dark:text-white outline-none"
             />
           </div>
 
           {/* Project Multi-select */}
-          <div>
-            <label className="block text-xs font-medium mb-1.5 text-foreground">
-              Assign to Projects <span className="text-red-500">*</span>
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-[#58524C] dark:text-[#A89F95]">
+              Assign to Projects <span className="text-[#FF5338]">*</span>
             </label>
             {projects.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-[#8C8379] italic">
                 No projects available. Please create a project first.
               </p>
             ) : (
-              <div className="max-h-32 overflow-y-auto p-2 rounded-md border border-input bg-background space-y-1">
+              <div className="max-h-32 overflow-y-auto p-2.5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.03] space-y-1">
                 {projects.map((p) => (
                   <label
                     key={p.id}
-                    className="flex items-center gap-2 text-xs px-2 py-1 rounded hover:bg-accent cursor-pointer"
+                    className="flex items-center gap-2.5 text-xs px-2.5 py-1.5 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.05] cursor-pointer text-[#1E1A17] dark:text-[#FAF8F5]"
                   >
                     <input
                       type="checkbox"
                       checked={selectedProjectIds.includes(p.id)}
                       onChange={() => toggleProject(p.id)}
-                      className="rounded border-input text-primary"
+                      className="rounded border-black/20 text-[#FF5338] focus:ring-[#FF5338]"
                     />
                     <span className="truncate">{p.name}</span>
                   </label>
@@ -275,24 +317,25 @@ export function AssetModal({
             )}
           </div>
 
-          <div className="pt-2 flex justify-end gap-2 border-t border-border">
-            <Button
+          <div className="pt-3 flex justify-end items-center gap-2 border-t border-black/[0.04] dark:border-white/[0.05]">
+            <button
               type="button"
-              variant="outline"
               onClick={onClose}
               disabled={createAsset.isPending}
+              className="h-9 px-4 rounded-full text-xs font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white transition-colors cursor-pointer"
             >
               Cancel
-            </Button>
-            <Button
+            </button>
+            <button
               type="submit"
               disabled={createAsset.isPending || projects.length === 0}
+              className="h-9 px-5 rounded-full bg-[#FF5338] hover:bg-[#E0452C] disabled:opacity-50 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
             >
               {createAsset.isPending ? "Adding..." : "Add Asset"}
-            </Button>
+            </button>
           </div>
         </form>
       </div>
-    </div>
+    </dialog>
   );
 }

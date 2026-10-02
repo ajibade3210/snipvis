@@ -22,9 +22,7 @@ const PROVIDER_CONFIGS: Record<
   openrouter: {
     baseUrl: "https://openrouter.ai/api/v1/chat/completions",
     apiKey: process.env.OPENROUTER_API_KEY ?? "",
-    textModel:
-      process.env.OPENROUTER_TEXT_MODEL ??
-      "deepseek/deepseek-chat-v3-0324:free",
+    textModel: process.env.OPENROUTER_TEXT_MODEL ?? "openrouter/free",
     visionModel:
       process.env.OPENROUTER_VISION_MODEL ?? "meta-llama/llama-4-maverick:free",
     extraHeaders: {
@@ -33,15 +31,69 @@ const PROVIDER_CONFIGS: Record<
       "X-Title": "Snipvis OS",
     },
   },
+  gemini: {
+    baseUrl:
+      "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+    apiKey: process.env.GEMINI_API_KEY ?? "",
+    textModel: process.env.GEMINI_TEXT_MODEL ?? "gemini-3.8-flash",
+    visionModel: process.env.GEMINI_VISION_MODEL ?? "gemini-3.8-flash",
+  },
 };
 
+export function getAiProviderConfig() {
+  const currentProvider = (process.env.API_PROVIDER ??
+    "deepseek") as ApiProvider;
+  const config = PROVIDER_CONFIGS[currentProvider] || PROVIDER_CONFIGS.deepseek;
+  let dynamicApiKey = config.apiKey;
+  let dynamicTextModel = config.textModel;
+
+  if (currentProvider === "gemini") {
+    dynamicApiKey = process.env.GEMINI_API_KEY || config.apiKey;
+    dynamicTextModel = process.env.GEMINI_TEXT_MODEL || "gemini-3.8-flash";
+  } else if (currentProvider === "openrouter") {
+    dynamicApiKey = process.env.OPENROUTER_API_KEY || config.apiKey;
+    dynamicTextModel = process.env.OPENROUTER_TEXT_MODEL || "openrouter/free";
+  } else {
+    dynamicApiKey = process.env.DEEPSEEK_API_KEY || config.apiKey;
+    dynamicTextModel = process.env.DEEPSEEK_TEXT_MODEL || "deepseek-chat";
+  }
+
+  return {
+    provider: currentProvider,
+    baseUrl: config.baseUrl,
+    apiKey: dynamicApiKey,
+    textModel: dynamicTextModel,
+    visionModel: config.visionModel,
+    extraHeaders: config.extraHeaders,
+    TIMEOUT_MS: 90000,
+    SCRAPE_TIMEOUT_MS: 3000,
+    TEMPERATURE: 0.3,
+  };
+}
+
 export const AI_PROVIDER_CONFIG = {
-  provider,
-  ...PROVIDER_CONFIGS[provider],
-  TIMEOUT_MS: 35000,
+  get provider() {
+    return (process.env.API_PROVIDER ?? "deepseek") as ApiProvider;
+  },
+  get baseUrl() {
+    return getAiProviderConfig().baseUrl;
+  },
+  get apiKey() {
+    return getAiProviderConfig().apiKey;
+  },
+  get textModel() {
+    return getAiProviderConfig().textModel;
+  },
+  get visionModel() {
+    return getAiProviderConfig().visionModel;
+  },
+  get extraHeaders() {
+    return getAiProviderConfig().extraHeaders;
+  },
+  TIMEOUT_MS: 90000,
   SCRAPE_TIMEOUT_MS: 3000,
   TEMPERATURE: 0.3,
-} as const;
+};
 
 // Kept for backward compat — aliases to AI_PROVIDER_CONFIG
 export const DEEPSEEK_CONFIG = AI_PROVIDER_CONFIG;

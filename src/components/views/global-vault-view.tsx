@@ -93,28 +93,28 @@ export function GlobalVaultView({
   return (
     <div className="space-y-6">
       {/* View Header & Toolbar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#E3DCD3] dark:border-[#3C3530] pb-5">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
+            <h1 className="text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
               Inspo Vault
             </h1>
-            <span className="px-3 py-1 rounded-full text-xs font-bold font-grotesk bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40 dark:text-red-300">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-black/[0.04] dark:bg-white/[0.06] text-[#8C8379]">
               {filtered.length} Inspirations
             </span>
           </div>
         </div>
 
         {/* View Switcher & Sort */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center p-1 bg-[#F1EDE6] dark:bg-[#221E1A] rounded-xl border border-[#E3DCD3] dark:border-[#3C3530]">
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center p-0.5 bg-black/[0.03] dark:bg-white/[0.04] rounded-full border border-black/[0.04] dark:border-white/[0.06]">
             <button
               type="button"
               onClick={() => setViewMode("grid")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition-all ${
+              className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
                 viewMode === "grid"
-                  ? "bg-white dark:bg-[#2A2521] text-[#FF5338] shadow-xs"
-                  : "text-[#58524C] dark:text-[#A89F95]"
+                  ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                  : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
               <span>Grid</span>
@@ -122,10 +122,10 @@ export function GlobalVaultView({
             <button
               type="button"
               onClick={() => setViewMode("masonry")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+              className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
                 viewMode === "masonry"
-                  ? "bg-white dark:bg-[#2A2521] text-[#FF5338] shadow-xs"
-                  : "text-[#58524C] dark:text-[#A89F95]"
+                  ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                  : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
               <span>Masonry</span>
@@ -133,10 +133,10 @@ export function GlobalVaultView({
             <button
               type="button"
               onClick={() => setViewMode("compact")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+              className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
                 viewMode === "compact"
-                  ? "bg-white dark:bg-[#2A2521] text-[#FF5338] shadow-xs"
-                  : "text-[#58524C] dark:text-[#A89F95]"
+                  ? "bg-white dark:bg-[#201C18] text-[#1E1A17] dark:text-[#FAF8F5] shadow-xs font-semibold"
+                  : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
               <span>Compact</span>
@@ -147,14 +147,14 @@ export function GlobalVaultView({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="h-9 px-3.5 rounded-xl border border-[#E3DCD3] dark:border-[#3C3530] bg-white dark:bg-[#221E1A] text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-2 focus:ring-[#FF5338] shadow-xs cursor-pointer appearance-none pr-8"
+              className="h-8 px-3 rounded-full border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.025] dark:bg-white/[0.03] text-xs font-medium text-[#1E1A17] dark:text-[#FAF8F5] focus:outline-none focus:ring-1 focus:ring-[#FF5338] shadow-xs cursor-pointer appearance-none pr-7"
             >
               <option value="score">Sort: Highest AI Score</option>
               <option value="ctr">Sort: Highest CTR</option>
               <option value="views">Sort: Most Views</option>
               <option value="recent">Sort: Most Recent</option>
             </select>
-            <span className="absolute right-2.5 top-2.5 pointer-events-none text-xs text-[#8C8379]">
+            <span className="absolute right-2.5 top-2 pointer-events-none text-xs text-[#8C8379]">
               ⌵
             </span>
           </div>
@@ -163,7 +163,7 @@ export function GlobalVaultView({
 
       {/* Filter Ribbon Strip */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           {(
             [
               { id: "ALL", label: "All Items", count: inspirations.length },
@@ -177,15 +177,15 @@ export function GlobalVaultView({
               key={f.id}
               type="button"
               onClick={() => setFilterChip(f.id)}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 transition-all ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                 filterChip === f.id
-                  ? "bg-[#1E1A17] dark:bg-[#FAF8F5] text-white dark:text-[#1E1A17] shadow-xs"
-                  : "bg-[#F1EDE6] dark:bg-[#221E1A] text-[#1E1A17] dark:text-[#FAF8F5] hover:bg-[#EBE5DC] border border-[#E3DCD3]/60 dark:border-[#3C3530]/60"
+                  ? "bg-[#1E1A17] dark:bg-[#FAF8F5] text-white dark:text-[#1E1A17] shadow-xs font-semibold"
+                  : "bg-black/[0.03] dark:bg-white/[0.04] text-[#58524C] dark:text-[#A89F95] hover:bg-black/[0.05] dark:hover:bg-white/[0.06]"
               }`}
             >
               <span>{f.label}</span>
               {"count" in f ? (
-                <span className="font-grotesk font-normal opacity-80 text-[10px]">
+                <span className="font-mono text-[10px] opacity-75">
                   {f.count}
                 </span>
               ) : null}
@@ -200,23 +200,23 @@ export function GlobalVaultView({
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] overflow-hidden card-lift flex flex-col justify-between break-inside-avoid mb-6"
+              className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-black/[0.06] dark:border-white/[0.08] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between break-inside-avoid mb-6"
             >
               <div>
-                <div className="bg-[#F1EDE6] dark:bg-[#2A2521] relative overflow-hidden group">
+                <div className="bg-black/[0.03] dark:bg-white/[0.04] relative overflow-hidden group">
                   <img
                     src={item.thumbnailUrl}
                     alt={item.title || "Inspiration thumbnail"}
-                    className="w-full h-auto object-cover group-hover:scale-103 transition-transform duration-300"
+                    className="w-full h-auto object-cover group-hover:scale-102 transition-transform duration-300"
                     onError={(e) => {
                       (e.target as HTMLElement).style.display = "none";
                     }}
                   />
-                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-white text-[10px] font-grotesk font-bold">
+                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 text-white text-[10px] font-mono font-medium">
                     {item.duration || "14:20"}
                   </div>
                   <div
-                    className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-grotesk font-extrabold shadow-sm ${
+                    className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-mono font-bold shadow-xs ${
                       item.ctrColor || "bg-[#059669]"
                     }`}
                   >
@@ -227,7 +227,7 @@ export function GlobalVaultView({
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
                           item.categoryColor ||
                           "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
                         }`}
@@ -236,7 +236,7 @@ export function GlobalVaultView({
                       </span>
                       {(item.strength_score ?? item.strengthScore) != null && (
                         <span
-                          className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full border ${getStrengthScoreBadgeStyle(
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${getStrengthScoreBadgeStyle(
                             item.strength_score ?? item.strengthScore,
                           )}`}
                         >
@@ -244,17 +244,17 @@ export function GlobalVaultView({
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[100px]">
+                    <span className="text-[11px] font-medium text-[#8C8379] dark:text-[#A89F95] truncate max-w-[100px]">
                       @{item.channelName || "Creator"}
                     </span>
                   </div>
-                  <h3 className="font-extrabold text-sm leading-snug text-[#1E1A17] dark:text-[#FAF8F5]">
+                  <h3 className="font-bold text-sm leading-snug text-[#1E1A17] dark:text-[#FAF8F5]">
                     {item.title}
                   </h3>
-                  <div className="bg-[#F7F4EF] dark:bg-[#25201C] rounded-xl p-3 border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-grotesk font-bold">
+                  <div className="bg-black/[0.025] dark:bg-white/[0.03] rounded-xl p-3 border border-black/[0.04] dark:border-white/[0.05] space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-medium">
                       <span className="text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1">
-                        <span className="text-[#FF5338]">TT</span>{" "}
+                        <span className="text-[#FF5338] font-bold">TT</span>{" "}
                         {item.insightLeft || "Pacing Test"}
                       </span>
                       <span
@@ -264,18 +264,18 @@ export function GlobalVaultView({
                       </span>
                     </div>
                     <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
-                      💡 <span className="font-medium">Note:</span> "
+                      💡 <span className="font-medium not-italic">Note:</span> "
                       {item.note || "Curated in research vault."}"
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="p-4 pt-1 border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50 flex items-center justify-between text-xs">
+              <div className="p-3.5 border-t border-black/[0.04] dark:border-white/[0.05] flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
                   <span
                     className={`w-2 h-2 rounded-full ${item.projectDot || "bg-[#FF5338]"}`}
                   />
-                  <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[130px]">
+                  <span className="text-[11px] font-medium text-[#58524C] dark:text-[#A89F95] truncate max-w-[130px]">
                     {item.projectName || "Global Vault"}
                   </span>
                 </div>
@@ -283,7 +283,7 @@ export function GlobalVaultView({
                   <button
                     type="button"
                     onClick={() => onEditNote(item)}
-                    className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
+                    className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white transition-colors cursor-pointer"
                     title="Edit Note"
                   >
                     📝
@@ -292,7 +292,7 @@ export function GlobalVaultView({
                     <button
                       type="button"
                       onClick={() => onRemoveItem(item)}
-                      className="p-1 rounded text-[#8C8379] hover:text-red-500"
+                      className="p-1 rounded text-[#8C8379] hover:text-red-500 transition-colors cursor-pointer"
                       title="Detach from project"
                     >
                       ✕
@@ -301,7 +301,7 @@ export function GlobalVaultView({
                   <button
                     type="button"
                     onClick={() => onToggleFavorite(item)}
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
                       item.projectContext?.favorite
                         ? "text-[#FF5338]"
                         : "text-[#8C8379] hover:text-[#FF5338]"
@@ -330,14 +330,14 @@ export function GlobalVaultView({
           ))}
         </div>
       ) : viewMode === "compact" ? (
-        <div className="flex flex-col divide-y divide-[#E3DCD3] dark:divide-[#3C3530] border border-[#E3DCD3] dark:border-[#3C3530] rounded-2xl overflow-hidden bg-white dark:bg-[#1E1A17] pb-24">
+        <div className="flex flex-col divide-y divide-black/[0.04] dark:divide-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] rounded-2xl overflow-hidden bg-white dark:bg-[#1E1A17] pb-24 shadow-xs">
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="flex items-center gap-4 px-4 py-3 hover:bg-[#F7F4EF] dark:hover:bg-[#25201C] transition-colors group"
+              className="flex items-center gap-4 px-4 py-3 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors group"
             >
               {/* Small thumbnail */}
-              <div className="w-20 h-12 rounded-lg overflow-hidden bg-[#F1EDE6] dark:bg-[#2A2521] shrink-0 relative">
+              <div className="w-20 h-12 rounded-lg overflow-hidden bg-black/[0.03] dark:bg-white/[0.04] shrink-0 relative">
                 <img
                   src={item.thumbnailUrl}
                   alt={item.title || ""}
@@ -360,12 +360,12 @@ export function GlobalVaultView({
 
               {/* Details */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-xs font-extrabold text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-1 group-hover:text-[#FF5338] transition-colors">
+                <h3 className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-1 group-hover:text-[#FF5338] transition-colors">
                   {item.title}
                 </h3>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span
-                    className={`text-[9px] font-bold px-1.5 py-px rounded-full ${
+                    className={`text-[9px] font-semibold px-1.5 py-px rounded-full ${
                       item.categoryColor ||
                       "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
                     }`}
@@ -374,7 +374,7 @@ export function GlobalVaultView({
                   </span>
                   {(item.strength_score ?? item.strengthScore) != null && (
                     <span
-                      className={`text-[9px] font-extrabold px-1.5 py-px rounded-full border ${getStrengthScoreBadgeStyle(
+                      className={`text-[9px] font-bold px-1.5 py-px rounded-full border ${getStrengthScoreBadgeStyle(
                         item.strength_score ?? item.strengthScore,
                       )}`}
                     >
@@ -397,7 +397,7 @@ export function GlobalVaultView({
                 <button
                   type="button"
                   onClick={() => onEditNote(item)}
-                  className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                   title="Edit Note"
                 >
                   📝
@@ -406,7 +406,7 @@ export function GlobalVaultView({
                   <button
                     type="button"
                     onClick={() => onRemoveItem(item)}
-                    className="p-1 rounded text-[#8C8379] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="p-1 rounded text-[#8C8379] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                     title="Detach"
                   >
                     ✕
@@ -415,7 +415,7 @@ export function GlobalVaultView({
                 <button
                   type="button"
                   onClick={() => onToggleFavorite(item)}
-                  className={`w-6 h-6 rounded flex items-center justify-center transition-colors ${
+                  className={`w-6 h-6 rounded flex items-center justify-center transition-colors cursor-pointer ${
                     item.projectContext?.favorite
                       ? "text-[#FF5338]"
                       : "text-[#8C8379] hover:text-[#FF5338]"
@@ -447,28 +447,28 @@ export function GlobalVaultView({
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-[#E3DCD3] dark:border-[#3C3530] overflow-hidden card-lift flex flex-col justify-between"
+              className="bg-white dark:bg-[#1E1A17] rounded-2xl border border-black/[0.06] dark:border-white/[0.08] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
                 {/* Media Thumbnail Container */}
-                <div className="aspect-video bg-[#F1EDE6] dark:bg-[#2A2521] relative overflow-hidden group">
+                <div className="aspect-video bg-black/[0.03] dark:bg-white/[0.04] relative overflow-hidden group">
                   <img
                     src={item.thumbnailUrl}
                     alt={item.title || "Inspiration thumbnail"}
-                    className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                     onError={(e) => {
                       (e.target as HTMLElement).style.display = "none";
                     }}
                   />
 
                   {/* Duration Badge */}
-                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-xs text-white text-[10px] font-grotesk font-bold">
+                  <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 text-white text-[10px] font-mono font-medium">
                     {item.duration || "14:20"}
                   </div>
 
                   {/* CTR Badge */}
                   <div
-                    className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-grotesk font-extrabold shadow-sm ${
+                    className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-white text-[11px] font-mono font-bold shadow-xs ${
                       item.ctrColor || "bg-[#059669]"
                     }`}
                   >
@@ -481,7 +481,7 @@ export function GlobalVaultView({
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full truncate max-w-[170px] ${
                           item.categoryColor ||
                           "bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40"
                         }`}
@@ -490,7 +490,7 @@ export function GlobalVaultView({
                       </span>
                       {(item.strength_score ?? item.strengthScore) != null && (
                         <span
-                          className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full border ${getStrengthScoreBadgeStyle(
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${getStrengthScoreBadgeStyle(
                             item.strength_score ?? item.strengthScore,
                           )}`}
                         >
@@ -498,20 +498,20 @@ export function GlobalVaultView({
                         </span>
                       )}
                     </div>
-                    <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[100px]">
+                    <span className="text-[11px] font-medium text-[#8C8379] dark:text-[#A89F95] truncate max-w-[100px]">
                       @{item.channelName || "Creator"}
                     </span>
                   </div>
 
-                  <h3 className="font-extrabold text-sm leading-snug text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-2">
+                  <h3 className="font-bold text-sm leading-snug text-[#1E1A17] dark:text-[#FAF8F5] line-clamp-2">
                     {item.title}
                   </h3>
 
                   {/* Embedded Insight Container */}
-                  <div className="bg-[#F7F4EF] dark:bg-[#25201C] rounded-xl p-3 border border-[#E3DCD3]/70 dark:border-[#3C3530]/70 space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-grotesk font-bold">
+                  <div className="bg-black/[0.025] dark:bg-white/[0.03] rounded-xl p-3 border border-black/[0.04] dark:border-white/[0.05] space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] font-medium">
                       <span className="text-[#1E1A17] dark:text-[#FAF8F5] flex items-center gap-1">
-                        <span className="text-[#FF5338]">TT</span>{" "}
+                        <span className="text-[#FF5338] font-bold">TT</span>{" "}
                         {item.insightLeft || "Pacing Test"}
                       </span>
                       <span
@@ -521,7 +521,7 @@ export function GlobalVaultView({
                       </span>
                     </div>
                     <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
-                      💡 <span className="font-medium">Note:</span> "
+                      💡 <span className="font-medium not-italic">Note:</span> "
                       {item.note || "Curated in research vault."}"
                     </div>
                   </div>
@@ -529,12 +529,12 @@ export function GlobalVaultView({
               </div>
 
               {/* Bottom Row */}
-              <div className="p-4 pt-1 border-t border-[#E3DCD3]/50 dark:border-[#3C3530]/50 flex items-center justify-between text-xs">
+              <div className="p-3.5 border-t border-black/[0.04] dark:border-white/[0.05] flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
                   <span
                     className={`w-2 h-2 rounded-full ${item.projectDot || "bg-[#FF5338]"}`}
                   />
-                  <span className="text-[11px] font-bold text-[#58524C] dark:text-[#A89F95] truncate max-w-[130px]">
+                  <span className="text-[11px] font-medium text-[#58524C] dark:text-[#A89F95] truncate max-w-[130px]">
                     {item.projectName || "Global Vault"}
                   </span>
                 </div>
@@ -543,7 +543,7 @@ export function GlobalVaultView({
                   <button
                     type="button"
                     onClick={() => onEditNote(item)}
-                    className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
+                    className="p-1 rounded text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white transition-colors cursor-pointer"
                     title="Edit Note"
                   >
                     📝
@@ -552,7 +552,7 @@ export function GlobalVaultView({
                     <button
                       type="button"
                       onClick={() => onRemoveItem(item)}
-                      className="p-1 rounded text-[#8C8379] hover:text-red-500"
+                      className="p-1 rounded text-[#8C8379] hover:text-red-500 transition-colors cursor-pointer"
                       title="Detach from project"
                     >
                       ✕
@@ -561,7 +561,7 @@ export function GlobalVaultView({
                   <button
                     type="button"
                     onClick={() => onToggleFavorite(item)}
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
                       item.projectContext?.favorite
                         ? "text-[#FF5338]"
                         : "text-[#8C8379] hover:text-[#FF5338]"
@@ -593,12 +593,12 @@ export function GlobalVaultView({
 
       {/* Empty State */}
       {filtered.length === 0 && (
-        <div className="py-16 text-center rounded-2xl border-2 border-dashed border-[#E3DCD3] dark:border-[#3C3530] p-8 space-y-3">
+        <div className="py-16 text-center rounded-3xl border border-dashed border-black/[0.08] dark:border-white/[0.08] bg-black/[0.01] dark:bg-white/[0.01] p-8 space-y-3">
           <div className="text-3xl">🔍</div>
           <h3 className="text-sm font-bold text-[#1E1A17] dark:text-[#FAF8F5]">
             No inspirations found
           </h3>
-          <p className="text-xs text-[#58524C] dark:text-[#A89F95] max-w-sm mx-auto">
+          <p className="text-xs text-[#8C8379] max-w-sm mx-auto">
             {searchQuery
               ? `No matches for "${searchQuery}" in your current filter.`
               : "Capture or add your first inspiration to populate this section."}
@@ -606,9 +606,10 @@ export function GlobalVaultView({
           <button
             type="button"
             onClick={onOpenAddModal}
-            className="px-4 py-2 rounded-full bg-[#FF5338] text-white text-xs font-bold tactile-btn shadow-sm"
+            className="h-9 px-4 rounded-full bg-[#FF5338] text-white text-xs font-semibold shadow-xs hover:bg-[#d93820] active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1.5"
           >
-            + Add Inspiration
+            <span>+</span>
+            <span>Add Inspiration</span>
           </button>
         </div>
       )}

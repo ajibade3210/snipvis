@@ -1,3 +1,4 @@
+import { SUBJECT_MODES } from "@/lib/thumbnail-prompt/schema";
 import { channelSchema } from "@/types/channel";
 import {
   aiHookBreakdownSchema,
@@ -391,11 +392,12 @@ export const updateCompetitorSchema = createCompetitorSchema
 export const fetchYoutubeChannelSchema = z.object({
   url: z.string().min(1, "YouTube URL or handle is required"),
 });
-
 export const generateThumbnailPromptSchema = z.object({
   topic: z.string().min(2, "Topic must be at least 2 characters").max(200),
   hook: z.string().max(2000).optional(),
   channelName: z.string().max(100).optional(),
+  subject: z.enum(SUBJECT_MODES).default("generic-character"),
+  channelFormula: z.string().trim().max(4000).optional(),
   style: z
     .enum([
       "cinematic",
@@ -405,4 +407,5 @@ export const generateThumbnailPromptSchema = z.object({
     ])
     .default("cinematic")
     .optional(),
+  optionIndex: z.number().int().min(1).max(3).optional(),
 });

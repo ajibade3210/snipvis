@@ -97,7 +97,7 @@ export type NavView =
 
 export type Theme = "light" | "dark";
 
-export type ApiProvider = "deepseek" | "openrouter";
+export type ApiProvider = "deepseek" | "openrouter" | "gemini";
 
 export type ButtonVariant = "default" | "ghost" | "outline" | "tactile";
 

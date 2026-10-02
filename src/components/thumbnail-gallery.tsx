@@ -146,23 +146,22 @@ export function ThumbnailGallery({
       />
 
       {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E3DCD3] dark:border-[#3C3530] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/[0.06] dark:border-white/[0.06] pb-5">
         <div>
-          <div className="flex items-center gap-3">
-            <h2 className="text-xl font-extrabold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
-              🖼️ Thumbnail Lab
-            </h2>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold font-grotesk bg-[#FFEBE7] text-[#b51d07] dark:bg-red-950/40 dark:text-red-300">
-              {thumbnails.length} Concept{thumbnails.length === 1 ? "" : "s"}
-            </span>
-          </div>
+          <h2 className="text-xl font-bold tracking-tight text-[#1C1815] dark:text-[#FBF9F5]">
+            Thumbnail Lab
+          </h2>
+          <p className="text-xs text-[#8C827A] dark:text-[#A89F97] mt-0.5">
+            Test packaging iterations, run AI prompts, and simulate YouTube
+            browse feeds.
+          </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setIsPromptModalOpen(true)}
-            className="h-10 px-3.5 rounded-full bg-[#FFD700]/10 hover:bg-[#FFD700]/20 text-[#B45309] dark:text-[#FFD700] text-xs font-bold flex items-center gap-1.5 border border-[#FFD700]/30 tactile-btn shadow-xs cursor-pointer"
+            className="h-9 px-3.5 rounded-full bg-amber-500/10 hover:bg-amber-500/15 text-amber-700 dark:text-amber-300 text-xs font-semibold flex items-center gap-1.5 border border-amber-500/20 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
           >
             <span>✨</span>
             <span>AI Prompt</span>
@@ -171,7 +170,7 @@ export function ThumbnailGallery({
           <button
             type="button"
             onClick={() => setIsSimulatorOpen(true)}
-            className="h-10 px-4 rounded-full bg-white dark:bg-[#25201C] hover:bg-[#F1EDE6] dark:hover:bg-[#322C28] text-[#1E1A17] dark:text-[#FAF8F5] text-xs font-bold flex items-center gap-1.5 border border-[#E3DCD3] dark:border-[#3C3530] tactile-btn shadow-xs cursor-pointer"
+            className="h-9 px-4 rounded-full bg-black/[0.03] dark:bg-white/[0.04] hover:bg-black/[0.06] dark:hover:bg-white/[0.07] text-[#1C1815] dark:text-[#FBF9F5] text-xs font-semibold flex items-center gap-1.5 border border-black/[0.08] dark:border-white/[0.1] shadow-xs transition-all active:scale-[0.98] cursor-pointer"
           >
             <span>⚡</span>
             <span>Simulate Feed</span>
@@ -181,7 +180,7 @@ export function ThumbnailGallery({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
-            className="h-10 px-5 rounded-full bg-[#FF5338] text-white text-xs font-bold flex items-center gap-1.5 tactile-btn shadow-sm hover:bg-[#d93820] disabled:opacity-50 cursor-pointer"
+            className="h-9 px-5 rounded-full bg-[#FF5338] text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm hover:bg-[#E0452C] transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
           >
             {isUploading ? (
               <>
@@ -208,7 +207,7 @@ export function ThumbnailGallery({
               </>
             ) : (
               <>
-                <span className="text-sm leading-none font-black">+</span>
+                <span className="text-sm leading-none font-bold">+</span>
                 <span>Upload Thumbnails</span>
               </>
             )}
@@ -219,10 +218,10 @@ export function ThumbnailGallery({
       {/* Status feedback */}
       {uploadFeedback && (
         <div
-          className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+          className={`p-3 rounded-2xl text-xs font-medium flex items-center gap-2 ${
             uploadFeedback.type === "success"
-              ? "bg-[#D1FAE5] text-[#065F46] dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-500/20"
-              : "bg-[#FEE2E2] text-[#991B1B] dark:bg-red-950/40 dark:text-red-300 border border-red-500/20"
+              ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20"
+              : "bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20"
           }`}
         >
           <span>{uploadFeedback.type === "success" ? "✓" : "⚠️"}</span>
@@ -232,31 +231,23 @@ export function ThumbnailGallery({
 
       {/* Hero Main Thumbnail Display */}
       {mainThumbnail ? (
-        <div className="bg-white dark:bg-[#1E1A17] rounded-3xl border border-[#E3DCD3] dark:border-[#3C3530] p-6 shadow-sm space-y-4">
+        <div className="bg-white dark:bg-[#1E1A17] rounded-3xl border border-black/[0.06] dark:border-white/[0.08] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FF5338] animate-pulse" />
-              <span className="text-xs font-extrabold uppercase tracking-wider text-[#1E1A17] dark:text-[#FAF8F5]">
+              <span className="w-2 h-2 rounded-full bg-[#FF5338]" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[#1C1815] dark:text-[#FBF9F5]">
                 Primary Active Thumbnail
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIsSimulatorOpen(true)}
-                className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#FF5338]/10 text-[#FF5338] hover:bg-[#FF5338] hover:text-white border border-[#FF5338]/30 flex items-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <span>⚡</span>
-                <span>Test in Feed</span>
-              </button>
-              <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#FFD700]/20 text-[#B45309] dark:text-[#FCD34D] border border-[#F59E0B]/30 flex items-center gap-1.5">
+              <span className="px-3 py-1 rounded-full text-xs font-medium bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/20 flex items-center gap-1.5">
                 <span>★</span>
-                <span>Currently Featured on Video Card</span>
+                <span>Featured</span>
               </span>
             </div>
           </div>
 
-          <div className="relative aspect-video max-w-3xl mx-auto rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 shadow-lg group">
+          <div className="relative aspect-video max-w-3xl mx-auto rounded-2xl overflow-hidden border border-black/[0.08] dark:border-white/[0.1] shadow-md group">
             <img
               src={mainThumbnail.url}
               alt={mainThumbnail.label || projectName}
@@ -273,15 +264,15 @@ export function ThumbnailGallery({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-full border-2 border-dashed border-[#E3DCD3] dark:border-[#3C3530] rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#FF5338] hover:bg-[#FFEBE7]/20 dark:hover:bg-red-950/10 transition-all group"
+          className="w-full border-2 border-dashed border-black/[0.08] dark:border-white/[0.1] rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#FF5338]/50 hover:bg-[#FFEBE7]/15 dark:hover:bg-red-950/10 transition-all group"
         >
-          <div className="w-14 h-14 rounded-2xl bg-[#F1EDE6] dark:bg-[#2A2521] text-[#FF5338] flex items-center justify-center text-2xl group-hover:scale-110 transition-transform mb-3">
+          <div className="w-14 h-14 rounded-2xl bg-black/[0.03] dark:bg-white/[0.04] text-[#FF5338] flex items-center justify-center text-2xl group-hover:scale-105 transition-transform mb-3">
             🖼️
           </div>
-          <h3 className="font-extrabold text-sm text-[#1E1A17] dark:text-[#FAF8F5]">
+          <h3 className="font-semibold text-sm text-[#1C1815] dark:text-[#FBF9F5]">
             No Thumbnails Uploaded Yet
           </h3>
-          <p className="text-xs text-[#8C8379] mt-1 max-w-sm">
+          <p className="text-xs text-[#8C827A] dark:text-[#A89F97] mt-1 max-w-sm">
             Click here or use the button above to upload one or more 16:9
             thumbnail iterations for "{projectName}".
           </p>
@@ -292,10 +283,10 @@ export function ThumbnailGallery({
       {thumbnails.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-extrabold text-[#1E1A17] dark:text-[#FAF8F5]">
+            <h3 className="text-sm font-semibold text-[#1C1815] dark:text-[#FBF9F5]">
               All Thumbnail Variations ({thumbnails.length})
             </h3>
-            <span className="text-xs text-[#8C8379]">
+            <span className="text-xs text-[#8C827A] dark:text-[#A89F97]">
               Click "Set as Main" on any concept to switch the project's hero
               cover
             </span>
@@ -309,8 +300,8 @@ export function ThumbnailGallery({
                   key={thumb.id}
                   className={`bg-white dark:bg-[#1E1A17] rounded-2xl border transition-all overflow-hidden flex flex-col justify-between ${
                     isCurrentMain
-                      ? "border-[#FF5338] shadow-md ring-2 ring-[#FF5338]/20"
-                      : "border-[#E3DCD3] dark:border-[#3C3530] hover:border-[#8C8379]"
+                      ? "border-[#FF5338] shadow-sm ring-1 ring-[#FF5338]/30"
+                      : "border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
                   }`}
                 >
                   <div className="relative aspect-video w-full overflow-hidden bg-black/5 dark:bg-white/5">
@@ -320,17 +311,17 @@ export function ThumbnailGallery({
                       className="w-full h-full object-cover"
                     />
                     {isCurrentMain && (
-                      <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#FF5338] text-white shadow-xs">
+                      <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FF5338] text-white shadow-xs">
                         ★ Main
                       </span>
                     )}
-                    <span className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-black/80 text-white backdrop-blur-xs">
+                    <span className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-black/80 text-white">
                       #{index + 1}
                     </span>
                   </div>
 
-                  <div className="p-3.5 flex items-center justify-between gap-2 border-t border-[#E3DCD3]/60 dark:border-[#3C3530]/60">
-                    <span className="text-xs font-bold text-[#1E1A17] dark:text-[#FAF8F5] truncate">
+                  <div className="p-3.5 flex items-center justify-between gap-2 border-t border-black/[0.04] dark:border-white/[0.05]">
+                    <span className="text-xs font-medium text-[#1C1815] dark:text-[#FBF9F5] truncate">
                       {thumb.label || `Concept ${index + 1}`}
                     </span>
 
@@ -340,7 +331,7 @@ export function ThumbnailGallery({
                           type="button"
                           onClick={() => handleSetMain(thumb.id)}
                           disabled={setMainMutation.isPending}
-                          className="px-2.5 py-1 rounded-lg bg-[#F1EDE6] dark:bg-[#2A2521] hover:bg-[#FF5338] hover:text-white text-[11px] font-bold text-[#1E1A17] dark:text-white transition-colors cursor-pointer"
+                          className="px-2.5 py-1 rounded-full bg-black/[0.04] dark:bg-white/[0.06] hover:bg-[#FF5338] hover:text-white text-[11px] font-medium text-[#1C1815] dark:text-white transition-colors cursor-pointer"
                         >
                           Set Main
                         </button>
@@ -351,7 +342,7 @@ export function ThumbnailGallery({
                         onClick={() => handleDelete(thumb.id)}
                         disabled={deleteThumbnailMutation.isPending}
                         title="Delete Thumbnail"
-                        className="p-1 rounded-lg text-[#8C8379] hover:text-[#DC2626] hover:bg-red-500/10 transition-colors cursor-pointer"
+                        className="p-1 rounded-lg text-[#8C827A] hover:text-[#DC2626] hover:bg-red-500/10 transition-colors cursor-pointer"
                       >
                         <svg
                           className="w-4 h-4"

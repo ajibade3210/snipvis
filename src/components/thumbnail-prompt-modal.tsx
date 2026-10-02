@@ -1,7 +1,16 @@
 "use client";
 
+import { ThumbnailPromptConceptCard } from "@/components/thumbnail-prompt-concept-card";
+import { ConceptSkeletonLoader } from "@/components/ui/concept-skeleton-loader";
+import {
+  DEFAULT_THUMBNAIL_CONCEPT_OPTION,
+  THUMBNAIL_CONCEPT_OPTIONS,
+} from "@/constants/thumbnail-options";
 import { useGenerateThumbnailPrompt } from "@/hooks/use-thumbnail-prompt";
-import type { ThumbnailPromptConcept } from "@/types/thumbnail-prompt";
+import type {
+  SubjectMode,
+  ThumbnailPromptConcept,
+} from "@/types/thumbnail-prompt";
 import { useEffect, useState } from "react";
 
 interface ThumbnailPromptModalProps {
@@ -20,21 +29,32 @@ export function ThumbnailPromptModal({
   channelName,
 }: ThumbnailPromptModalProps) {
   const [topic, setTopic] = useState(initialTopic);
+  const [subject, setSubject] = useState<SubjectMode>("generic-character");
+  const [channelFormula, setChannelFormula] = useState("");
+  const [showFormulaInput, setShowFormulaInput] = useState(false);
   const [style, setStyle] = useState<
     "cinematic" | "hyper_realistic" | "illustrative_3d" | "minimalist_bold"
   >("cinematic");
-  const [concepts, setConcepts] = useState<ThumbnailPromptConcept[]>([]);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedOption, setSelectedOption] = useState<number>(1);
+  const [conceptsByOption, setConceptsByOption] = useState<
+    Record<number, ThumbnailPromptConcept>
+  >({});
+  const [isEditingSettings, setIsEditingSettings] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const generateMutation = useGenerateThumbnailPrompt();
 
   useEffect(() => {
     if (isOpen) {
       setTopic(initialTopic);
+      setErrorMessage(null);
+      setIsEditingSettings(false);
+      setConceptsByOption({});
+      setSelectedOption(1);
     }
   }, [isOpen, initialTopic]);
 
-  // Escape key handler
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -46,25 +66,51 @@ export function ThumbnailPromptModal({
 
   if (!isOpen) return null;
 
-  const handleGenerate = async () => {
+  const currentOptionMeta =
+    THUMBNAIL_CONCEPT_OPTIONS.find((opt) => opt.id === selectedOption) ||
+    DEFAULT_THUMBNAIL_CONCEPT_OPTION;
+
+  const activeConcept = conceptsByOption[selectedOption];
+  const hasAnyConcept = Object.keys(conceptsByOption).length > 0;
+  const isFormVisible = !hasAnyConcept || isEditingSettings;
+
+  const handleGenerate = async (targetOptionId?: number) => {
     if (!topic.trim()) return;
+    const optionToRun = targetOptionId ?? selectedOption;
+    setErrorMessage(null);
     try {
       const result = await generateMutation.mutateAsync({
         topic: topic.trim(),
         hook: hook || undefined,
         channelName: channelName || undefined,
+        subject,
+        channelFormula: channelFormula.trim() || undefined,
         style,
+        optionIndex: optionToRun,
       });
-      setConcepts(result.concepts);
-    } catch (err) {
-      console.error("Failed to generate prompt:", err);
+
+      const concept = result.concept || result.concepts?.[0];
+      if (concept) {
+        setConceptsByOption((prev) => ({
+          ...prev,
+          [optionToRun]: concept,
+        }));
+      }
+      setSelectedOption(optionToRun);
+      setIsEditingSettings(false);
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Failed to generate thumbnail concept";
+      setErrorMessage(msg);
     }
   };
 
-  const handleCopy = (text: string, id: string) => {
+  const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2500);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 2500);
   };
 
   return (
@@ -77,204 +123,278 @@ export function ThumbnailPromptModal({
       onKeyDown={(e) => {
         if (e.key === "Escape") onClose();
       }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-xs m-0 h-full w-full max-w-none border-0"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/35 m-0 h-full w-full max-w-none border-0"
     >
-      <div className="bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3] dark:border-[#3C3530] text-[#1E1A17] dark:text-[#FAF8F5] rounded-2xl w-full max-w-3xl max-h-[88vh] flex flex-col shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3DCD3] dark:border-[#2D2824] bg-white dark:bg-[#1E1A17]">
+      <div className="bg-[#FCFAF7] dark:bg-[#1C1815] border border-black/[0.08] dark:border-white/[0.08] text-[#1E1A17] dark:text-[#FAF8F5] rounded-3xl w-full max-w-2xl max-h-[88vh] flex flex-col shadow-2xl shadow-black/25 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Apple-Style Deferential Header */}
+        <div className="flex items-center justify-between px-6 sm:px-7 pt-5 pb-3 border-b border-black/[0.04] dark:border-white/[0.05]">
           <div>
             <h2 className="text-base font-semibold tracking-tight text-[#1E1A17] dark:text-white">
               Thumbnail Prompt Generator
             </h2>
-            <p className="text-xs text-[#58524C] dark:text-[#A89F95] mt-0.5">
-              Generate image prompts with high contrast and empty duration
-              corners.
+            <p className="text-xs text-[#8C8379] dark:text-[#A89F95] mt-0.5">
+              Select an angle to generate a targeted concept.
             </p>
           </div>
-
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-white hover:bg-[#F1EDE6] dark:hover:bg-[#2A2521] flex items-center justify-center transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center transition-colors cursor-pointer"
             aria-label="Close"
           >
             ✕
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-6 space-y-5 overflow-y-auto flex-1">
-          {/* Controls */}
-          <div className="space-y-3 bg-white dark:bg-[#201C18] p-4 rounded-xl border border-[#E3DCD3] dark:border-[#2D2824]">
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-              <div className="sm:col-span-8 space-y-1.5">
+        {/* Modal Body with Fixed Height Stability */}
+        <div className="p-6 sm:p-7 space-y-5 overflow-y-auto flex-1 min-h-[440px]">
+          {/* Segmented Pill Control (Options 1, 2, 3) */}
+          <div className="flex items-center gap-1 p-1 bg-black/[0.04] dark:bg-white/[0.05] rounded-2xl">
+            {THUMBNAIL_CONCEPT_OPTIONS.map((opt) => {
+              const isSelected = selectedOption === opt.id;
+              const isGenerated = Boolean(conceptsByOption[opt.id]);
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  disabled={generateMutation.isPending}
+                  onClick={() => setSelectedOption(opt.id)}
+                  className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center justify-center gap-1.5 truncate ${
+                    isSelected
+                      ? "bg-white dark:bg-[#2A2420] text-[#1E1A17] dark:text-white shadow-xs"
+                      : "text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
+                  }`}
+                >
+                  <span className="opacity-60">{opt.id}.</span>
+                  <span className="truncate">{opt.name}</span>
+                  {isGenerated ? (
+                    <span
+                      className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"
+                      title="Generated"
+                    />
+                  ) : (
+                    <span
+                      className="w-1.5 h-1.5 rounded-full border border-black/20 dark:border-white/20 shrink-0"
+                      title="Not yet generated"
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Collapsed Setup Summary (when concepts exist and not editing) */}
+          {hasAnyConcept && !isEditingSettings && (
+            <div className="flex items-center justify-between py-1 px-1 text-xs text-[#8C8379]">
+              <div className="truncate flex-1 pr-3">
+                <span className="font-medium text-[#1E1A17] dark:text-white">
+                  {topic}
+                </span>
+                <span className="mx-1.5">•</span>
+                <span>
+                  {subject} · {style}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditingSettings(true)}
+                className="text-xs font-medium text-[#FF5338] hover:underline cursor-pointer shrink-0"
+              >
+                Edit Setup
+              </button>
+            </div>
+          )}
+
+          {/* Full Setup Form (when no concepts or user clicks Edit Setup) */}
+          {isFormVisible && (
+            <div className="space-y-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] p-5">
+              <div className="space-y-1.5">
                 <label
                   htmlFor="topic-prompt-input"
                   className="text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
                 >
-                  Video Topic
+                  Video Topic / Title Premise
                 </label>
                 <input
                   id="topic-prompt-input"
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  placeholder="Enter your video topic or title premise..."
-                  className="w-full h-9 px-3 rounded-lg bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3] dark:border-[#3C3530] focus:border-[#FF5338] text-xs text-[#1E1A17] dark:text-white outline-none"
+                  placeholder="Enter your video topic premise..."
+                  className="w-full h-10 px-3.5 rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-xs text-[#1E1A17] dark:text-white outline-none"
                 />
               </div>
 
-              <div className="sm:col-span-4 space-y-1.5">
-                <label
-                  htmlFor="style-prompt-select"
-                  className="text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="subject-prompt-select"
+                    className="text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+                  >
+                    Subject Mode
+                  </label>
+                  <select
+                    id="subject-prompt-select"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value as SubjectMode)}
+                    className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-xs text-[#1E1A17] dark:text-white outline-none cursor-pointer"
+                  >
+                    <option value="generic-character">Generic Character</option>
+                    <option value="reference-face">
+                      Reference Face (Creator)
+                    </option>
+                    <option value="no-face">
+                      No Face (Hero Object / Scene)
+                    </option>
+                  </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="style-prompt-select"
+                    className="text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+                  >
+                    Visual Style
+                  </label>
+                  <select
+                    id="style-prompt-select"
+                    value={style}
+                    onChange={(e) =>
+                      setStyle(
+                        e.target.value as
+                          | "cinematic"
+                          | "hyper_realistic"
+                          | "illustrative_3d"
+                          | "minimalist_bold",
+                      )
+                    }
+                    className="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] text-xs text-[#1E1A17] dark:text-white outline-none cursor-pointer"
+                  >
+                    <option value="cinematic">Cinematic</option>
+                    <option value="hyper_realistic">Macro Photography</option>
+                    <option value="illustrative_3d">3D Render</option>
+                    <option value="minimalist_bold">Minimalist Bold</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Optional Formula */}
+              {!showFormulaInput && !channelFormula ? (
+                <button
+                  type="button"
+                  onClick={() => setShowFormulaInput(true)}
+                  className="text-xs font-medium text-[#FF5338] hover:underline cursor-pointer"
                 >
-                  Style
-                </label>
-                <select
-                  id="style-prompt-select"
-                  value={style}
-                  onChange={(e) =>
-                    setStyle(
-                      e.target.value as
-                        | "cinematic"
-                        | "hyper_realistic"
-                        | "illustrative_3d"
-                        | "minimalist_bold",
-                    )
-                  }
-                  className="w-full h-9 px-3 rounded-lg bg-[#FAF8F5] dark:bg-[#1A1613] border border-[#E3DCD3] dark:border-[#3C3530] text-xs text-[#1E1A17] dark:text-white outline-none cursor-pointer"
+                  + Add Channel Formula / Design Cues (Optional)
+                </button>
+              ) : (
+                <div className="space-y-1.5 pt-1">
+                  <div className="flex justify-between items-center">
+                    <label
+                      htmlFor="formula-prompt-input"
+                      className="text-xs font-medium text-[#58524C] dark:text-[#A89F95]"
+                    >
+                      Channel Formula (Optional)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowFormulaInput(false);
+                        setChannelFormula("");
+                      }}
+                      className="text-[11px] text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <textarea
+                    id="formula-prompt-input"
+                    rows={2}
+                    value={channelFormula}
+                    onChange={(e) => setChannelFormula(e.target.value)}
+                    placeholder="e.g., Ali Abdaal bright chiaroscuro..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-[#201C18] border border-black/[0.08] dark:border-white/[0.08] focus:border-[#FF5338] text-xs text-[#1E1A17] dark:text-white outline-none resize-none"
+                  />
+                </div>
+              )}
+
+              <div className="flex justify-end items-center gap-2 pt-1">
+                {hasAnyConcept && (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingSettings(false)}
+                    className="h-9 px-4 rounded-full text-xs font-medium text-[#8C8379] hover:text-[#1E1A17] dark:hover:text-white transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleGenerate(selectedOption)}
+                  disabled={generateMutation.isPending || !topic.trim()}
+                  className="h-9 px-5 rounded-full bg-[#FF5338] hover:bg-[#E0452C] disabled:opacity-50 text-white text-xs font-semibold transition-colors cursor-pointer shadow-xs"
                 >
-                  <option value="cinematic">Cinematic</option>
-                  <option value="hyper_realistic">Macro Photography</option>
-                  <option value="illustrative_3d">3D Render</option>
-                  <option value="minimalist_bold">Minimalist Bold</option>
-                </select>
+                  {generateMutation.isPending
+                    ? "Generating..."
+                    : `Generate Option ${selectedOption}`}
+                </button>
               </div>
             </div>
+          )}
 
-            <div className="flex justify-end pt-1">
-              <button
-                type="button"
-                onClick={handleGenerate}
-                disabled={generateMutation.isPending || !topic.trim()}
-                className="h-9 px-4 rounded-lg bg-[#FF5338] hover:bg-[#E0452C] disabled:opacity-50 text-white text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                {generateMutation.isPending ? (
-                  <>
-                    <svg
-                      className="animate-spin h-3.5 w-3.5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v8H4z"
-                      />
-                    </svg>
-                    <span>Generating...</span>
-                  </>
-                ) : (
-                  <span>Generate Prompts</span>
-                )}
-              </button>
+          {/* Error Banner */}
+          {errorMessage && (
+            <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs flex items-start gap-2.5">
+              <span className="font-semibold">Error:</span>
+              <p className="flex-1 leading-relaxed">{errorMessage}</p>
             </div>
-          </div>
+          )}
 
-          {/* Generated Prompts List */}
-          {concepts.length > 0 ? (
+          {/* Content Body: Loader vs Concept Card vs Empty Slot */}
+          {generateMutation.isPending ? (
+            <ConceptSkeletonLoader
+              message={`Engineering Option ${selectedOption}: ${currentOptionMeta.name}...`}
+              submessage="Calibrating chiaroscuro lighting and complementary overlay"
+            />
+          ) : activeConcept ? (
             <div className="space-y-4">
-              {concepts.map((concept, index) => {
-                const promptText = concept.prompt.includes("--ar 16:9")
-                  ? concept.prompt
-                  : `${concept.prompt} --ar 16:9`;
-                const isCopied = copiedId === `concept-${concept.id || index}`;
-
-                return (
-                  <div
-                    key={concept.id || `concept-${index}`}
-                    className="p-4 rounded-xl bg-white dark:bg-[#201C18] border border-[#E3DCD3] dark:border-[#2D2824] space-y-3"
-                  >
-                    {/* Header */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-[#8C8379]">
-                          {index + 1}.
-                        </span>
-                        <h4 className="text-sm font-semibold text-[#1E1A17] dark:text-white">
-                          {concept.conceptName}
-                        </h4>
-                      </div>
-                      {concept.psychologicalAngle && (
-                        <span className="text-[11px] text-[#8C8379] dark:text-[#A89F95]">
-                          {concept.psychologicalAngle}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Thumbnail Copy & Idea */}
-                    <div className="text-xs space-y-1 text-[#58524C] dark:text-[#C5BCB2]">
-                      {concept.thumbnailCopy && (
-                        <p>
-                          <span className="font-semibold text-[#1E1A17] dark:text-white">
-                            Thumbnail Text:{" "}
-                          </span>
-                          <span className="font-bold text-[#FF5338]">
-                            "{concept.thumbnailCopy}"
-                          </span>
-                        </p>
-                      )}
-                      {concept.visualAnalogy && (
-                        <p>
-                          <span className="font-semibold text-[#1E1A17] dark:text-white">
-                            Concept:{" "}
-                          </span>
-                          <span>{concept.visualAnalogy}</span>
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Prompt Box */}
-                    <div className="p-3 rounded-lg bg-[#FAF8F5] dark:bg-[#14110F] border border-[#E3DCD3] dark:border-[#26211C] font-mono text-xs text-[#1E1A17] dark:text-[#E6E1DC] leading-relaxed select-all">
-                      {promptText}
-                    </div>
-
-                    {/* Action Footer: Single Copy Button */}
-                    <div className="flex justify-end pt-1">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleCopy(
-                            promptText,
-                            `concept-${concept.id || index}`,
-                          )
-                        }
-                        className="h-8 px-3 rounded-lg bg-[#1E1A17] dark:bg-[#FAF8F5] hover:bg-[#332C26] dark:hover:bg-white text-white dark:text-[#1E1A17] text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5"
-                      >
-                        <span>{isCopied ? "✓ Copied" : "Copy"}</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+              <ThumbnailPromptConceptCard
+                concept={activeConcept}
+                copiedKey={copiedKey}
+                onCopy={handleCopy}
+              />
+              <div className="flex justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => handleGenerate(selectedOption)}
+                  className="text-xs font-medium text-[#8C8379] hover:text-[#FF5338] transition-colors cursor-pointer"
+                >
+                  Regenerate Option {selectedOption}
+                </button>
+              </div>
             </div>
           ) : (
-            <div className="text-center py-12 border border-dashed border-[#E3DCD3] dark:border-[#2D2824] rounded-xl p-6 text-[#8C8379]">
-              <p className="text-xs font-medium text-[#1E1A17] dark:text-white">
-                Ready to generate prompts
-              </p>
-              <p className="text-[11px] mt-1 text-[#58524C] dark:text-[#8C8379]">
-                Enter a topic above and click "Generate Prompts".
-              </p>
+            <div className="rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] p-8 text-center space-y-4 flex flex-col items-center justify-center min-h-[300px]">
+              <div className="max-w-md space-y-2">
+                <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#FF5338]/10 text-[#FF5338] text-[11px] font-medium tracking-wide">
+                  Option {currentOptionMeta.id}: {currentOptionMeta.name}
+                </span>
+                <p className="text-sm font-medium text-[#1E1A17] dark:text-[#E8E2DC]">
+                  {currentOptionMeta.description}
+                </p>
+                <p className="text-xs text-[#8C8379] leading-relaxed">
+                  Angle Focus: {currentOptionMeta.exampleAngle}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handleGenerate(selectedOption)}
+                disabled={!topic.trim()}
+                className="h-10 px-6 rounded-full bg-[#FF5338] hover:bg-[#E0452C] disabled:opacity-50 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+              >
+                Generate {currentOptionMeta.name} Concept
+              </button>
             </div>
           )}
         </div>
