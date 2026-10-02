@@ -304,7 +304,7 @@ export function ProjectWorkspaceView({
                   : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
-              💡 Inspirations ({inspirations.length})
+              Inspirations ({inspirations.length})
             </button>
             <button
               type="button"
@@ -315,7 +315,7 @@ export function ProjectWorkspaceView({
                   : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
-              🖼️ Thumbnails ({thumbnailCount})
+              Thumbnails ({thumbnailCount})
             </button>
             <button
               type="button"
@@ -326,7 +326,7 @@ export function ProjectWorkspaceView({
                   : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
-              📋 Creative Brief
+              Creative Brief
             </button>
             <button
               type="button"
@@ -337,7 +337,7 @@ export function ProjectWorkspaceView({
                   : "text-[#58524C] dark:text-[#A89F95] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5]"
               }`}
             >
-              📎 Assets ({currentProject._count?.assets ?? 0})
+              Assets ({currentProject._count?.assets ?? 0})
             </button>
           </div>
         </div>
@@ -447,7 +447,7 @@ export function ProjectWorkspaceView({
             {currentProject.hook && (
               <div className="mb-10 p-5 rounded-xl bg-[#FFEBE7]/60 dark:bg-red-950/20 border border-[#FF5338]/20">
                 <p className="text-[10px] font-black uppercase tracking-widest text-[#FF5338] mb-2">
-                  🎣 Opening Hook
+                  Opening Hook
                 </p>
                 <p className="text-sm leading-relaxed text-[#1E1A17] dark:text-[#FAF8F5] whitespace-pre-wrap font-medium">
                   {currentProject.hook}

@@ -235,11 +235,11 @@ export function AssetsView({
                           }
                           className="w-full text-xs font-bold rounded p-1 bg-white dark:bg-[#2A2521] border border-[#E3DCD3] dark:border-[#3C3530]"
                         >
-                          <option value="VIDEO">🎬 Video</option>
-                          <option value="AUDIO">🎵 Audio</option>
-                          <option value="IMAGE">🖼️ Image</option>
-                          <option value="FONT">🔤 Font</option>
-                          <option value="OTHER">📎 Other</option>
+                          <option value="VIDEO">Video</option>
+                          <option value="AUDIO">Audio</option>
+                          <option value="IMAGE">Image</option>
+                          <option value="FONT">Font</option>
+                          <option value="OTHER">Other</option>
                         </select>
                       </td>
                       <td className="py-1.5 px-2 border-r border-[#E3DCD3] dark:border-[#3C3530]">
@@ -331,11 +331,11 @@ export function AssetsView({
                     {/* Type Badge */}
                     <td className="py-2.5 px-3 border-r border-[#E3DCD3] dark:border-[#3C3530] whitespace-nowrap">
                       <span className="inline-flex items-center gap-1 font-bold text-xs text-[#1E1A17] dark:text-[#FAF8F5]">
-                        {asset.type === "VIDEO" && "🎬 Video"}
-                        {asset.type === "AUDIO" && "🎵 Audio"}
-                        {asset.type === "IMAGE" && "🖼️ Image"}
-                        {asset.type === "FONT" && "🔤 Font"}
-                        {asset.type === "OTHER" && "📎 Asset"}
+                        {asset.type === "VIDEO" && "Video"}
+                        {asset.type === "AUDIO" && "Audio"}
+                        {asset.type === "IMAGE" && "Image"}
+                        {asset.type === "FONT" && "Font"}
+                        {asset.type === "OTHER" && "Asset"}
                       </span>
                     </td>
 
@@ -418,11 +418,11 @@ export function AssetsView({
                       }
                       className="w-full text-xs font-bold rounded p-1 bg-white dark:bg-[#2A2521] border border-[#059669]"
                     >
-                      <option value="VIDEO">🎬 Video</option>
-                      <option value="AUDIO">🎵 Audio</option>
-                      <option value="IMAGE">🖼️ Image</option>
-                      <option value="FONT">🔤 Font</option>
-                      <option value="OTHER">📎 Other</option>
+                      <option value="VIDEO">Video</option>
+                      <option value="AUDIO">Audio</option>
+                      <option value="IMAGE">Image</option>
+                      <option value="FONT">Font</option>
+                      <option value="OTHER">Other</option>
                     </select>
                   </td>
                   <td className="py-1.5 px-2 border-r border-[#E3DCD3] dark:border-[#3C3530]">

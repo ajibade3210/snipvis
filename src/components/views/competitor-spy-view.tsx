@@ -365,7 +365,7 @@ function AddCompetitorForm({
             >
               {showCalculator
                 ? "Hide Calculator"
-                : "⚡ Calculate from Upload Dates"}
+                : "Calculate from Upload Dates"}
             </button>
           </div>
 
@@ -747,7 +747,7 @@ export function CompetitorSpyView() {
         <button
           type="button"
           onClick={() => setShowAddForm((v) => !v)}
-          className="h-8 sm:h-9 px-3 sm:px-4 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+          className="h-8 w-8 sm:w-auto sm:px-4 rounded-full text-xs font-semibold flex items-center justify-center sm:gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
           title={showAddForm ? "Cancel" : "Track Channel"}
           aria-label={showAddForm ? "Cancel" : "Track Channel"}
         >

@@ -359,7 +359,7 @@ export function AnalyzeHookModal({
                 >
                   <div className="space-y-3 max-w-sm mx-auto">
                     <div className="w-12 h-12 rounded-full bg-[#FF5338]/10 text-[#FF5338] flex items-center justify-center mx-auto text-xl">
-                      🖼️
+                      🖼️Xx
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-[#1E1A17] dark:text-[#FAF8F5]">
@@ -434,7 +434,7 @@ export function AnalyzeHookModal({
                   <span
                     className={`font-medium px-2.5 py-0.5 rounded-full text-[11px] ${emotionStyle.bg} ${emotionStyle.text}`}
                   >
-                    ⚡ {analysisResult.triggered_emotion}
+                    {analysisResult.triggered_emotion}
                   </span>
                   <span className="font-medium px-2.5 py-0.5 rounded-full text-[11px] bg-black/5 dark:bg-white/10 text-[#58524C] dark:text-[#C5BCB2]">
                     🎯{" "}

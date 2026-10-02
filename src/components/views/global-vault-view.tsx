@@ -94,8 +94,8 @@ export function GlobalVaultView({
     <div className="space-y-6">
       {/* View Header & Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-4 sm:pb-5">
-        <div>
-          <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className="flex items-center justify-between sm:justify-start gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#1E1A17] dark:text-[#FAF8F5]">
               Inspo Vault
             </h1>
@@ -103,6 +103,19 @@ export function GlobalVaultView({
               {filtered.length} Inspirations
             </span>
           </div>
+
+          <button
+            type="button"
+            onClick={onOpenAddModal}
+            className="h-8 w-8 sm:w-auto sm:px-3 rounded-full bg-[#FF5338] text-white text-xs font-semibold flex items-center justify-center sm:gap-1.5 shadow-xs hover:bg-[#d93820] active:scale-95 transition-all cursor-pointer shrink-0"
+            title="Add Inspiration"
+            aria-label="Add Inspiration"
+          >
+            <span className="text-base sm:text-xs leading-none font-bold">
+              +
+            </span>
+            <span className="hidden sm:inline">Add Inspo</span>
+          </button>
         </div>
 
         {/* View Switcher & Sort */}
@@ -167,10 +180,10 @@ export function GlobalVaultView({
           {(
             [
               { id: "ALL", label: "All Items", count: inspirations.length },
-              { id: "THUMBNAIL", label: "🖼️ Thumbnails", count: thumbnailCount },
-              { id: "TITLE", label: "🏷️ Titles", count: titleCount },
-              { id: "HOOK", label: "🎣 Hooks", count: hookCount },
-              { id: "OUTLIER", label: "🚀 Outliers (>10x Avg)" },
+              { id: "THUMBNAIL", label: "Thumbnails", count: thumbnailCount },
+              { id: "TITLE", label: "Titles", count: titleCount },
+              { id: "HOOK", label: "Hooks", count: hookCount },
+              { id: "OUTLIER", label: "Outliers (>10x Avg)" },
             ] as const
           ).map((f) => (
             <button
@@ -264,7 +277,7 @@ export function GlobalVaultView({
                       </span>
                     </div>
                     <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
-                      💡 <span className="font-medium not-italic">Note:</span> "
+                      <span className="font-medium not-italic">Note:</span> "
                       {item.note || "Curated in research vault."}"
                     </div>
                   </div>
@@ -521,7 +534,7 @@ export function GlobalVaultView({
                       </span>
                     </div>
                     <div className="text-[11px] text-[#58524C] dark:text-[#A89F95] italic leading-relaxed line-clamp-2">
-                      💡 <span className="font-medium not-italic">Note:</span> "
+                      <span className="font-medium not-italic">Note:</span> "
                       {item.note || "Curated in research vault."}"
                     </div>
                   </div>

@@ -24,8 +24,6 @@ interface SidebarProps {
   onSelectProject: (id: string | null) => void;
   onOpenNewProject: () => void;
   onAnalyzeUrl?: () => void;
-  isMobileOpen?: boolean;
-  onCloseMobile?: () => void;
 }
 
 export function Sidebar({
@@ -37,8 +35,6 @@ export function Sidebar({
   onSelectProject,
   onOpenNewProject,
   onAnalyzeUrl,
-  isMobileOpen = false,
-  onCloseMobile,
 }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { data: channels = [] } = useChannels();
@@ -76,17 +72,6 @@ export function Sidebar({
     }
   }, []);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (isMobileOpen) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-  }, [isMobileOpen]);
-
   const toggleCollapse = () => {
     setIsCollapsed((prev) => {
       const next = !prev;
@@ -97,26 +82,11 @@ export function Sidebar({
     });
   };
 
-  const renderSidebarContent = (collapsed: boolean, isMobile: boolean) => {
-    const handleNav = (nav: NavView) => {
-      onSelectNav(nav);
-      if (isMobile) onCloseMobile?.();
-    };
-
-    const handleProject = (id: string | null) => {
-      onSelectProject(id);
-      if (isMobile) onCloseMobile?.();
-    };
-
-    const handleNewProject = () => {
-      onOpenNewProject();
-      if (isMobile) onCloseMobile?.();
-    };
-
-    const handleAnalyze = () => {
-      onAnalyzeUrl?.();
-      if (isMobile) onCloseMobile?.();
-    };
+  const renderSidebarContent = (collapsed: boolean) => {
+    const handleNav = (nav: NavView) => onSelectNav(nav);
+    const handleProject = (id: string | null) => onSelectProject(id);
+    const handleNewProject = () => onOpenNewProject();
+    const handleAnalyze = () => onAnalyzeUrl?.();
 
     return (
       <>
@@ -174,50 +144,27 @@ export function Sidebar({
                 </div>
               </div>
             </div>
-            {isMobile ? (
-              <button
-                type="button"
-                onClick={onCloseMobile}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-[#8C8379] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
-                title="Close Navigation"
-                aria-label="Close Navigation"
+            <button
+              type="button"
+              onClick={toggleCollapse}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[#8C8379] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
+              title="Minimize Sidebar"
+              aria-label="Minimize Sidebar"
+            >
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={toggleCollapse}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-[#8C8379] hover:bg-black/[0.04] dark:hover:bg-white/[0.05] hover:text-[#1E1A17] dark:hover:text-[#FAF8F5] transition-colors cursor-pointer"
-                title="Minimize Sidebar"
-                aria-label="Minimize Sidebar"
-              >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect width="18" height="18" x="3" y="3" rx="2" />
-                  <path d="M9 3v18" />
-                  <path d="m14 9-3 3 3 3" />
-                </svg>
-              </button>
-            )}
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M9 3v18" />
+                <path d="m14 9-3 3 3 3" />
+              </svg>
+            </button>
           </div>
         )}
 
@@ -645,30 +592,12 @@ export function Sidebar({
   };
 
   return (
-    <>
-      {/* Desktop Sidebar */}
-      <aside
-        className={`hidden md:flex border-r border-black/[0.05] dark:border-white/[0.06] bg-[#FAF8F5] dark:bg-[#171412] flex-col h-[calc(100vh-65px)] sticky top-[65px] select-none text-[#1E1A17] dark:text-[#FAF8F5] transition-all duration-200 shrink-0 ${
-          isCollapsed ? "w-[68px]" : "w-72"
-        }`}
-      >
-        {renderSidebarContent(isCollapsed, false)}
-      </aside>
-
-      {/* Mobile Slide-over Drawer */}
-      {isMobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden flex">
-          <button
-            type="button"
-            aria-label="Close navigation overlay"
-            className="fixed inset-0 bg-black/35 animate-in fade-in duration-200 cursor-default w-full h-full border-0 p-0"
-            onClick={onCloseMobile}
-          />
-          <aside className="relative w-[280px] max-w-[85vw] h-full bg-[#FAF8F5] dark:bg-[#171412] border-r border-black/[0.05] dark:border-white/[0.06] flex flex-col shadow-2xl z-10 animate-in slide-in-from-left duration-200 select-none text-[#1E1A17] dark:text-[#FAF8F5] overscroll-contain touch-pan-y">
-            {renderSidebarContent(false, true)}
-          </aside>
-        </div>
-      )}
-    </>
+    <aside
+      className={`hidden md:flex border-r border-black/[0.05] dark:border-white/[0.06] bg-[#FAF8F5] dark:bg-[#171412] flex-col h-[calc(100vh-65px)] sticky top-[65px] select-none text-[#1E1A17] dark:text-[#FAF8F5] transition-all duration-200 shrink-0 ${
+        isCollapsed ? "w-[68px]" : "w-72"
+      }`}
+    >
+      {renderSidebarContent(isCollapsed)}
+    </aside>
   );
 }

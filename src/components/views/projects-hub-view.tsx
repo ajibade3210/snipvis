@@ -185,7 +185,7 @@ export function ProjectsHubView({
         <button
           type="button"
           onClick={onOpenNewProject}
-          className="h-8 sm:h-9 px-3 sm:px-4 rounded-full bg-[#FF5338] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs hover:bg-[#d93820] active:scale-95 transition-all cursor-pointer shrink-0"
+          className="h-8 w-8 sm:w-auto sm:px-4 rounded-full bg-[#FF5338] text-white text-xs font-semibold flex items-center justify-center sm:gap-1.5 shadow-xs hover:bg-[#d93820] active:scale-95 transition-all cursor-pointer shrink-0"
           title="Create New Project"
           aria-label="Create New Project"
         >

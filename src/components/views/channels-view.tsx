@@ -103,12 +103,12 @@ export function ChannelsView({
             setIsAddingChannel(true);
             setCreateError(null);
           }}
-          className="h-8 sm:h-9 px-3 sm:px-4 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+          className="h-8 w-8 sm:w-auto sm:px-4 rounded-full text-xs font-semibold flex items-center justify-center sm:gap-1.5 bg-[#FF5338] text-white hover:bg-[#d93820] shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
           title="New Channel"
           aria-label="New Channel"
         >
           <span className="text-base sm:text-xs leading-none font-bold">+</span>
-          <span className="hidden sm:inline">New Channel</span>
+          <span className="hidden sm:inline font-semibold">New Channel</span>
         </button>
       </div>
 

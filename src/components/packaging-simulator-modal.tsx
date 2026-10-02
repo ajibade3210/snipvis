@@ -99,7 +99,7 @@ export function PackagingSimulatorModal({
 
   const formulaPivots = [
     {
-      label: "⚡ Loss Aversion",
+      label: "Loss Aversion",
       title: `The ${cleanSubject} Mistake Nobody Talks About`,
     },
     {

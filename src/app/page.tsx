@@ -2,6 +2,7 @@
 
 import { AnalyzeHookModal } from "@/components/analyze-hook-modal";
 import { InspirationModal } from "@/components/inspiration-modal";
+import { MobileNav } from "@/components/mobile-nav";
 import { NoteModal } from "@/components/note-modal";
 import { ProjectModal } from "@/components/project-modal";
 import { Sidebar } from "@/components/sidebar";
@@ -52,7 +53,6 @@ function CreatorLabShell() {
   >(null);
   const [isAddInspirationOpen, setIsAddInspirationOpen] = useState(false);
   const [isAnalyzeHookOpen, setIsAnalyzeHookOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [noteModalData, setNoteModalData] = useState<{
     inspirationId: string;
     projectId: string;
@@ -79,7 +79,6 @@ function CreatorLabShell() {
         setIsAddInspirationOpen(false);
         setIsNewProjectOpen(false);
         setIsAnalyzeHookOpen(false);
-        setIsMobileMenuOpen(false);
         setNoteModalData(null);
       }
     };
@@ -103,7 +102,6 @@ function CreatorLabShell() {
     tab?: string | null;
     channel?: string | null;
   }) => {
-    setIsMobileMenuOpen(false);
     const current = new URLSearchParams(Array.from(searchParams.entries()));
     for (const [key, value] of Object.entries(params)) {
       if (value === null) current.delete(key);
@@ -157,11 +155,10 @@ function CreatorLabShell() {
         }}
         searchInputRef={searchInputRef}
         itemCount={formattedInspirations.length}
-        onOpenAddInspiration={() => setIsAddInspirationOpen(true)}
         onOpenSettings={() =>
           updateUrl({ view: "settings", project: null, tab: null })
         }
-        onToggleMobileMenu={() => setIsMobileMenuOpen((prev) => !prev)}
+        onOpenAnalyzeHook={() => setIsAnalyzeHookOpen(true)}
       />
 
       <div className="flex-1 flex flex-col md:flex-row">
@@ -170,8 +167,6 @@ function CreatorLabShell() {
           totalInspirationsCount={formattedInspirations.length}
           activeNav={activeNav}
           selectedProjectId={selectedProjectId}
-          isMobileOpen={isMobileMenuOpen}
-          onCloseMobile={() => setIsMobileMenuOpen(false)}
           onSelectNav={(nav) =>
             updateUrl({ view: nav, project: null, tab: null, channel: null })
           }
@@ -191,7 +186,7 @@ function CreatorLabShell() {
           }}
         />
 
-        <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto max-w-[1600px]">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 pb-24 md:pb-8 overflow-y-auto max-w-[1600px]">
           {selectedProjectId && currentProject ? (
             <ProjectWorkspaceView
               project={currentProject}
@@ -319,6 +314,14 @@ function CreatorLabShell() {
           initialNote={noteModalData.note}
         />
       )}
+      <MobileNav
+        activeNav={activeNav}
+        selectedProjectId={selectedProjectId}
+        onSelectNav={(nav) =>
+          updateUrl({ view: nav, project: null, tab: null, channel: null })
+        }
+        onOpenAddInspiration={() => setIsAddInspirationOpen(true)}
+      />
     </div>
   );
 }

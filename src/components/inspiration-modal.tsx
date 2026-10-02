@@ -276,10 +276,10 @@ export function InspirationModal({
                   }`}
                 >
                   {t === "THUMBNAIL"
-                    ? "🖼️ Thumbnail"
+                    ? "Thumbnail"
                     : t === "TITLE"
-                      ? "🏷️ Title"
-                      : "🎣 Hook"}
+                      ? "Title"
+                      : "Hook"}
                 </button>
               ))}
             </div>

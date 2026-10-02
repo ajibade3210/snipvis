@@ -267,7 +267,7 @@ export function ThumbnailGallery({
           className="w-full border-2 border-dashed border-black/[0.08] dark:border-white/[0.1] rounded-3xl p-10 flex flex-col items-center justify-center text-center cursor-pointer hover:border-[#FF5338]/50 hover:bg-[#FFEBE7]/15 dark:hover:bg-red-950/10 transition-all group"
         >
           <div className="w-14 h-14 rounded-2xl bg-black/[0.03] dark:bg-white/[0.04] text-[#FF5338] flex items-center justify-center text-2xl group-hover:scale-105 transition-transform mb-3">
-            🖼️
+            🖼️Oo
           </div>
           <h3 className="font-semibold text-sm text-[#1C1815] dark:text-[#FBF9F5]">
             No Thumbnails Uploaded Yet
